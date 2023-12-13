@@ -13,6 +13,12 @@
         android:theme="@style/Theme.Proyecto"
         tools:targetApi="31">
         <activity
+            android:name=".AddGuestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GuestListActivity"
+            android:exported="false" />
+        <activity
             android:name=".RegisterActivity"
             android:exported="false" />
         <activity
