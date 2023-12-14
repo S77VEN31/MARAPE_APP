@@ -1,4 +1,4 @@
-package tec.ac.cr.marape.app.model.state
+package tec.ac.cr.marape.app.state
 
 import com.google.api.Context
 import tec.ac.cr.marape.app.model.User
