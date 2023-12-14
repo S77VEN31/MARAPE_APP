@@ -1,6 +1,6 @@
 package tec.ac.cr.marape.app.state
 
-import com.google.api.Context
+import android.content.Context
 import tec.ac.cr.marape.app.model.User
 
 class State(var context: Context) {
