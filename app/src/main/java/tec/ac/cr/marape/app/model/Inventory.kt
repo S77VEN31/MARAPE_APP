@@ -9,6 +9,7 @@ enum class InventoryStatus(var status: Int) {
 }
 
 data class Inventory(
+    var id: String = "",
     var name: String = "",
     // NOTE: the reason for the change is because we'll be using timestamps in the database,
     // however there are some conflicts with the way firebase tries to use the getters and

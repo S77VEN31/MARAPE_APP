@@ -1,6 +1,7 @@
 package tec.ac.cr.marape.app.model
 
 data class Product(
+  var id: String = "",
   var name: String = "",
   var barcode: String = "",
   var brand: String = "",
