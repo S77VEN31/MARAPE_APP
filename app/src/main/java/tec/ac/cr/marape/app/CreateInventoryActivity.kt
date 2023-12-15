@@ -12,12 +12,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
-import java.time.Instant
-import kotlin.collections.listOf
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.InventoryStatus
-import tec.ac.cr.marape.app.model.User
 import tec.ac.cr.marape.app.state.State
+import java.time.Instant
 
 class CreateInventoryActivity : AppCompatActivity() {
   private lateinit var inventory: Inventory
@@ -29,70 +27,65 @@ class CreateInventoryActivity : AppCompatActivity() {
   private lateinit var emptyNameError: String
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+
     state = State.getInstance(this.baseContext)
     db = FirebaseFirestore.getInstance()
     states = resources.getStringArray(R.array.create_inventory_states)
     emptyNameError = resources.getString(R.string.create_product_empty_name_error)
 
-    inventory =
-        Inventory(
-            "",
-            0, // NOTE: This value will be set upon creation
-            InventoryStatus.INACTIVE,
-            state.user.email,
-            listOf()
-        )
+    inventory = Inventory()
+    inventory.ownerEmail = state.user.email
 
-    super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_create_inventory)
     inflateStateSpinner()
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     text = findViewById(R.id.create_inventory_name_input)
     text.addTextChangedListener(
-        object : TextWatcher {
-          override fun afterTextChanged(s: Editable?) {
-            inventory.name = s.toString()
-          }
-
-          override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-          override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+      object : TextWatcher {
+        override fun afterTextChanged(s: Editable?) {
+          inventory.name = s.toString()
         }
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+      }
     )
   }
 
-  public fun addProduct(view: View) {
+  fun addProduct(view: View) {
     TODO("Implement functionality for adding products to the inventory")
   }
 
   @SuppressLint("NewApi")
-  public fun createInventory(view: View) {
+  fun createInventory(view: View) {
     if (inventory.name.isEmpty()) {
       text.error = emptyNameError
       return
     }
     inventory.creationDate = Instant.now().toEpochMilli()
     db.collection("inventories")
-        .document()
-        .set(inventory)
-        .addOnSuccessListener { _ ->
-          Toast.makeText(
-                  this@CreateInventoryActivity,
-                  "Inventory created successfully",
-                  Toast.LENGTH_SHORT
-              )
-              .show()
-          finish()
-        }
-        .addOnFailureListener { ex ->
-          Toast.makeText(
-                  this@CreateInventoryActivity,
-                  "An error occurred ${ex}",
-                  Toast.LENGTH_SHORT
-              )
-              .show()
-        }
+      .document()
+      .set(inventory)
+      .addOnSuccessListener { _ ->
+        Toast.makeText(
+          this@CreateInventoryActivity,
+          "Inventory created successfully",
+          Toast.LENGTH_SHORT
+        )
+          .show()
+        finish()
+      }
+      .addOnFailureListener { ex ->
+        Toast.makeText(
+          this@CreateInventoryActivity,
+          "An error occurred ${ex}",
+          Toast.LENGTH_SHORT
+        )
+          .show()
+      }
   }
 
   fun inflateStateSpinner() {
@@ -105,19 +98,19 @@ class CreateInventoryActivity : AppCompatActivity() {
     stateSpinner.adapter = adapter
 
     stateSpinner.onItemSelectedListener =
-        object : AdapterView.OnItemSelectedListener {
-          override fun onItemSelected(
-              parent: AdapterView<*>?,
-              view: View?,
-              position: Int,
-              id: Long
-          ) {
-            inventory.status = InventoryStatus.fromInt(position)
-          }
-
-          override fun onNothingSelected(parent: AdapterView<*>?) {
-            TODO("Implement this, honestly I don't know what this does lmao 💀")
-          }
+      object : AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(
+          parent: AdapterView<*>?,
+          view: View?,
+          position: Int,
+          id: Long
+        ) {
+          inventory.status = InventoryStatus.fromInt(position)
         }
+
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+          TODO("Implement this, honestly I don't know what this does lmao 💀")
+        }
+      }
   }
 }
