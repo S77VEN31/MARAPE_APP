@@ -4,7 +4,7 @@ enum class InventoryStatus(var status: Int) {
   INACTIVE(0),
   ACTIVE(1);
   companion object {
-    fun fromInt(value: Int) = InventoryStatus.values().first { it.status == value }
+    fun fromInt(value: Int) = entries.first { it.status == value }
   }
 }
 
