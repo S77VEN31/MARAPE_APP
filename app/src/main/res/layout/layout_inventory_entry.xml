@@ -4,7 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="20dp">
+    android:layout_marginLeft="10dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/rounded_corners_drawable"
+    android:elevation="2dp"
+    android:outlineProvider="background"
+    android:padding="10dp">
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -16,12 +23,17 @@
 
         <TextView
             android:id="@+id/entry_inventory_name"
-            android:layout_width="match_parent"
+            style="@style/Widget.MaterialComponents.TextView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:padding="10dp"
+            android:text="Mi Quinto Inventario"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="?attr/colorPrimary"
+            android:textStyle="bold" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
@@ -29,13 +41,17 @@
                 android:id="@+id/entry_inventory_creation_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:padding="10dp"
+                android:text="TextView"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textStyle="italic" />
 
             <Switch
                 android:id="@+id/entry_inventory_status_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
         </LinearLayout>
 
     </LinearLayout>
@@ -44,41 +60,44 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/entry_inventory_collaborators"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_home_black_24dp"
-            android:text="TextView" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/entry_inventory_collaborators"
+                style="@style/Widget.MaterialComponents.TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="TextView"
+                app:drawableStartCompat="@drawable/ic_rounded_groups"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageButton
             android:id="@+id/entry_add_collaborator_button"
             android:layout_width="45dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@android:drawable/btn_star" />
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/person_add_fill0_wght400_grad0_opsz24" />
 
         <ImageButton
             android:id="@+id/entry_delete_inventory_button"
             android:layout_width="45dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@android:drawable/btn_star" />
+            android:background="?attr/selectableItemBackground"
+            android:foregroundTintMode="add"
+            android:src="@drawable/ic_round_delete"
+            android:tint="@color/danger"
+            android:tintMode="src_in" />
     </LinearLayout>
-
-    <View
-        android:id="@+id/view"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_margin="0dp"
-        android:background="@color/black"
-        android:outlineProvider="none"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/linearLayout2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
