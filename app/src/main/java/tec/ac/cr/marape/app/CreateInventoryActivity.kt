@@ -34,8 +34,6 @@ class CreateInventoryActivity : AppCompatActivity() {
     states = resources.getStringArray(R.array.create_inventory_states)
     emptyNameError = resources.getString(R.string.create_product_empty_name_error)
 
-    state.user = User("Aaron", "erizojuan33@gmail.com", "Something I guess", "Costa Rica", "6475-0398")
-
     inventory =
         Inventory(
             "",
@@ -44,9 +42,11 @@ class CreateInventoryActivity : AppCompatActivity() {
             state.user.email,
             listOf()
         )
+
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_create_inventory)
     inflateStateSpinner()
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     text = findViewById(R.id.create_inventory_name_input)
     text.addTextChangedListener(
