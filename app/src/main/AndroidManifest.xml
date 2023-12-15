@@ -35,6 +35,10 @@
             <!-- </intent-filter> -->
         </activity>
         <activity
+            android:name=".CreateInventoryActivity"
+            android:exported="false"
+            android:label="@string/create_inventory"/>
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name">
