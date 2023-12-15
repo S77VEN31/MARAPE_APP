@@ -66,9 +66,10 @@ class CreateInventoryActivity : AppCompatActivity() {
       return
     }
     inventory.creationDate = Instant.now().toEpochMilli()
-    db.collection("inventories")
+    val inventoryDoc = db.collection("inventories")
       .document()
-      .set(inventory)
+    inventory.id = inventoryDoc.id
+    inventoryDoc.set(inventory)
       .addOnSuccessListener { _ ->
         Toast.makeText(
           this@CreateInventoryActivity,
@@ -89,9 +90,6 @@ class CreateInventoryActivity : AppCompatActivity() {
   }
 
   fun inflateStateSpinner() {
-    // TODO: extract these hard coded values into a string-array resource, the string-array
-    // resource works by taking string resources from the string resource file and joining them into
-    // a string-array resource in the arrays resource file.
     val stateSpinner: Spinner = findViewById(R.id.create_inventory_state_spinner)
     val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, states)
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
