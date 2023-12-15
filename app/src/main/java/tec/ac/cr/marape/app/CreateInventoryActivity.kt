@@ -1,5 +1,6 @@
 package tec.ac.cr.marape.app
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -23,12 +24,18 @@ class CreateInventoryActivity : AppCompatActivity() {
   private lateinit var state: State
   private lateinit var db: FirebaseFirestore
 
+  private lateinit var states: Array<String>
+  private lateinit var text: TextView
+  private lateinit var emptyNameError: String
+
   override fun onCreate(savedInstanceState: Bundle?) {
     state = State.getInstance(this.baseContext)
     db = FirebaseFirestore.getInstance()
-    // XXX: This is testing code
-    state.user = User("Aaron", "erizojuan33@gmail.com", "Something I guess")
-    // XXX: END OF TESTING CODE
+    states = resources.getStringArray(R.array.create_inventory_states)
+    emptyNameError = resources.getString(R.string.create_product_empty_name_error)
+
+    state.user = User("Aaron", "erizojuan33@gmail.com", "Something I guess", "Costa Rica", "6475-0398")
+
     inventory =
         Inventory(
             "",
@@ -41,7 +48,7 @@ class CreateInventoryActivity : AppCompatActivity() {
     setContentView(R.layout.activity_create_inventory)
     inflateStateSpinner()
 
-    val text: TextView = findViewById(R.id.create_inventory_name_input)
+    text = findViewById(R.id.create_inventory_name_input)
     text.addTextChangedListener(
         object : TextWatcher {
           override fun afterTextChanged(s: Editable?) {
@@ -59,8 +66,12 @@ class CreateInventoryActivity : AppCompatActivity() {
     TODO("Implement functionality for adding products to the inventory")
   }
 
+  @SuppressLint("NewApi")
   public fun createInventory(view: View) {
-    // TODO: validations, right now we won't be doing validations
+    if (inventory.name.isEmpty()) {
+      text.error = emptyNameError
+      return
+    }
     inventory.creationDate = Instant.now().toEpochMilli()
     db.collection("inventories")
         .document()
@@ -88,7 +99,6 @@ class CreateInventoryActivity : AppCompatActivity() {
     // TODO: extract these hard coded values into a string-array resource, the string-array
     // resource works by taking string resources from the string resource file and joining them into
     // a string-array resource in the arrays resource file.
-    val states = listOf("Inactivo", "Activo")
     val stateSpinner: Spinner = findViewById(R.id.create_inventory_state_spinner)
     val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, states)
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
