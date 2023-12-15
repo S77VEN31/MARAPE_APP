@@ -1,9 +1,7 @@
 package tec.ac.cr.marape.app
 
 import android.app.Application
-import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
-import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.User
 import tec.ac.cr.marape.app.state.State
 
@@ -15,6 +13,7 @@ class Marape : Application() {
     state = State.getInstance(baseContext)
     db = FirebaseFirestore.getInstance()
 
+    // FIXME: Remove this, the only reason this is here is because proper authentication has not been properly setup yet
     state.user = User(
       "Aaron González",
       "erizojuan33@gmail.com",
@@ -24,16 +23,6 @@ class Marape : Application() {
     )
 
     state.inventories = ArrayList()
-
-    val inventoriesRef =
-      db.collection("inventories").where(Filter.equalTo("ownerEmail", state.user.email))
-    inventoriesRef.get().addOnSuccessListener { snapshot ->
-      snapshot.documents.iterator().forEach { inventorySnapshot ->
-        val inventory = inventorySnapshot.toObject(Inventory::class.java)
-        inventory?.id = inventorySnapshot.id
-        inventory?.let { state.inventories.add(it) }
-      }
-    }
 
   }
 }
