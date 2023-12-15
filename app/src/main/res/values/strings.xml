@@ -7,4 +7,7 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_register">RegisterActivity</string>
+    <string name="add_product">Agregar Producto</string>
+    <string name="create_inventory">Crear Inventario</string>
+    <string name="create_product_name_hint">Nombre</string>
 </resources>
