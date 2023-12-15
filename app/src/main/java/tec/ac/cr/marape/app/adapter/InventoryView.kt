@@ -11,11 +11,17 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import tec.ac.cr.marape.app.R
 import tec.ac.cr.marape.app.model.Inventory
+import java.text.DateFormat
+import java.time.LocalDate
 import java.util.Date
+import java.util.Locale
 
 
 class InventoryView(private var inventories: ArrayList<Inventory>) :
   RecyclerView.Adapter<InventoryView.ViewHolder>() {
+
+  private val locale = Locale("es", "CR")
+  private val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val itemView = LayoutInflater.from(parent.context).inflate(R.layout.layout_inventory_entry, parent, false)
@@ -29,7 +35,7 @@ class InventoryView(private var inventories: ArrayList<Inventory>) :
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
     val currentInventory = inventories[position]
     holder.inventoryName.text = currentInventory.name
-    holder.creationDate.text = Date(currentInventory.creationDate).toString()
+    holder.creationDate.text = formatter.format(Date(currentInventory.creationDate)).toString()
     holder.statusSwitch.isChecked = currentInventory.status.status == 1
     holder.collaborators.text = currentInventory.invitedUsers?.size.toString()
   }
