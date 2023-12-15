@@ -77,6 +77,8 @@ class CreateInventoryActivity : AppCompatActivity() {
           Toast.LENGTH_SHORT
         )
           .show()
+        state.inventories.add(inventory)
+        setResult(200)
         finish()
       }
       .addOnFailureListener { ex ->
