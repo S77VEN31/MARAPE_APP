@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="create_inventory_states">
+        <item>Inactivo</item>
+        <item>Activo</item>
+    </string-array>
+</resources>
