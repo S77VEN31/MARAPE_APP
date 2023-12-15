@@ -9,16 +9,20 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.databinding.ActivityMainBinding
+import tec.ac.cr.marape.app.model.User
+import tec.ac.cr.marape.app.state.State
 
 class MainActivity : AppCompatActivity() {
 
   private lateinit var binding: ActivityMainBinding
   private lateinit var db: FirebaseFirestore
+  private lateinit var state: State
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     db = FirebaseFirestore.getInstance()
+    state = State.getInstance(baseContext)
 
     binding = ActivityMainBinding.inflate(layoutInflater)
     setContentView(binding.root)
@@ -29,9 +33,9 @@ class MainActivity : AppCompatActivity() {
     // Passing each menu ID as a set of Ids because each
     // menu should be considered as top level destinations.
     val appBarConfiguration =
-        AppBarConfiguration(
-            setOf(R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
-        )
+      AppBarConfiguration(
+        setOf(R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
+      )
     setupActionBarWithNavController(navController, appBarConfiguration)
     navView.setupWithNavController(navController)
   }
