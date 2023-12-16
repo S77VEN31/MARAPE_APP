@@ -7,4 +7,10 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_register">RegisterActivity</string>
+    <string name="text_log_out">Cerrar Sesión</string>
+    <string name="text_delete_account">Borrar Cuenta</string>
+    <string name="login_error">No se pudo iniciar sesión</string>
+    <string name="account_deletion_confirmation_message">¿Seguro que deseas borrar tu cuenta?</string>
+    <string name="account_deletion_title">Borrar Cuenta</string>
+    <string name="account_deletion_confirm_button_text">Confirmar</string>
 </resources>
