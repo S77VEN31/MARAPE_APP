@@ -13,8 +13,11 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         android:clickable="true"
-        android:onClick="createInventory"
-        android:src="@android:drawable/ic_input_add"
+        android:foreground="@drawable/add_fill0_wght400_grad0_opsz24"
+        android:foregroundTint="?attr/colorOnPrimary"
+        android:foregroundTintMode="src_atop"
+        app:backgroundTint="?attr/colorPrimary"
+        app:backgroundTintMode="add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -22,6 +25,7 @@
         android:id="@+id/owned_inventories_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:foregroundTintMode="src_in"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
