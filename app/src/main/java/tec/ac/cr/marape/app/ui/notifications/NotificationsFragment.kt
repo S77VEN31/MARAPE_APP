@@ -33,7 +33,7 @@ class NotificationsFragment : Fragment() {
 
     // Accede a tus vistas a través de binding
     user?.email?.let {
-      binding.etEmail.setText(it)
+      binding.etEmail.text = it
     }
 
     // Botón para cerrar sesión
@@ -49,7 +49,6 @@ class NotificationsFragment : Fragment() {
       deleteAccount()
     }
 
-    // Resto de tu código...
 
     return root
   }
@@ -57,20 +56,15 @@ class NotificationsFragment : Fragment() {
   private fun deleteAccount() {
     val user = mAuth.currentUser
 
-    user?.delete()
-      ?.addOnCompleteListener { task ->
-        if (task.isSuccessful) {
-          // Cuenta eliminada con éxito
-          startActivity(Intent(requireContext(), LoginActivity::class.java))
-        } else {
-          // Fallo al eliminar la cuenta
-          Toast.makeText(
-            requireContext(),
-            "Error al eliminar la cuenta: ${task.exception?.message}",
-            Toast.LENGTH_SHORT
-          ).show()
-        }
-      }
+    user?.delete()?.addOnSuccessListener {
+      startActivity(Intent(requireContext(), LoginActivity::class.java))
+    }?.addOnFailureListener {
+      Toast.makeText(
+        requireContext(),
+        "Error al eliminar la cuenta: ${it.message}",
+        Toast.LENGTH_SHORT
+      ).show()
+    }
   }
 
   override fun onDestroyView() {
