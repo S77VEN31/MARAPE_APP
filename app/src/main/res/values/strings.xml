@@ -19,5 +19,9 @@
     <string name="create_inventory">Crear Inventario</string>
     <string name="create_product_name_hint">Nombre</string>
     <string name="create_product_empty_name_error">El nombre no puede estar vacío</string>
+    <string name="user_profile_username">Nombre de Usuario</string>
+    <string name="user_profile_email">Correo</string>
+    <string name="user_profile_country">País</string>
+    <string name="user_profile_phone">Teléfono</string>
 
 </resources>
