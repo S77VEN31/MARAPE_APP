@@ -89,10 +89,9 @@ class LoginActivity : AppCompatActivity() {
         }.addOnFailureListener {
           Toast.makeText(
             this@LoginActivity,
-            "No se pudo iniciar sesión. Verifique correo o contraseña",
+            it.message,
             Toast.LENGTH_SHORT
           ).show()
-          this.finish()
         }
       }
     }
