@@ -1,16 +1,23 @@
 <resources>
     <string name="app_name">Proyecto</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_owned_inventories">Mis Inventarios</string>
+    <string name="title_notifications">Perfil</string>
     <string name="title_activity_login">Login</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_register">RegisterActivity</string>
+
     <string name="text_log_out">Cerrar Sesión</string>
     <string name="text_delete_account">Borrar Cuenta</string>
     <string name="login_error">No se pudo iniciar sesión</string>
     <string name="account_deletion_confirmation_message">¿Seguro que deseas borrar tu cuenta?</string>
     <string name="account_deletion_title">Borrar Cuenta</string>
     <string name="account_deletion_confirm_button_text">Confirmar</string>
+
+    <string name="add_product">Agregar Producto</string>
+    <string name="create_inventory">Crear Inventario</string>
+    <string name="create_product_name_hint">Nombre</string>
+    <string name="create_product_empty_name_error">El nombre no puede estar vacío</string>
+
 </resources>
