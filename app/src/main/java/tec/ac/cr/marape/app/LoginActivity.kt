@@ -9,7 +9,6 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.model.User
 import tec.ac.cr.marape.app.state.State
@@ -56,8 +55,11 @@ class LoginActivity : AppCompatActivity() {
     var email = emailEntry.text.toString()
     var contrasenia = passwordEntry.text.toString()
 
+    // TODO: Extract these strings into resource files.
     when {
-      !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> emailEntry.error = "El correo es invalido"
+      !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> emailEntry.error =
+        "El correo es invalido"
+
       contrasenia.isEmpty() -> passwordEntry.error = "La contraseña no puede estar vacia"
       contrasenia.length < 8 -> passwordEntry.error =
         "La contraseña no puede ser menor de 8 caracteres"
@@ -67,7 +69,6 @@ class LoginActivity : AppCompatActivity() {
         dialogoInicio.setMessage("Iniciando sesión, espere un momento...")
         dialogoInicio.setCancelable(false)
         dialogoInicio.show()
-
 
         //Verificar Usuario
         mAuth.signInWithEmailAndPassword(email, contrasenia).addOnSuccessListener {
@@ -80,6 +81,9 @@ class LoginActivity : AppCompatActivity() {
               val principal = Intent(this, MainActivity::class.java)
               //Iniciar la activity
               startActivity(principal)
+            } ?: run {
+              // TODO: Same as below, either fix the issue or at least tell the user that there's been something wrong
+              finish()
             }
           }
         }.addOnFailureListener {
@@ -88,6 +92,7 @@ class LoginActivity : AppCompatActivity() {
             "No se pudo iniciar sesión. Verifique correo o contraseña",
             Toast.LENGTH_SHORT
           ).show()
+          this.finish()
         }
       }
     }
@@ -95,11 +100,23 @@ class LoginActivity : AppCompatActivity() {
 
   override fun onStart() {
     super.onStart()
-    val user: FirebaseUser? = mAuth.currentUser
-    if (user != null) {
-      val principal = Intent(this, MainActivity::class.java)
-      // Iniciar la activity
-      startActivity(principal)
+    mAuth.currentUser?.let {
+      it.email?.let {
+        db.collection("users").document(it).get().addOnSuccessListener {
+          it.toObject(User::class.java)?.let {
+            state.user = it
+            val principal = Intent(this, MainActivity::class.java)
+            startActivity(principal)
+          }
+        }.addOnFailureListener {
+          Toast.makeText(this@LoginActivity, R.string.login_error, Toast.LENGTH_SHORT).show()
+          // TODO: actually fix the issue instead of just killing the app
+          finish()
+        }
+      } ?: run {
+        // TODO: Actually fix the underlying issue or at least tell the user that there's something wrong gonig on
+        finish()
+      }
     }
   }
 
