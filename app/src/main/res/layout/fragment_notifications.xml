@@ -27,15 +27,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:text="Nombre de usuario:"
+                android:text="@string/user_profile_username"
                 android:textColor="#000000"
-                android:textSize="18sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/et_user"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textSize="16sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -49,15 +50,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:text="Correo:"
+                android:text="@string/user_profile_email"
                 android:textColor="#000000"
-                android:textSize="18sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/et_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textSize="16sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -71,15 +73,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:text="País:"
+                android:text="@string/user_profile_country"
                 android:textColor="#000000"
-                android:textSize="18sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/et_Country"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textSize="16sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -93,15 +96,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:text="Teléfono:"
+                android:text="@string/user_profile_phone"
                 android:textColor="#000000"
-                android:textSize="18sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/et_Phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textSize="16sp" />
         </LinearLayout>
 
     </LinearLayout>
@@ -121,6 +125,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:background="@drawable/style_border"
+            android:backgroundTintMode="multiply"
             android:text="@string/text_log_out" />
 
         <Button
@@ -139,7 +144,10 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         android:clickable="true"
-        android:src="@android:drawable/ic_input_add"
+        android:src="@drawable/edit_fill0_wght400_grad0_opsz24"
+        android:tint="?attr/colorOnPrimary"
+        android:tintMode="src_in"
+        app:backgroundTint="?attr/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
