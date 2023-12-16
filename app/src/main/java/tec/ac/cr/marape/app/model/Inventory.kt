@@ -19,5 +19,5 @@ data class Inventory(
   var creationDate: Long = 0,
   var status: InventoryStatus = InventoryStatus.INACTIVE,
   var ownerEmail: String = "",
-  var invitedUsers: List<String> = listOf(),
+  var invitedUsers: List<String> = emptyList(),
 )
