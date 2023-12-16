@@ -72,6 +72,7 @@ class NotificationsFragment : Fragment() {
     builder.setTitle(R.string.account_deletion_title)
     builder.setPositiveButton(R.string.account_deletion_confirm_button_text) { _, _ ->
       mAuth.currentUser?.delete()?.addOnSuccessListener {
+        state.inventories.clear()
         startActivity(Intent(requireContext(), LoginActivity::class.java))
       }?.addOnFailureListener {
         Toast.makeText(
