@@ -15,36 +15,64 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/create_inventory_name_input"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:ems="10"
-            android:hint="@string/create_product_name_hint"
-            android:inputType="text" />
-
-        <Spinner
-            android:id="@+id/create_inventory_state_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="51dp" />
-
-        <Button
-            android:id="@+id/create_inventory_add_product_button"
+        <LinearLayout
+            android:id="@+id/linearLayout4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="addProduct"
-            android:text="@string/add_product" />
+            android:layout_margin="10dp"
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/create_inventory_confirm"
+            <EditText
+                android:id="@+id/create_inventory_name"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/style_border"
+                android:ems="10"
+                android:hint="@string/create_product_name_hint"
+                android:inputType="text" />
+
+            <Spinner
+                android:id="@+id/create_inventory_state_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="51dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/style_border"
+                android:dropDownWidth="match_parent"
+                android:dropDownSelector="@drawable/ic_home_black_24dp"
+                android:spinnerMode="dialog" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="createInventory"
-            android:text="@string/create_inventory" />
+            android:layout_margin="10dp"
+            android:orientation="vertical">
 
+            <Button
+                android:id="@+id/create_inventory_add_product_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/style_border"
+                android:onClick="addProduct"
+                android:text="@string/add_product" />
+
+            <Button
+                android:id="@+id/create_inventory_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/style_border"
+                android:onClick="createInventory"
+                android:text="@string/create_inventory" />
+
+        </LinearLayout>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
