@@ -15,7 +15,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.model.Inventory
-import tec.ac.cr.marape.app.model.InventoryStatus
 import tec.ac.cr.marape.app.state.State
 import java.io.Serializable
 import java.time.Instant
@@ -98,7 +97,7 @@ class CreateInventoryActivity : AppCompatActivity() {
       }
   }
 
-  fun inflateStateSpinner() {
+  private fun inflateStateSpinner() {
     val stateSpinner: Spinner = findViewById(R.id.create_inventory_state_spinner)
     val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, states)
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -112,11 +111,11 @@ class CreateInventoryActivity : AppCompatActivity() {
           position: Int,
           id: Long
         ) {
-          inventory.status = InventoryStatus.fromInt(position)
+          inventory.active = position == 1
         }
 
         override fun onNothingSelected(parent: AdapterView<*>?) {
-          TODO("Implement this, honestly I don't know what this does lmao 💀")
+          // TODO("Implement this, honestly I don't know what this does lmao 💀")
         }
       }
   }
