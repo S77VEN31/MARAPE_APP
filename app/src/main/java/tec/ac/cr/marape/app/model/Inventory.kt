@@ -2,13 +2,6 @@ package tec.ac.cr.marape.app.model
 
 import java.io.Serializable
 
-enum class InventoryStatus(var status: Int) {
-  INACTIVE(0),
-  ACTIVE(1);
-  companion object {
-    fun fromInt(value: Int) = entries.first { it.status == value }
-  }
-}
 
 data class Inventory(
   var id: String = "",
@@ -19,7 +12,7 @@ data class Inventory(
     // will find some methods that don't conform with its POJO expectatives so the application
     // will crash
   var creationDate: Long = 0,
-  var status: InventoryStatus = InventoryStatus.INACTIVE,
+  var active: Boolean = false,
   var ownerEmail: String = "",
   var invitedUsers: List<String> = emptyList(),
 ) : Serializable
