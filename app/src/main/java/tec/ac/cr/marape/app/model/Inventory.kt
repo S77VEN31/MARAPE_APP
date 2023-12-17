@@ -1,5 +1,7 @@
 package tec.ac.cr.marape.app.model
 
+import java.io.Serializable
+
 enum class InventoryStatus(var status: Int) {
   INACTIVE(0),
   ACTIVE(1);
@@ -20,4 +22,4 @@ data class Inventory(
   var status: InventoryStatus = InventoryStatus.INACTIVE,
   var ownerEmail: String = "",
   var invitedUsers: List<String> = emptyList(),
-)
+) : Serializable
