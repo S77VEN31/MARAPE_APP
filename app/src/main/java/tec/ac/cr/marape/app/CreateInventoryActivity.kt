@@ -1,9 +1,11 @@
 package tec.ac.cr.marape.app
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -15,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.InventoryStatus
 import tec.ac.cr.marape.app.state.State
+import java.io.Serializable
 import java.time.Instant
 
 class CreateInventoryActivity : AppCompatActivity() {
@@ -35,10 +38,12 @@ class CreateInventoryActivity : AppCompatActivity() {
     emptyNameError = resources.getString(R.string.create_product_empty_name_error)
 
     inventory = Inventory()
+    // This could honestly be a bit better tbh
     inventory.ownerEmail = state.user.email
 
     setContentView(R.layout.activity_create_inventory)
     inflateStateSpinner()
+
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     text = findViewById(R.id.create_inventory_name_input)
@@ -77,8 +82,10 @@ class CreateInventoryActivity : AppCompatActivity() {
           Toast.LENGTH_SHORT
         )
           .show()
-        state.inventories.add(inventory)
-        setResult(200)
+        // state.inventories.add(inventory)
+        val res = Intent()
+        res.putExtra("created", inventory as Serializable)
+        setResult(200, res)
         finish()
       }
       .addOnFailureListener { ex ->
@@ -112,5 +119,15 @@ class CreateInventoryActivity : AppCompatActivity() {
           TODO("Implement this, honestly I don't know what this does lmao 💀")
         }
       }
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when {
+      item.itemId == android.R.id.home -> {
+        finish()
+        true
+      }
+      else -> super.onOptionsItemSelected(item)
+    }
   }
 }
