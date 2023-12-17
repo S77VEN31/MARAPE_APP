@@ -14,6 +14,7 @@
     <string name="account_deletion_confirmation_message">¿Seguro que deseas borrar tu cuenta?</string>
     <string name="account_deletion_title">Borrar Cuenta</string>
     <string name="account_deletion_confirm_button_text">Confirmar</string>
+    <string name="action_cancel">Cancelar</string>
 
     <string name="add_product">Agregar Producto</string>
     <string name="create_inventory">Crear Inventario</string>
@@ -23,5 +24,10 @@
     <string name="user_profile_email">Correo</string>
     <string name="user_profile_country">País</string>
     <string name="user_profile_phone">Teléfono</string>
+    <string name="text_hint_password">Contraseña</string>
+
+    <string name="inventory_deletion_title">Borrar Inventario</string>
+    <string name="inventory_deletion_message">¿Deseas borrar este inventario?</string>
+    <string name="inventory_search_message">Buscar</string>
 
 </resources>
