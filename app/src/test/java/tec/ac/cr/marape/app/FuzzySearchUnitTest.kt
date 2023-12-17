@@ -3,14 +3,12 @@ package tec.ac.cr.marape.app
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.junit.Test
 
-import org.junit.Assert.*
-
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
-class FuzzySeearchUnitTest {
+class FuzzySearchUnitTest {
     @Test
     fun `fuzzy search all lowercase`() {
       assert(FuzzySearch.ratio("hola", "hola") == 100)
