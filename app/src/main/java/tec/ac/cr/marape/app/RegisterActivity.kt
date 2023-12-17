@@ -35,7 +35,7 @@ class RegisterActivity : AppCompatActivity() {
     btnRegister = findViewById(R.id.btnRegister)
     userNameEntry = findViewById(R.id.nombre)
     emailEntry = findViewById(R.id.correo)
-    passwordEntry = findViewById(R.id.create_inventory_name_input)
+    passwordEntry = findViewById(R.id.contrasenia)
     confirmPasswordEntry = findViewById(R.id.confirmarContrasena)
 
 
