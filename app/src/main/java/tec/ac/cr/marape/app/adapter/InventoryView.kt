@@ -25,7 +25,10 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
 
   private val locale = Locale("es", "CR")
   private val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
-  private lateinit var deleteHandler: (Inventory, Int) -> Unit
+
+  private lateinit var deleteHandler: (View, Inventory, Int) -> Unit
+  private lateinit var disablingHandler: (View, Inventory, Boolean, Int) -> Unit
+  private lateinit var clickHandler: (View, Inventory, Int) -> Unit
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val itemView =
@@ -41,15 +44,30 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
     val currentInventory = inventories[position]
     holder.inventoryName.text = currentInventory.name
     holder.creationDate.text = formatter.format(Date(currentInventory.creationDate)).toString()
-    holder.statusSwitch.isChecked = currentInventory.status.status == 1
+    holder.statusSwitch.isChecked = currentInventory.active
     holder.collaborators.text = currentInventory.invitedUsers.size.toString()
     holder.deleteInventoryButton.setOnClickListener {
-      deleteHandler(currentInventory, position)
+      deleteHandler(it, currentInventory, position)
+    }
+
+    holder.statusSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+      disablingHandler(buttonView, currentInventory, isChecked, position)
+    }
+    holder.itemView.setOnClickListener {
+      clickHandler(it, currentInventory, position)
     }
   }
 
-  fun setDeleteHandler(handler: (Inventory, Int) -> Unit) {
+  fun setDeleteHandler(handler: (View, Inventory, Int) -> Unit) {
     deleteHandler = handler
+  }
+
+  fun setDisablingHandler(handler: (View, Inventory, Boolean, Int) -> Unit) {
+    disablingHandler = handler
+  }
+
+  fun setOnClickListener(listener: (View, Inventory, Int) -> Unit) {
+    clickHandler = listener
   }
 
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
