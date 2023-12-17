@@ -12,7 +12,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.User
 import tec.ac.cr.marape.app.state.State
@@ -38,7 +37,7 @@ class LoginActivity : AppCompatActivity() {
 
     btnInicio = findViewById(R.id.btnInicio)
     emailEntry = findViewById(R.id.correo)
-    passwordEntry = findViewById(R.id.create_inventory_name_input)
+    passwordEntry = findViewById(R.id.login_contrasenia)
 
     dialogoInicio = AlertDialog.Builder(this)
 
