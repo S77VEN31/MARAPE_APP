@@ -46,7 +46,7 @@ class CreateInventoryActivity : AppCompatActivity() {
 
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    text = findViewById(R.id.create_inventory_name_input)
+    text = findViewById(R.id.create_inventory_name)
     text.addTextChangedListener(
       object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
