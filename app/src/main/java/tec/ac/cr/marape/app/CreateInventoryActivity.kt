@@ -3,8 +3,6 @@ package tec.ac.cr.marape.app
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
@@ -13,6 +11,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.state.State
@@ -27,6 +26,7 @@ class CreateInventoryActivity : AppCompatActivity() {
   private lateinit var states: Array<String>
   private lateinit var text: TextView
   private lateinit var emptyNameError: String
+  private val CREATED_INVENTORY = 1
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -46,17 +46,9 @@ class CreateInventoryActivity : AppCompatActivity() {
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     text = findViewById(R.id.create_inventory_name)
-    text.addTextChangedListener(
-      object : TextWatcher {
-        override fun afterTextChanged(s: Editable?) {
-          inventory.name = s.toString()
-        }
-
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-      }
-    )
+    text.addTextChangedListener {
+      inventory.name = it.toString()
+    }
   }
 
   fun addProduct(view: View) {
@@ -75,22 +67,15 @@ class CreateInventoryActivity : AppCompatActivity() {
     inventory.id = inventoryDoc.id
     inventoryDoc.set(inventory)
       .addOnSuccessListener { _ ->
-        Toast.makeText(
-          this@CreateInventoryActivity,
-          "Inventory created successfully",
-          Toast.LENGTH_SHORT
-        )
-          .show()
-        // state.inventories.add(inventory)
-        val res = Intent()
-        res.putExtra("created", inventory as Serializable)
-        setResult(200, res)
+        val result = Intent()
+        result.putExtra("created", inventory as Serializable)
+        setResult(CREATED_INVENTORY, result)
         finish()
       }
       .addOnFailureListener { ex ->
         Toast.makeText(
           this@CreateInventoryActivity,
-          "An error occurred ${ex}",
+          ex.message,
           Toast.LENGTH_SHORT
         )
           .show()
@@ -121,12 +106,12 @@ class CreateInventoryActivity : AppCompatActivity() {
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    return when {
-      item.itemId == android.R.id.home -> {
-        finish()
-        true
-      }
-      else -> super.onOptionsItemSelected(item)
+    return when (item.itemId) {
+        android.R.id.home -> {
+          finish()
+          true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
   }
 }
