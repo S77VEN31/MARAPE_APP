@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
@@ -24,6 +25,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.CreateInventoryActivity
 import tec.ac.cr.marape.app.R
@@ -31,6 +34,8 @@ import tec.ac.cr.marape.app.adapter.InventoryView
 import tec.ac.cr.marape.app.databinding.FragmentDashboardBinding
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.state.State
+import tec.ac.cr.marape.app.EditInventoryActivity
+import java.io.Serializable
 
 class DashboardFragment : Fragment() {
 
@@ -40,6 +45,10 @@ class DashboardFragment : Fragment() {
   private lateinit var launcher: ActivityResultLauncher<Intent>
   private lateinit var viewModel: Lazy<DashboardViewModel>
   private lateinit var db: FirebaseFirestore
+  private lateinit var inventoriesRef: CollectionReference
+  private val CREATED_INVENTORY = 1
+  private val EDITED_INVENTORY = 2
+  private lateinit var customAdapter: InventoryView
 
 
   private val binding get() = _binding!!
@@ -51,8 +60,11 @@ class DashboardFragment : Fragment() {
 
     recyclerView = binding.ownedInventoriesRecycler
     recyclerView!!.setHasFixedSize(false)
-    val customAdapter = InventoryView(viewModel.value.inventories)
+
     customAdapter.setDeleteHandler(::handleInventoryDeletion)
+    customAdapter.setDisablingHandler(::handleDisablingInventory)
+    customAdapter.setOnClickListener(::handleItemClick)
+
     recyclerView!!.adapter = customAdapter
     recyclerView!!.layoutManager = LinearLayoutManager(activity)
 
@@ -67,7 +79,7 @@ class DashboardFragment : Fragment() {
         (searchItem.actionView as SearchView).setOnQueryTextListener(object :
           SearchView.OnQueryTextListener {
           override fun onQueryTextSubmit(query: String?): Boolean {
-            return true
+            return false
           }
 
           override fun onQueryTextChange(newText: String?): Boolean {
@@ -87,13 +99,26 @@ class DashboardFragment : Fragment() {
     recyclerView!!.adapter?.notifyDataSetChanged()
   }
 
-  private fun handleInventoryDeletion(inventory: Inventory, position: Int) {
+  private fun handleDisablingInventory(view: View, inventory: Inventory, checked: Boolean, position: Int) {
+    inventoriesRef.document(inventory.id).update("active", checked).addOnFailureListener {
+      Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+    }
+  }
+
+  private fun handleItemClick(view: View, inventory: Inventory, position: Int) {
+    val intent = Intent(requireContext(), EditInventoryActivity::class.java)
+    intent.putExtra("position", position)
+    intent.putExtra("inventory", inventory)
+    launcher.launch(intent)
+  }
+
+  private fun handleInventoryDeletion(view: View, inventory: Inventory, position: Int) {
     AlertDialog.Builder(requireContext())
       .setTitle(R.string.inventory_deletion_title)
       .setMessage(R.string.inventory_deletion_message)
       .setCancelable(true)
       .setPositiveButton(R.string.account_deletion_confirm_button_text) { _, _ ->
-        db.collection("inventories").document(inventory.id).delete().addOnSuccessListener {
+        inventoriesRef.document(inventory.id).delete().addOnSuccessListener {
           viewModel.value.remove(inventory)
           recyclerView!!.adapter?.notifyItemRemoved(position)
         }
@@ -106,10 +131,29 @@ class DashboardFragment : Fragment() {
 
   @RequiresApi(Build.VERSION_CODES.TIRAMISU)
   private fun resultCallback(result: ActivityResult) {
-    val createdInventory = result.data?.getSerializableExtra("created", Inventory::class.java)
-    createdInventory?.let { inventory ->
-      viewModel.value.add(inventory)
-      recyclerView!!.adapter?.notifyItemInserted(0)
+    when (result.resultCode) {
+      CREATED_INVENTORY -> {
+        val createdInventory = result.data?.getSerializableExtra("created", Inventory::class.java)
+        createdInventory?.let { inventory ->
+          // TODO: Find another workaround so that I don't have to repeat that much code
+          // NOTE: This add method is a custom built one, it'll add it to the beginning of the list,
+          // none of the ways I'm doing this are optimal, I'm just doing it this way to get it done before
+          // the end of the week, after that I'll fine tune all the details. Don't worry about performance.
+          viewModel.value.add(inventory)
+          customAdapter.inventoriesFull.add(inventory)
+          recyclerView!!.adapter?.notifyItemInserted(0)
+        }
+      }
+      EDITED_INVENTORY -> {
+        val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)
+        val editedInventory = result.data?.getSerializableExtra("edited", Inventory::class.java)
+        if (position != null && position != RecyclerView.NO_POSITION) {
+          editedInventory?.let {inventory ->
+            viewModel.value.inventories[position] = inventory
+            recyclerView!!.adapter!!.notifyItemChanged(position)
+          }
+        }
+      }
     }
   }
 
@@ -133,6 +177,9 @@ class DashboardFragment : Fragment() {
     _binding = FragmentDashboardBinding.inflate(inflater, container, false)
     viewModel = viewModels<DashboardViewModel>(factoryProducer = { ViewModelProducer(state) })
     db = FirebaseFirestore.getInstance()
+    inventoriesRef = db.collection("inventories")
+    customAdapter = InventoryView(viewModel.value.inventories)
+
     return binding.root
   }
 
