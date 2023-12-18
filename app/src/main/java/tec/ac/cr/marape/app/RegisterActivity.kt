@@ -107,4 +107,10 @@ class RegisterActivity : AppCompatActivity() {
     }
   }
 
+  fun callLoginActivity(view: View) {
+    // Lógica para iniciar la actividad de registro
+    val intent = Intent(this, LoginActivity::class.java)
+    startActivity(intent)
+  }
+
 }
