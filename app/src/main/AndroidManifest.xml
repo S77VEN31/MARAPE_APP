@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".Marape"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -11,8 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Proyecto"
-        android:name=".Marape"
         tools:targetApi="31">
+        <activity
+            android:name=".EditInventoryActivity"
+            android:exported="false" />
         <activity
             android:name=".EditProductActivity"
             android:exported="false" />
@@ -31,24 +34,26 @@
 
             <!-- NOTE: comentar esta vara para que la LoginActivity deje de ser la principal -->
             <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".CreateInventoryActivity"
             android:exported="false"
-            android:label="@string/create_inventory"/>
+            android:label="@string/create_inventory" />
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name">
+            android:exported="false">
 
             <!-- NOTE: descomentar esto para hacer que esta actividad sea la principal -->
-            <!--<intent-filter>
+            <!--
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
+            -->
         </activity>
     </application>
 
