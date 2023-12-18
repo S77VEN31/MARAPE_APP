@@ -50,8 +50,8 @@ class NotificationsFragment : Fragment() {
       mAuth.signOut()
       // Aquí puedes realizar la transición a la actividad LoginActivity
       val intent = Intent(requireContext(), LoginActivity::class.java)
-      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
       startActivity(intent)
+      requireActivity().finish()
     }
 
     // Botón para eliminar la cuenta

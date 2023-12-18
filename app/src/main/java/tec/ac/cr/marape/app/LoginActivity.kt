@@ -141,7 +141,7 @@ class LoginActivity : AppCompatActivity() {
         }
         // TODO: Find a non blocking way of doing this
         startActivity(intent)
-        //finish()
+        finish()
       }
   }
 

@@ -89,12 +89,12 @@ class RegisterActivity : AppCompatActivity() {
             //Redireccionar al MainActivity
             val principal = Intent(this, MainActivity::class.java)
             //Iniciar la activity
-            startActivity(principal)
             Toast.makeText(
               this@RegisterActivity,
               "Registrado Correctamente",
               Toast.LENGTH_SHORT
             ).show()
+            startActivity(principal)
             finish()
           }.addOnFailureListener {
             Toast.makeText(
