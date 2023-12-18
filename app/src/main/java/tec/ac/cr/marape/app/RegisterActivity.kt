@@ -32,9 +32,9 @@ class RegisterActivity : AppCompatActivity() {
     setContentView(R.layout.activity_register)
 
 
-    btnRegister = findViewById(R.id.btnRegister)
-    userNameEntry = findViewById(R.id.nombre)
-    emailEntry = findViewById(R.id.correo)
+    btnRegister = findViewById(R.id.btnEditar)
+    userNameEntry = findViewById(R.id.edit_user)
+    emailEntry = findViewById(R.id.edit_email)
     passwordEntry = findViewById(R.id.contrasenia)
     confirmPasswordEntry = findViewById(R.id.confirmarContrasena)
 

@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import tec.ac.cr.marape.app.LoginActivity
+import tec.ac.cr.marape.app.EditProfile
 import tec.ac.cr.marape.app.R
 import tec.ac.cr.marape.app.databinding.FragmentNotificationsBinding
 import tec.ac.cr.marape.app.state.State
@@ -63,6 +64,13 @@ class NotificationsFragment : Fragment() {
     binding.deleteAccount.setOnClickListener {
       deleteAccount()
     }
+
+    // Botón para editar perfil
+    binding.floatingActionButton.setOnClickListener {
+      val edit = Intent(requireContext(), EditProfile::class.java)
+      startActivity(edit)
+    }
+
   }
 
   private fun deleteAccount() {

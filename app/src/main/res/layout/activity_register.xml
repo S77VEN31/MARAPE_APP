@@ -7,9 +7,9 @@
     tools:context=".RegisterActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="348dp"
-        android:layout_height="302dp"
+        android:id="@+id/linearLayoutEdit"
+        android:layout_width="313dp"
+        android:layout_height="295dp"
         android:layout_margin="0dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
@@ -18,10 +18,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias=".50">
+        app:layout_constraintVertical_bias="0.369">
 
         <EditText
-            android:id="@+id/nombre"
+            android:id="@+id/edit_user"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_margin="10dp"
@@ -31,7 +31,7 @@
             android:inputType="text" />
 
         <EditText
-            android:id="@+id/correo"
+            android:id="@+id/edit_email"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_margin="10dp"
@@ -61,6 +61,35 @@
             android:inputType="textPassword" />
     </LinearLayout>
 
+    <Button
+        android:id="@+id/btnEditar"
+        android:layout_width="164dp"
+        android:layout_height="51dp"
+        android:background="@drawable/style_border"
+        android:onClick="verifyCredentials"
+        android:text="Registrarse"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutEdit"
+        app:layout_constraintVertical_bias="0.12" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:text="Registrarse"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutEdit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.868" />
+
     <TextView
         android:id="@+id/conCuenta"
         android:layout_width="wrap_content"
@@ -73,36 +102,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnRegister"
-        app:layout_constraintVertical_bias="0.13999999" />
-
-    <Button
-        android:id="@+id/btnRegister"
-        android:layout_width="164dp"
-        android:layout_height="51dp"
-        android:background="@drawable/style_border"
-        android:onClick="verifyCredentials"
-        android:text="Registrarse"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-        app:layout_constraintVertical_bias="0.16000003" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-medium"
-        android:text="Registrarse"
-        android:textColor="#000000"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.90999997" />
+        app:layout_constraintTop_toBottomOf="@+id/btnEditar"
+        app:layout_constraintVertical_bias="0.133" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -33,7 +33,7 @@ class LoginActivity : AppCompatActivity() {
 
 
     btnInicio = findViewById(R.id.btnInicio)
-    emailEntry = findViewById(R.id.correo)
+    emailEntry = findViewById(R.id.edit_email)
     passwordEntry = findViewById(R.id.contrasenia)
 
     dialogoInicio = AlertDialog.Builder(this)
