@@ -29,5 +29,10 @@
     <string name="inventory_deletion_title">Borrar Inventario</string>
     <string name="inventory_deletion_message">¿Deseas borrar este inventario?</string>
     <string name="inventory_search_message">Buscar</string>
+    <string name="edit_inventory_remove_product">Quitar Producto</string>
+    <string name="edit_inventory_add_product">Agregar Producto</string>
+    <string name="edit_inventory_save">Guardar</string>
+    <string name="edit_inventory_name">Nombre del Inventario</string>
+    <string name="edit_inventory_creation_date">Fecha de Creación</string>
 
 </resources>
