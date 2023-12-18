@@ -52,6 +52,7 @@ class LoginActivity : AppCompatActivity() {
     // Lógica para iniciar la actividad de registro
     val intent = Intent(this, RegisterActivity::class.java)
     startActivity(intent)
+    finish()
   }
 
   fun verifyCredentialsHome(view: View) {
@@ -68,10 +69,11 @@ class LoginActivity : AppCompatActivity() {
         "La contraseña no puede ser menor de 8 caracteres"
 
       else -> {
+        // TODO: Fix this, whoever made this forgot to use the builder like it was intended to be used.
         dialogoInicio.setTitle("Iniciar Sesión")
         dialogoInicio.setMessage("Iniciando sesión, espere un momento...")
         dialogoInicio.setCancelable(false)
-        dialogoInicio.show()
+        val dialog = dialogoInicio.show()
 
         //Verificar Usuario
         mAuth.signInWithEmailAndPassword(email, contrasenia).addOnSuccessListener {
@@ -80,6 +82,7 @@ class LoginActivity : AppCompatActivity() {
           Toast.makeText(
             this@LoginActivity, it.message, Toast.LENGTH_SHORT
           ).show()
+          dialog.cancel()
         }
       }
     }
@@ -105,7 +108,8 @@ class LoginActivity : AppCompatActivity() {
         db.collection("users").document(it).get().addOnSuccessListener(::reLoginUser)
           .addOnFailureListener {
             Toast.makeText(this@LoginActivity, R.string.login_error, Toast.LENGTH_SHORT).show()
-            finish()
+            // TODO: see if this changes anything
+            //finish()
           }
       } ?: run {
         // TODO: Actually fix the underlying issue or at least tell the user that there's something wrong gonig on
@@ -123,11 +127,13 @@ class LoginActivity : AppCompatActivity() {
 
   private fun launchMainActivity() {
     val intent = Intent(this, MainActivity::class.java)
-    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
 
     db.collection("inventories")
       .where(Filter.equalTo("ownerEmail", state.user.email))
       .get().addOnSuccessListener { snapshot ->
+        // Clear the inventories before loading any new ones
+        state.inventories.clear()
         snapshot.documents.iterator().forEach { inventorySnapshot ->
           val inventory = inventorySnapshot.toObject(Inventory::class.java)
           inventory?.id = inventorySnapshot.id
@@ -135,6 +141,7 @@ class LoginActivity : AppCompatActivity() {
         }
         // TODO: Find a non blocking way of doing this
         startActivity(intent)
+        //finish()
       }
   }
 
