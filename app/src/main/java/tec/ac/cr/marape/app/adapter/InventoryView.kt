@@ -21,7 +21,7 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
   RecyclerView.Adapter<InventoryView.ViewHolder>(), Filterable {
 
 
-  var inventoriesFull = inventories.toList()
+  var inventoriesFull = ArrayList(inventories)
 
   private val locale = Locale("es", "CR")
   private val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
@@ -92,7 +92,8 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
       } else {
         val query = constraint.toString().lowercase().trim()
         for (item in inventoriesFull) {
-          if (FuzzySearch.ratio(query, item.name) > 30) {
+          // TODO: Add the rest of the fuzzy searching capabilities, somehow.
+          if (FuzzySearch.ratio(query, item.name) > 20) {
             filteredList.add(item)
           }
         }
