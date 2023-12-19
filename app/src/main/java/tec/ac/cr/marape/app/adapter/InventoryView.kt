@@ -58,6 +58,7 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
     }
   }
 
+
   // Removing an item uses its ID, because there's no way to know where that item might be in the
   // physical list, so instead of just using its position I'm looking for it in both arrays to
   // remove it
@@ -67,6 +68,7 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
     }
     if (ogIndex != -1) {
       filteredInventories.removeAt(ogIndex)
+
     }
 
     val idx = inventories.indexOfFirst {
@@ -86,6 +88,7 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
 
   // TODO: Make this function also work for all cases, right now if I update an inventory while in
   //  search mode it won't update the correct one
+
   fun update(position: Int, inventory: Inventory) {
     if (position < inventories.size) {
       inventories.set(position, inventory)
