@@ -119,8 +119,7 @@ class DashboardFragment : Fragment() {
       .setCancelable(true)
       .setPositiveButton(R.string.account_deletion_confirm_button_text) { _, _ ->
         inventoriesRef.document(inventory.id).delete().addOnSuccessListener {
-          viewModel.value.remove(inventory)
-          recyclerView!!.adapter?.notifyItemRemoved(position)
+          customAdapter.remove(inventory)
         }
       }
       .setNegativeButton(R.string.action_cancel) { self, _ ->
@@ -135,13 +134,7 @@ class DashboardFragment : Fragment() {
       CREATED_INVENTORY -> {
         val createdInventory = result.data?.getSerializableExtra("created", Inventory::class.java)
         createdInventory?.let { inventory ->
-          // TODO: Find another workaround so that I don't have to repeat that much code
-          // NOTE: This add method is a custom built one, it'll add it to the beginning of the list,
-          // none of the ways I'm doing this are optimal, I'm just doing it this way to get it done before
-          // the end of the week, after that I'll fine tune all the details. Don't worry about performance.
-          viewModel.value.add(inventory)
-          customAdapter.inventoriesFull.add(inventory)
-          recyclerView!!.adapter?.notifyItemInserted(0)
+          customAdapter.add(inventory)
         }
       }
       EDITED_INVENTORY -> {
@@ -149,8 +142,7 @@ class DashboardFragment : Fragment() {
         val editedInventory = result.data?.getSerializableExtra("edited", Inventory::class.java)
         if (position != null && position != RecyclerView.NO_POSITION) {
           editedInventory?.let {inventory ->
-            viewModel.value.inventories[position] = inventory
-            recyclerView!!.adapter!!.notifyItemChanged(position)
+            customAdapter.update(position, inventory)
           }
         }
       }
@@ -172,7 +164,6 @@ class DashboardFragment : Fragment() {
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
   ): View {
-    //val dashboardViewModel = ViewModelProvider(this).get(DashboardViewModel::class.java)
     state = State.getInstance(null)
     _binding = FragmentDashboardBinding.inflate(inflater, container, false)
     viewModel = viewModels<DashboardViewModel>(factoryProducer = { ViewModelProducer(state) })

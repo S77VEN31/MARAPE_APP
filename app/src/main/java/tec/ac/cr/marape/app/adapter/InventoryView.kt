@@ -58,6 +58,39 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
     }
   }
 
+  // Removing an item uses its ID, because there's no way to know where that item might be in the physical list,
+  // so instead of just using its position I'm looking for it in both arrays to remove it
+  fun remove(inventory: Inventory) {
+    val ogIndex = inventoriesFull.indexOfFirst {
+      it.id == inventory.id
+    }
+    if (ogIndex != -1) {
+      inventoriesFull.removeAt(ogIndex)
+    }
+
+    val idx = inventories.indexOfFirst {
+      it.id == inventory.id
+    }
+    if (idx != -1) {
+      inventories.removeAt(idx)
+    }
+    notifyItemRemoved(ogIndex)
+  }
+
+  fun add(inventory: Inventory) {
+    inventories.add(0, inventory)
+    inventoriesFull.add(0, inventory)
+    notifyItemInserted(0)
+  }
+
+  fun update(position: Int, inventory: Inventory) {
+    if (position < inventories.size) {
+      inventories.set(position, inventory)
+    }
+    inventoriesFull.set(position, inventory)
+    notifyItemChanged(position)
+  }
+
   fun setDeleteHandler(handler: (View, Inventory, Int) -> Unit) {
     deleteHandler = handler
   }
