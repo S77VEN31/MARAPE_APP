@@ -21,7 +21,7 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
   RecyclerView.Adapter<InventoryView.ViewHolder>(), Filterable {
 
 
-  var inventoriesFull = ArrayList(inventories)
+  var filteredInventories = ArrayList(inventories)
 
   private val locale = Locale("es", "CR")
   private val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
@@ -37,11 +37,11 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
   }
 
   override fun getItemCount(): Int {
-    return inventories.size
+    return filteredInventories.size
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val currentInventory = inventories[position]
+    val currentInventory = filteredInventories[position]
     holder.inventoryName.text = currentInventory.name
     holder.creationDate.text = formatter.format(Date(currentInventory.creationDate)).toString()
     holder.statusSwitch.isChecked = currentInventory.active
@@ -58,14 +58,17 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
     }
   }
 
-  // Removing an item uses its ID, because there's no way to know where that item might be in the physical list,
-  // so instead of just using its position I'm looking for it in both arrays to remove it
+
+  // Removing an item uses its ID, because there's no way to know where that item might be in the
+  // physical list, so instead of just using its position I'm looking for it in both arrays to
+  // remove it
   fun remove(inventory: Inventory) {
-    val ogIndex = inventoriesFull.indexOfFirst {
+    val ogIndex = filteredInventories.indexOfFirst {
       it.id == inventory.id
     }
     if (ogIndex != -1) {
-      inventoriesFull.removeAt(ogIndex)
+      filteredInventories.removeAt(ogIndex)
+
     }
 
     val idx = inventories.indexOfFirst {
@@ -79,15 +82,18 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
 
   fun add(inventory: Inventory) {
     inventories.add(0, inventory)
-    inventoriesFull.add(0, inventory)
+    filteredInventories.add(0, inventory)
     notifyItemInserted(0)
   }
+
+  // TODO: Make this function also work for all cases, right now if I update an inventory while in
+  //  search mode it won't update the correct one
 
   fun update(position: Int, inventory: Inventory) {
     if (position < inventories.size) {
       inventories.set(position, inventory)
     }
-    inventoriesFull.set(position, inventory)
+    filteredInventories.set(position, inventory)
     notifyItemChanged(position)
   }
 
@@ -118,31 +124,25 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
 
   private val itemsFilter: Filter = object : Filter() {
     override fun performFiltering(constraint: CharSequence?): FilterResults {
-      val filteredList = ArrayList<Inventory>()
 
-      if (constraint == null || constraint.length == 0) {
-        filteredList.addAll(inventoriesFull)
-      } else {
-        val query = constraint.toString().lowercase().trim()
-        for (item in inventoriesFull) {
-          // TODO: Add the rest of the fuzzy searching capabilities, somehow.
-          if (FuzzySearch.ratio(query, item.name) > 20) {
-            filteredList.add(item)
-          }
-        }
+      val query = constraint?.toString() ?: ""
+
+      filteredInventories = if (query.isEmpty()) inventories else {
+          val filteredList = ArrayList<Inventory>()
+          inventories.filter {
+            FuzzySearch.ratio(query, it.name) > 20
+          }.forEach { filteredList.add(it) }
+        filteredList
       }
 
-      val results = FilterResults()
-      results.values = filteredList
-      return results
+      return FilterResults().apply { values = filteredInventories }
     }
 
-    private var first = true
 
     @SuppressLint("NotifyDataSetChanged")
     override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-      inventories.clear()
-      inventories.addAll(results?.values as List<Inventory>)
+      filteredInventories =
+        if (results?.values == null) ArrayList() else results.values as ArrayList<Inventory>
       notifyDataSetChanged()
     }
 
