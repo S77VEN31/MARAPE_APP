@@ -18,28 +18,35 @@ class AddGuestActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_add_guest)
 
+    val inventory = intent.getStringExtra("idInventory")
     val recyclerView: RecyclerView = findViewById(R.id.recycle_users);
-    recyclerView.layoutManager = LinearLayoutManager(this);
-    val userList = getUsers();
+    recyclerView.layoutManager = LinearLayoutManager(this)
 
-    val adapter = UserView(userList);
-    recyclerView.adapter = adapter;
+    if (inventory != null) {
+      val userList = getUsers(inventory);
+
+      val adapter = UserView(userList, inventory);
+      recyclerView.adapter = adapter;
+    }
   }
 
-  private fun getUsers(): List<User>{
+  private fun getUsers(idInventory: String): MutableList<User>{
     val db = FirebaseFirestore.getInstance();
-    val dataList = mutableListOf<User>();
+    val userAvailableList = mutableListOf<User>();
 
-    db.collection("users").get().addOnSuccessListener{ result ->
-      for (document in result){
+    db.collection("users").get().addOnSuccessListener { result ->
+      for (document in result) {
         val user = document.toObject(User::class.java)
-        if(user.email != currentUserEmail){
-          dataList.add(user);
+
+        if (user.email != currentUserEmail) {
+          userAvailableList.add(user)
         }
       }
-    }.addOnFailureListener{ exception -> Log.d(TAG, "Error getting documents", exception) }
+    }.addOnFailureListener { exception ->
+      Log.d(TAG, "Error getting documents", exception)
+    }
 
-    return dataList;
+    return userAvailableList;
   }
 
 }
