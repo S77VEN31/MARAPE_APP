@@ -1,6 +1,7 @@
 package tec.ac.cr.marape.app.adapter
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import me.xdrop.fuzzywuzzy.FuzzySearch
+import tec.ac.cr.marape.app.AddGuestActivity
 import tec.ac.cr.marape.app.R
 import tec.ac.cr.marape.app.model.Inventory
 import java.text.DateFormat
@@ -41,6 +43,7 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    val context = holder.itemView.context;
     val currentInventory = filteredInventories[position]
     holder.inventoryName.text = currentInventory.name
     holder.creationDate.text = formatter.format(Date(currentInventory.creationDate)).toString()
@@ -56,6 +59,13 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
     holder.itemView.setOnClickListener {
       clickHandler(it, currentInventory, position)
     }
+
+    holder.addCollaboratorButton.setOnClickListener{
+      val intent = Intent(context, AddGuestActivity::class.java)
+      intent.putExtra("idInventory", currentInventory.id)
+      context.startActivity(intent)
+    }
+
   }
 
 
