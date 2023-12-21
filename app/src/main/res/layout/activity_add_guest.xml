@@ -8,20 +8,23 @@
 
     <EditText
         android:id="@+id/entry_guest_search"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/style_border"
         android:drawableEnd="@drawable/ic_round_search"
         android:drawableTint="?android:attr/colorForeground"
         android:ems="10"
         android:hint="@string/guest_search"
         android:inputType="text"
-        android:textSize="20sp" />
+        android:padding="8dp"
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycle_users"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/entry_guest_search"/>
 
 </RelativeLayout>

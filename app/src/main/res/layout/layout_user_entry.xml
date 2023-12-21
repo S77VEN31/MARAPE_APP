@@ -75,8 +75,7 @@
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:background="@android:drawable/presence_invisible"
-            android:backgroundTint="@color/success"
+            android:background="@drawable/ic_round_add_guest"
             android:contentDescription="@string/guest_add"
             android:src="@drawable/add_fill0_wght400_grad0_opsz24" />
     </LinearLayout>
