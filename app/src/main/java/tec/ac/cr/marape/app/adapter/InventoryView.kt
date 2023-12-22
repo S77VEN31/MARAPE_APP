@@ -127,11 +127,9 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
       val query = constraint?.toString() ?: ""
 
       filteredInventories = if (query.isEmpty()) inventories else {
-          val filteredList = ArrayList<Inventory>()
-          inventories.filter {
-            FuzzySearch.ratio(query, it.name) > 20
-          }.forEach { filteredList.add(it) }
-        filteredList
+        inventories.filter {
+          FuzzySearch.ratio(query, it.name) > 20
+        } as ArrayList<Inventory>
       }
 
       return FilterResults().apply { values = filteredInventories }
