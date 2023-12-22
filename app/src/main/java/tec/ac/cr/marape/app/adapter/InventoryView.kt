@@ -68,7 +68,6 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
     }
     if (ogIndex != -1) {
       filteredInventories.removeAt(ogIndex)
-
     }
 
     val idx = inventories.indexOfFirst {
