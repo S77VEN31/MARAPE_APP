@@ -44,6 +44,8 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
+    // NOTE: Dependencia para los barcodes
+    implementation ("com.google.android.gms:play-services-vision:20.1.3")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
