@@ -42,7 +42,7 @@ class DashboardFragment : Fragment() {
   private lateinit var inventoriesRef: CollectionReference
   private val CREATED_INVENTORY = 1
   private val EDITED_INVENTORY = 2
-  private lateinit var customAdapter: InventoryAdapter
+  private lateinit var inventoryAdapter: InventoryAdapter
 
 
   private val binding get() = _binding!!
@@ -55,11 +55,11 @@ class DashboardFragment : Fragment() {
     recyclerView = binding.ownedInventoriesRecycler
     recyclerView!!.setHasFixedSize(false)
 
-    customAdapter.setDeleteHandler(::handleInventoryDeletion)
-    customAdapter.setDisablingHandler(::handleDisablingInventory)
-    customAdapter.setOnClickListener(::handleItemClick)
+    inventoryAdapter.setDeleteHandler(::handleInventoryDeletion)
+    inventoryAdapter.setDisablingHandler(::handleDisablingInventory)
+    inventoryAdapter.setOnClickListener(::handleItemClick)
 
-    recyclerView!!.adapter = customAdapter
+    recyclerView!!.adapter = inventoryAdapter
     recyclerView!!.layoutManager = LinearLayoutManager(activity)
 
     launcher = registerForActivityResult(StartActivityForResult(), ::resultCallback)
@@ -77,7 +77,7 @@ class DashboardFragment : Fragment() {
           }
 
           override fun onQueryTextChange(newText: String?): Boolean {
-            customAdapter.filter.filter(newText)
+            inventoryAdapter.filter.filter(newText)
             return true
           }
 
@@ -101,7 +101,7 @@ class DashboardFragment : Fragment() {
   ) {
     inventoriesRef.document(inventory.id).update("active", checked)
       .addOnSuccessListener {
-        customAdapter.toggle(position, inventory, checked)
+        inventoryAdapter.toggle(position, inventory, checked)
       }
       .addOnFailureListener {
       Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
@@ -122,7 +122,7 @@ class DashboardFragment : Fragment() {
       .setCancelable(true)
       .setPositiveButton(R.string.account_deletion_confirm_button_text) { _, _ ->
         inventoriesRef.document(inventory.id).delete().addOnSuccessListener {
-          customAdapter.remove(position, inventory)
+          inventoryAdapter.remove(position, inventory)
         }
       }
       .setNegativeButton(R.string.action_cancel) { self, _ ->
@@ -137,7 +137,7 @@ class DashboardFragment : Fragment() {
       CREATED_INVENTORY -> {
         val createdInventory = result.data?.getSerializableExtra("created", Inventory::class.java)
         createdInventory?.let { inventory ->
-          customAdapter.add(inventory)
+          inventoryAdapter.add(inventory)
         }
       }
 
@@ -146,7 +146,7 @@ class DashboardFragment : Fragment() {
         val editedInventory = result.data?.getSerializableExtra("edited", Inventory::class.java)
         if (position != null && position != RecyclerView.NO_POSITION) {
           editedInventory?.let { inventory ->
-            customAdapter.update(position, inventory)
+            inventoryAdapter.update(position, inventory)
           }
         }
       }
@@ -165,7 +165,7 @@ class DashboardFragment : Fragment() {
     _binding = FragmentDashboardBinding.inflate(inflater, container, false)
     db = FirebaseFirestore.getInstance()
     inventoriesRef = db.collection("inventories")
-    customAdapter = InventoryAdapter(state.inventories)
+    inventoryAdapter = InventoryAdapter(state.inventories)
     return binding.root
   }
 
