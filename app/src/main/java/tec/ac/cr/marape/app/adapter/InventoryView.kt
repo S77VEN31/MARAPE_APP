@@ -62,21 +62,16 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
   // Removing an item uses its ID, because there's no way to know where that item might be in the
   // physical list, so instead of just using its position I'm looking for it in both arrays to
   // remove it
-  fun remove(inventory: Inventory) {
-    val ogIndex = filteredInventories.indexOfFirst {
-      it.id == inventory.id
-    }
-    if (ogIndex != -1) {
-      filteredInventories.removeAt(ogIndex)
-    }
-
+  fun remove(position: Int, inventory: Inventory) {
     val idx = inventories.indexOfFirst {
       it.id == inventory.id
     }
     if (idx != -1) {
       inventories.removeAt(idx)
     }
-    notifyItemRemoved(ogIndex)
+
+    filteredInventories.removeAt(position)
+    notifyItemRemoved(position)
   }
 
   fun add(inventory: Inventory) {
@@ -91,6 +86,11 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
     val idx = inventories.indexOfFirst {
       it.id.compareTo(inventory.id) == 0
     }
+    // These are NOT the same indices, because the user could update
+    // an inventory in search mode, and that inventory will have a different index
+    // in either list, so it's best to not use the same index, the position can be used
+    // to update the filteredInventories array because that's the one that's being shown
+    // on screen.
     inventories[idx] = inventory
     filteredInventories[position] = inventory
     notifyItemChanged(position)
