@@ -32,6 +32,8 @@ import tec.ac.cr.marape.app.databinding.FragmentDashboardBinding
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.state.State
 
+const val CREATED_INVENTORY = 1
+const val EDITED_INVENTORY = 2
 class DashboardFragment : Fragment() {
 
   private var _binding: FragmentDashboardBinding? = null
@@ -40,8 +42,6 @@ class DashboardFragment : Fragment() {
   private lateinit var launcher: ActivityResultLauncher<Intent>
   private lateinit var db: FirebaseFirestore
   private lateinit var inventoriesRef: CollectionReference
-  private val CREATED_INVENTORY = 1
-  private val EDITED_INVENTORY = 2
   private lateinit var inventoryAdapter: InventoryAdapter
 
 
