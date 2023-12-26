@@ -87,12 +87,12 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
 
   // TODO: Make this function also work for all cases, right now if I update an inventory while in
   //  search mode it won't update the correct one
-
   fun update(position: Int, inventory: Inventory) {
-    if (position < inventories.size) {
-      inventories.set(position, inventory)
+    val idx = inventories.indexOfFirst {
+      it.id.compareTo(inventory.id) == 0
     }
-    filteredInventories.set(position, inventory)
+    inventories[idx] = inventory
+    filteredInventories[position] = inventory
     notifyItemChanged(position)
   }
 
