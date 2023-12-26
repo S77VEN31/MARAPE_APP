@@ -17,8 +17,8 @@ import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
 
-class InventoryView(var inventories: ArrayList<Inventory>) :
-  RecyclerView.Adapter<InventoryView.ViewHolder>(), Filterable {
+class InventoryAdapter(var inventories: ArrayList<Inventory>) :
+  RecyclerView.Adapter<InventoryAdapter.ViewHolder>(), Filterable {
 
 
   var filteredInventories = ArrayList(inventories)

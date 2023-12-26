@@ -27,7 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.CreateInventoryActivity
 import tec.ac.cr.marape.app.EditInventoryActivity
 import tec.ac.cr.marape.app.R
-import tec.ac.cr.marape.app.adapter.InventoryView
+import tec.ac.cr.marape.app.adapter.InventoryAdapter
 import tec.ac.cr.marape.app.databinding.FragmentDashboardBinding
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.state.State
@@ -42,7 +42,7 @@ class DashboardFragment : Fragment() {
   private lateinit var inventoriesRef: CollectionReference
   private val CREATED_INVENTORY = 1
   private val EDITED_INVENTORY = 2
-  private lateinit var customAdapter: InventoryView
+  private lateinit var customAdapter: InventoryAdapter
 
 
   private val binding get() = _binding!!
@@ -165,7 +165,7 @@ class DashboardFragment : Fragment() {
     _binding = FragmentDashboardBinding.inflate(inflater, container, false)
     db = FirebaseFirestore.getInstance()
     inventoriesRef = db.collection("inventories")
-    customAdapter = InventoryView(state.inventories)
+    customAdapter = InventoryAdapter(state.inventories)
     return binding.root
   }
 
