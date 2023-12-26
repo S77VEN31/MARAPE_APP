@@ -34,6 +34,7 @@ import tec.ac.cr.marape.app.state.State
 
 const val CREATED_INVENTORY = 1
 const val EDITED_INVENTORY = 2
+
 class DashboardFragment : Fragment() {
 
   private var _binding: FragmentDashboardBinding? = null
@@ -104,8 +105,8 @@ class DashboardFragment : Fragment() {
         inventoryAdapter.toggle(position, inventory, checked)
       }
       .addOnFailureListener {
-      Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
-    }
+        Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+      }
   }
 
   private fun handleItemClick(view: View, inventory: Inventory, position: Int) {
