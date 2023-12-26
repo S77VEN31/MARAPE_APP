@@ -96,6 +96,14 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
     notifyItemChanged(position)
   }
 
+  fun toggle(position: Int, inventory: Inventory, state: Boolean) {
+    val idx = inventories.indexOfFirst {
+      it.id.compareTo(inventory.id) == 0
+    }
+    inventories[idx].active = state
+    filteredInventories[position].active = state
+  }
+
   fun setDeleteHandler(handler: (View, Inventory, Int) -> Unit) {
     deleteHandler = handler
   }
