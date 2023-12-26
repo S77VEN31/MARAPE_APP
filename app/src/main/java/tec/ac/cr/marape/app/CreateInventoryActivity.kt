@@ -18,6 +18,7 @@ import tec.ac.cr.marape.app.state.State
 import java.io.Serializable
 import java.time.Instant
 
+const val CREATED_INVENTORY = 1
 class CreateInventoryActivity : AppCompatActivity() {
   private lateinit var inventory: Inventory
   private lateinit var state: State
@@ -26,7 +27,6 @@ class CreateInventoryActivity : AppCompatActivity() {
   private lateinit var states: Array<String>
   private lateinit var text: TextView
   private lateinit var emptyNameError: String
-  private val CREATED_INVENTORY = 1
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
