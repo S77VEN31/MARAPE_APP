@@ -78,6 +78,10 @@ class LoginActivity : AppCompatActivity() {
         //Verificar Usuario
         mAuth.signInWithEmailAndPassword(email, contrasenia).addOnSuccessListener {
           db.collection("users").document(email).get().addOnSuccessListener(::doInitialLogin)
+            .addOnFailureListener {
+              Toast.makeText(this@LoginActivity, it.toString(), Toast.LENGTH_LONG).show()
+              dialog.cancel()
+            }
         }.addOnFailureListener {
           Toast.makeText(
             this@LoginActivity, it.message, Toast.LENGTH_SHORT
