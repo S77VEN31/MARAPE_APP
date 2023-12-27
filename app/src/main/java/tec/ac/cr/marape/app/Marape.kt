@@ -13,6 +13,6 @@ class Marape : Application() {
     db = FirebaseFirestore.getInstance()
 
     state.inventories = ArrayList()
-
+    state.sharedInventories = ArrayList()
   }
 }

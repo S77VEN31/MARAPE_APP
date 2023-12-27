@@ -7,6 +7,7 @@ import tec.ac.cr.marape.app.model.User
 class State(var context: Context) {
   public lateinit var user: User
   public lateinit var inventories: ArrayList<Inventory>
+  public lateinit var sharedInventories: ArrayList<Inventory>
 
   companion object {
     private var instance: State? = null

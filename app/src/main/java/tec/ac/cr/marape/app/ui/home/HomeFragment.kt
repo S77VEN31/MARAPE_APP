@@ -4,39 +4,74 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
+import tec.ac.cr.marape.app.adapter.SharedInventoryView
 import tec.ac.cr.marape.app.databinding.FragmentHomeBinding
+import tec.ac.cr.marape.app.model.Inventory
+import tec.ac.cr.marape.app.state.State
+
+import tec.ac.cr.marape.app.ui.home.HomeViewModel
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+
 
 class HomeFragment : Fragment() {
 
-    private var _binding: FragmentHomeBinding? = null
+  private var _binding: FragmentHomeBinding? = null
+  private val binding get() = _binding!!
+  private lateinit var db: FirebaseFirestore
+  private lateinit var sharedInventoriesRef: CollectionReference
+  private lateinit var customAdapter: SharedInventoryView
+  private lateinit var viewModel: Lazy<HomeViewModel>
+  private lateinit var state: State
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+  override fun onCreateView(
+    inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+  ): View {
+    _binding = FragmentHomeBinding.inflate(inflater, container, false)
+    state = State.getInstance(null)
+    viewModel = viewModels<HomeViewModel>(factoryProducer = { ViewModelProducer(state) })
+    db = FirebaseFirestore.getInstance()
+    sharedInventoriesRef = db.collection("inventories")
+    customAdapter = SharedInventoryView(viewModel.value.inventories)
+    
+    return binding.root
+  }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
 
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+    val recyclerView: RecyclerView = binding.sharedInventoriesRecycler
+    recyclerView.setHasFixedSize(true)
+    recyclerView.adapter = customAdapter
+    recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-        return root
+    customAdapter.setToggleHandler(::handleInventoryToggle)
+    // Aquí puedes agregar el manejo para el botón de detalles si lo necesitas
+  }
+
+  private fun handleInventoryToggle(inventory: Inventory, isChecked: Boolean) {
+    sharedInventoriesRef.document(inventory.id).update("active", isChecked)
+      .addOnFailureListener {
+        // Manejar error
+      }
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  class ViewModelProducer(val state: State) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+      return HomeViewModel(state.sharedInventories) as T
     }
+  }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+  override fun onDestroyView() {
+    super.onDestroyView()
+    _binding = null
+  }
 }

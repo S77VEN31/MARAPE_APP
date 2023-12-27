@@ -143,6 +143,23 @@ class LoginActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
       }
+
+    // Add inventory if my email is in the invitedUsers list
+    db.collection("inventories")
+  .whereArrayContains("invitedUsers", state.user.email)
+  .get().addOnSuccessListener { snapshot ->
+    // Clear the inventories before loading any new ones
+    state.sharedInventories.clear()
+    snapshot.documents.iterator().forEach { inventorySnapshot ->
+      val inventory = inventorySnapshot.toObject(Inventory::class.java)
+      inventory?.id = inventorySnapshot.id
+      inventory?.let { state.sharedInventories.add(it) }
+    }
+    // TODO: Find a non blocking way of doing this
+    startActivity(intent)
+    finish()
   }
 
+
+  }
 }
