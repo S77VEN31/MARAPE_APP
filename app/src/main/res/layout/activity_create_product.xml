@@ -74,7 +74,7 @@
         <EditText
             android:id="@+id/create_product_description"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="75dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
             android:layout_marginRight="10dp"
@@ -82,7 +82,7 @@
             android:background="@drawable/style_border"
             android:ems="10"
             android:hint="@string/create_product_description"
-            android:inputType="text" />
+            android:inputType="text|textLongMessage|textMultiLine" />
 
         <EditText
             android:id="@+id/create_product_color"
