@@ -1,78 +1,77 @@
 package tec.ac.cr.marape.app
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import com.google.firebase.firestore.FirebaseFirestore
+import tec.ac.cr.marape.app.databinding.ActivityCreateProductBinding
 import tec.ac.cr.marape.app.model.Product
 import tec.ac.cr.marape.app.networking.RemoteApi
 import java.util.Timer
 import kotlin.concurrent.schedule
 
+
 class CreateProductActivity : AppCompatActivity() {
+
+  private var _binding: ActivityCreateProductBinding? = null
+  private val binding get() = _binding!!
 
   private val product = Product()
   private var timer = Timer()
   private lateinit var db: FirebaseFirestore
-  private lateinit var nameEntry: TextView
-  private lateinit var priceEntry: TextView
-  private lateinit var brandEntry: TextView
-  private lateinit var descriptionEntry: TextView
-  private lateinit var colorEntry: TextView
-  private lateinit var materialEntry: TextView
-  private lateinit var sizeEntry: TextView
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_create_product)
-
+    _binding = ActivityCreateProductBinding.inflate(layoutInflater)
+    setContentView(binding.root)
     db = FirebaseFirestore.getInstance()
-    nameEntry = findViewById<TextView>(R.id.create_product_name)
-    nameEntry.addTextChangedListener {
+
+    binding.createProductName.addTextChangedListener {
       product.name = it.toString()
     }
-    brandEntry = findViewById<TextView>(R.id.create_product_brand)
-    brandEntry.addTextChangedListener {
+
+    binding.createProductBrand.addTextChangedListener {
       product.brand = it.toString()
     }
-    val t = this
-    findViewById<TextView>(R.id.create_product_barcode).doAfterTextChanged {
+
+    binding.createProductBarcode.doAfterTextChanged {
       timer.cancel()
       timer = Timer()
       timer.schedule(500L) {
         product.barcode = it.toString()
-        t.fetchTargetPrice(product.barcode)
+        fetchTargetPrice(product.barcode)
       }
     }
-    findViewById<TextView>(R.id.create_product_amount).addTextChangedListener {
+
+    binding.createProductAmount.addTextChangedListener {
       product.amount = it.toString().toInt()
     }
-    priceEntry = findViewById<TextView>(R.id.create_product_price)
-    priceEntry.addTextChangedListener {
+
+    binding.createProductPrice.addTextChangedListener {
       product.targetPrice = it.toString().toFloat()
     }
-    descriptionEntry = findViewById<TextView>(R.id.create_product_description)
-    descriptionEntry.addTextChangedListener {
+
+    binding.createProductDescription.addTextChangedListener {
       product.description = it.toString()
     }
-    colorEntry = findViewById<TextView>(R.id.create_product_color)
-    colorEntry.addTextChangedListener {
+
+    binding.createProductColor.addTextChangedListener {
       // TODO: Change the color input for something else.
       product.color = it.toString()
     }
-    materialEntry = findViewById<TextView>(R.id.create_product_material)
-    materialEntry.addTextChangedListener {
+
+    binding.createProductMaterial.addTextChangedListener {
       product.material = it.toString()
     }
-    sizeEntry = findViewById<TextView>(R.id.create_product_size)
-    sizeEntry.addTextChangedListener {
+
+    binding.createProductSize.addTextChangedListener {
       product.size = it.toString()
     }
-    findViewById<TextView>(R.id.create_product_our_price).addTextChangedListener {
+
+    binding.createProductOurPrice.addTextChangedListener {
       product.price = it.toString().toFloat()
     }
   }
@@ -88,15 +87,15 @@ class CreateProductActivity : AppCompatActivity() {
           )
         }
 
-        nameEntry.text = prod.title
-        brandEntry.text = prod.brand
-        descriptionEntry.text = prod.description
-        colorEntry.text = prod.color
-        materialEntry.text = prod.material
-        sizeEntry.text = prod.size
+        binding.createProductName.setText(prod.title)
+        binding.createProductBrand.setText(prod.brand)
+        binding.createProductDescription.setText(prod.description)
+        binding.createProductColor.setText(prod.color)
+        binding.createProductMaterial.setText(prod.material)
+        binding.createProductSize.setText(prod.size)
 
         target?.let {
-          priceEntry.text = it.price
+          binding.createProductPrice.setText(it.price)
         }
       }
     }, {
@@ -117,16 +116,13 @@ class CreateProductActivity : AppCompatActivity() {
       else -> products.document(product.barcode)
     }
     product.id = doc.id
-    doc.set(product).addOnFailureListener {
-      Log.e("Z:Fetch", it.message.toString())
+    doc.set(product).addOnSuccessListener {
+      Toast.makeText(
+        this@CreateProductActivity,
+        R.string.create_product_success,
+        Toast.LENGTH_LONG
+      ).show()
+      finish()
     }
-      .addOnSuccessListener {
-        Toast.makeText(
-          this@CreateProductActivity,
-          R.string.create_product_success,
-          Toast.LENGTH_LONG
-        ).show()
-        finish()
-      }
   }
 }
