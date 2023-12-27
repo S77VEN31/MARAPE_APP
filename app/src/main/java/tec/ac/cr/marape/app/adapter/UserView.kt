@@ -1,5 +1,7 @@
 package tec.ac.cr.marape.app.adapter
 
+import android.app.AlertDialog
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,51 +24,54 @@ class UserView(private var userList:MutableList<User>, private var idInventory: 
     val addUser:ImageButton = itemView.findViewById(R.id.add_user);
   }
 
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-    val itemView = LayoutInflater.from(parent.context).inflate(R.layout.layout_user_entry,
-      parent, false);
-    return UserViewHolder(itemView);
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):  UserViewHolder{
+    val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_user_entry, parent, false)
+    return UserViewHolder(view)
   }
 
+
   override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-    val db = FirebaseFirestore.getInstance();
-    val currentUser = userList[position];
-    holder.username.text = currentUser.name;
-    holder.email.text = currentUser.email;
+    val db = FirebaseFirestore.getInstance()
+    val currentUser = userList[position]
+    holder.username.text = currentUser.name
+    holder.email.text = currentUser.email
 
     if(currentUser.phone.isNotEmpty()){
-      holder.phone.text = currentUser.phone;
+      holder.phone.text = currentUser.phone
     }else{
-      holder.phone.text = "Sin número";
+      holder.phone.text = "Sin número"
     }
 
     if(currentUser.country.isNotEmpty()){
       holder.country.text = currentUser.country;
     }else{
-      holder.country.text = "Sin país";
+      holder.country.text = "Sin país"
     }
 
-    holder.addUser.setOnClickListener{
-      db.collection("inventories").document(idInventory).update("invitedUsers",
-        FieldValue.arrayUnion(currentUser)).addOnSuccessListener {
-        Toast.makeText(holder.itemView.context, "Usuario agregado al inventario",
-          Toast.LENGTH_SHORT).show()
+    holder.addUser.setOnClickListener {
+      db.collection("inventories").document(idInventory)
+        .update("invitedUsers", FieldValue.arrayUnion(currentUser.email))
+        .addOnSuccessListener {
+          Toast.makeText(holder.itemView.context, "Usuario agregado al inventario", Toast.LENGTH_SHORT).show()
 
-        if (userList.contains(currentUser)) {
-          userList.remove(currentUser)
+          if (userList.contains(currentUser)) {
+            userList.remove(currentUser)
+          }
+          notifyDataSetChanged()
         }
-
-        notifyDataSetChanged();
-
-      }.addOnFailureListener {
-        Toast.makeText(holder.itemView.context, "Error al agregar usuario al inventario",
-          Toast.LENGTH_SHORT).show() }
+        .addOnFailureListener {
+          Toast.makeText(holder.itemView.context, "Error al agregar usuario al inventario", Toast.LENGTH_SHORT).show()
+        }
     }
 
   }
 
   override fun getItemCount(): Int {
-    return userList.size;
+    return userList.size
   }
 
+  fun updateData(newList: MutableList<User>){
+    userList = newList
+    notifyDataSetChanged()
+  }
 }
