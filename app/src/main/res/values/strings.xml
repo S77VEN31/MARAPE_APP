@@ -17,7 +17,11 @@
     <string name="action_cancel">Cancelar</string>
 
     <string name="add_product">Agregar Producto</string>
-    <string name="create_inventory">Crear Inventario</string>
+
+    <!-- TODO: refactor these 2 strings into a single one, no need for 2 separate strings -->
+    <string name="create_inventory">Crear</string>
+    <string name="create_product">Crear</string>
+
     <string name="create_product_name_hint">Nombre</string>
     <string name="create_product_empty_name_error">El nombre no puede estar vacío</string>
     <string name="user_profile_username">Nombre de Usuario</string>
@@ -34,5 +38,16 @@
     <string name="edit_inventory_save">Guardar</string>
     <string name="edit_inventory_name">Nombre del Inventario</string>
     <string name="edit_inventory_creation_date">Fecha de Creación</string>
+
+    <string name="create_product_brand">Marca</string>
+    <string name="create_product_amount">Cantidad</string>
+    <string name="create_product_price">Precio</string>
+    <string name="create_product_code">Codigo</string>
+    <string name="create_product_description">Descripción</string>
+    <string name="create_product_color">Color</string>
+    <string name="create_product_material">Material</string>
+    <string name="create_product_size">Tamaño</string>
+    <string name="create_product_our_price">Precio Nuestro (Opcional)</string>
+    <string name="create_product_add_image">Agregar Imagen</string>
 
 </resources>
