@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="10dp"
@@ -12,24 +14,30 @@
     android:padding="10dp">
 
     <LinearLayout
+        android:id="@+id/linearLayout8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/entry_guest_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Juanito Gonzalez"
+            android:text="Text View"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="?attr/colorPrimary" />
+            android:textColor="?attr/colorPrimary"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/entry_guest_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="juanito@gmail.com"
-            android:textColor="@android:color/primary_text_light" />
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="14sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,38 +49,41 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="4543-4333"
-                android:textColor="@android:color/primary_text_light" />
+                android:text="PhoneNumber"
+                android:textColor="@android:color/primary_text_light"
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/entry_guest_country"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Ecuador"
-                android:textColor="@android:color/primary_text_light" />
+                android:padding="8dp"
+                android:text="Country"
+                android:textColor="@android:color/primary_text_light"
+                android:textSize="12sp" />
         </LinearLayout>
 
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/linearLayout7"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/linearLayout8"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
             android:id="@+id/entry_delete_guestList_button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="@dimen/large_button_size"
+            android:layout_height="@dimen/large_button_size"
             android:layout_weight="1"
-            android:src="@drawable/ic_round_delete"
-            android:tint="@color/danger" />
+            android:background="@drawable/ic_round_delete"
+            android:backgroundTint="@color/danger"
+            android:contentDescription="Eliminar/Desligar invitado"
+            android:padding="8dp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
