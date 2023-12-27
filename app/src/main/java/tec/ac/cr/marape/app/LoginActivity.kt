@@ -135,7 +135,8 @@ class LoginActivity : AppCompatActivity() {
 
     db.collection("inventories")
       .where(Filter.equalTo("ownerEmail", state.user.email))
-      .get().addOnSuccessListener { snapshot ->
+      .get()
+      .addOnSuccessListener { snapshot ->
         // Clear the inventories before loading any new ones
         state.inventories.clear()
         snapshot.documents.iterator().forEach { inventorySnapshot ->
