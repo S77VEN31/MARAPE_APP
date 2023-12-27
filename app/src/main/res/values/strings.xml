@@ -50,4 +50,7 @@
     <string name="create_product_our_price">Precio Nuestro (Opcional)</string>
     <string name="create_product_add_image">Agregar Imagen</string>
 
+    <string name="barcode_not_found_error">Código de barras no encontrado.</string>
+    <string name="create_product_success">Producto creado con éxito.</string>
+
 </resources>
