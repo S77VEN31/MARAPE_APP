@@ -56,10 +56,10 @@ class HomeFragment : Fragment() {
     // Aquí puedes agregar el manejo para el botón de detalles si lo necesitas
   }
 
-  private fun handleInventoryToggle(inventory: Inventory, isChecked: Boolean) {
+  private fun handleInventoryToggle(inventory: Inventory, isChecked: Boolean, position: Int) {
     sharedInventoriesRef.document(inventory.id).update("active", isChecked)
-      .addOnFailureListener {
-        // Manejar error
+      .addOnSuccessListener {
+        customAdapter.toggle(position, inventory, isChecked)
       }
   }
 

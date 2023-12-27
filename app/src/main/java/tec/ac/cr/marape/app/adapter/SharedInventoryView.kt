@@ -19,7 +19,7 @@ class SharedInventoryView(var inventories: ArrayList<Inventory>) :
   private val locale = Locale("es", "CR")
   private val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
 
-  private lateinit var toggleHandler: (Inventory, Boolean) -> Unit
+  private lateinit var toggleHandler: (Inventory, Boolean, Int) -> Unit
   private lateinit var detailButtonHandler: (Inventory) -> Unit
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -36,8 +36,11 @@ class SharedInventoryView(var inventories: ArrayList<Inventory>) :
     holder.creationDate.text = formatter.format(Date(currentInventory.creationDate)).toString()
     holder.statusSwitch.isChecked = currentInventory.active
 
+
+
+
     holder.statusSwitch.setOnCheckedChangeListener { _, isChecked ->
-      toggleHandler(currentInventory, isChecked)
+      toggleHandler(currentInventory, isChecked, position)
     }
 
     holder.detailsButton.setOnClickListener {
@@ -45,7 +48,12 @@ class SharedInventoryView(var inventories: ArrayList<Inventory>) :
     }
   }
 
-  fun setToggleHandler(handler: (Inventory, Boolean) -> Unit) {
+  fun toggle (position: Int, inventory: Inventory, isChecked: Boolean) {
+    inventories[position].active = isChecked
+    // Implement notifyItemChanged
+  }
+
+  fun setToggleHandler(handler: (Inventory, Boolean, Int) -> Unit) {
     toggleHandler = handler
   }
 
