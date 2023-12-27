@@ -1,22 +1,15 @@
 package tec.ac.cr.marape.app
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
-import android.util.AttributeSet
-import android.view.View
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.databinding.ActivityMainBinding
-import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.state.State
 
 class MainActivity : AppCompatActivity() {
