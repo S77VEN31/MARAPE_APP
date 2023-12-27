@@ -18,18 +18,20 @@ object RemoteApi {
 
   fun getProduct(
     barcode: String,
-    callback: (LookupResponse) -> Unit
+    callback: (LookupResponse) -> Unit,
+    onError: (Exception) -> Unit
   ) {
     Thread(Runnable {
-      val connection = URL(baseUrl.format(barcode, apiKey)).openConnection() as HttpURLConnection
-      connection.requestMethod = "GET"
-      connection.setRequestProperty("Content-Type", "application/json")
-      connection.setRequestProperty("Accept", "application/json")
-      connection.connectTimeout = 10000
-      connection.readTimeout = 10000
-      connection.doInput = true
-
+      var connection: HttpURLConnection? = null
       try {
+        connection = URL(baseUrl.format(barcode, apiKey)).openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        connection.setRequestProperty("Content-Type", "application/json")
+        connection.setRequestProperty("Accept", "application/json")
+        connection.connectTimeout = 10000
+        connection.readTimeout = 10000
+        connection.doInput = true
+
         val reader = InputStreamReader(connection.inputStream)
         reader.use { input ->
           val response = StringBuilder()
@@ -43,9 +45,9 @@ object RemoteApi {
         }
       } catch (e: Exception) {
         //TODO: do something with the exception
+        onError(e)
       }
-
-      connection.disconnect()
+      connection?.disconnect()
     }).start()
   }
 
