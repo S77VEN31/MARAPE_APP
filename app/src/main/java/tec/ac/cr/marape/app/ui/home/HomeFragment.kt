@@ -1,24 +1,25 @@
 package tec.ac.cr.marape.app.ui.home
 
-import android.os.Bundle
-import android.view.LayoutInflater
 import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import tec.ac.cr.marape.app.InventoryDetailsActivity
 import tec.ac.cr.marape.app.adapter.SharedInventoryView
 import tec.ac.cr.marape.app.databinding.FragmentHomeBinding
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.state.State
-
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import tec.ac.cr.marape.app.InventoryDetailsActivity
+import java.io.Serializable
 
 
 class HomeFragment : Fragment() {
@@ -40,7 +41,7 @@ class HomeFragment : Fragment() {
     db = FirebaseFirestore.getInstance()
     sharedInventoriesRef = db.collection("inventories")
     customAdapter = SharedInventoryView(viewModel.value.inventories)
-    
+
     return binding.root
   }
 
@@ -63,13 +64,11 @@ class HomeFragment : Fragment() {
       }
   }
 
-  private fun handleInventoryDetails( inventory: Inventory, position: Int) {
+  private fun handleInventoryDetails(inventory: Inventory, position: Int) {
     val intent = Intent(requireContext(), InventoryDetailsActivity::class.java)
     intent.putExtra("position", position)
-    intent.putExtra("inventory", inventory);
-    // Todo: Add inventory position to intent
+    intent.putExtra("inventory", inventory as Serializable)
     startActivity(intent)
-    requireActivity().finish()
   }
 
   @Suppress("UNCHECKED_CAST")
