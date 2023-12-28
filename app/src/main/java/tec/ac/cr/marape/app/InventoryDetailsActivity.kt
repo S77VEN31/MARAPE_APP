@@ -2,45 +2,71 @@
 
 package tec.ac.cr.marape.app
 
-import android.content.Intent
 import android.os.Build
-import androidx.core.widget.addTextChangedListener
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.google.firebase.firestore.FirebaseFirestore
-import android.widget.TextView
+import android.view.MenuItem
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.FirebaseFirestore
+import tec.ac.cr.marape.app.databinding.ActivityInventoryDetailsBinding
 import tec.ac.cr.marape.app.model.Inventory
+import tec.ac.cr.marape.app.model.User
+import java.text.DateFormat
+import java.util.Date
+import java.util.Locale
 
 class InventoryDetailsActivity : AppCompatActivity() {
-    private lateinit var db: FirebaseFirestore
-    private lateinit var inventory: Inventory
+  private lateinit var db: FirebaseFirestore
+  private lateinit var owner: User
+  private lateinit var inventory: Inventory
+  private lateinit var binding: ActivityInventoryDetailsBinding
+  private val locale = Locale("es", "CR")
+  private val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
 
-    
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_inventory_details)
+  @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    binding = ActivityInventoryDetailsBinding.inflate(layoutInflater)
+    db = FirebaseFirestore.getInstance()
+    setContentView(binding.root)
 
-        // This is the back button
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    // This is the back button
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        db = FirebaseFirestore.getInstance()
-        val inventoryName: TextView = findViewById(R.id.shared_inventory_name)
-        val inventoryCreationDate: TextView = findViewById(R.id.shared_inventory_creation_date)
-        val inventoryStatus: TextView = findViewById(R.id.shared_inventory_status)
-        val inventoryOwner: TextView = findViewById(R.id.shared_inventory_owner)
+    // TODO: The position will be used to update the inventory in the local sharedInventories array.
+    intent.getIntExtra("position", RecyclerView.NO_POSITION)
+    intent.getSerializableExtra("inventory", Inventory::class.java)?.let {
+      inventory = it
 
+      binding.sharedInventoryName.text = inventory.name
+      binding.sharedInventoryCreationDate.text = formatter.format(Date(inventory.creationDate))
 
+      // TODO: Find a different way of doing this, somethig more idiomatic, or somethingdsds
+      // that uses the string resources.
+      binding.sharedInventoryStatus.text = if (inventory.active) {
+        "Activo"
+      } else {
+        "Inactivo"
+      }
 
-        intent.getSerializableExtra("inventory", Inventory::class.java)?.let {
-            inventory = it
-          } ?: run {
-            // WARNING: If for some reason the inventory is null the activity will just finish
-            finish()
-          }
-
-
-        inventoryName.text = inventory.name
+      db.document(
+        "/users/${inventory.ownerEmail}"
+      ).get().addOnSuccessListener { doc ->
+        owner = doc.toObject(User::class.java)!!
+        binding.sharedInventoryOwner.text = owner.name
+      }
     }
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when (item.itemId) {
+      android.R.id.home -> {
+        finish()
+        true
+      }
+
+      else -> super.onOptionsItemSelected(item)
+    }
+  }
 }
