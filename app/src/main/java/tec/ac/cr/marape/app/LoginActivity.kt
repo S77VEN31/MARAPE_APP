@@ -136,7 +136,7 @@ class LoginActivity : AppCompatActivity() {
       }
     // Add inventory if my email is in the invitedUsers list
     db.collection("inventories")
-      .where(Filter.arrayContains("invitedUsers", state.user.ref))
+      .where(Filter.arrayContains("invitedUsers", state.user.email))
       .get().addOnSuccessListener { snapshot ->
         // Clear the inventories before loading any new ones
         state.sharedInventories.clear()
