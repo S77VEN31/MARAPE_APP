@@ -13,6 +13,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.User
 import tec.ac.cr.marape.app.state.State
@@ -120,34 +124,32 @@ class LoginActivity : AppCompatActivity() {
     val intent = Intent(this, MainActivity::class.java)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
 
-    db.collection("inventories")
-      .where(Filter.equalTo("ownerEmail", state.user.email))
-      .get().addOnSuccessListener { snapshot ->
-        // Clear the inventories before loading any new ones
-        state.inventories.clear()
-        snapshot.documents.iterator().forEach { inventorySnapshot ->
-          val inventory = inventorySnapshot.toObject(Inventory::class.java)
-          inventory?.id = inventorySnapshot.id
-          inventory?.let { state.inventories.add(it) }
+    runBlocking {
+      awaitAll(
+        async {
+          db.collection("inventories")
+            .where(Filter.equalTo("ownerEmail", state.user.email))
+            .get().await().let { snapshot ->
+              // Clear the inventories before loading any new ones
+              state.inventories = snapshot.documents.map { doc ->
+                doc.toObject(Inventory::class.java)
+              } as ArrayList<Inventory>
+            }
+        },
+        async {
+          db.collection("inventories")
+            .where(Filter.arrayContains("invitedUsers", state.user.ref))
+            .get().await().let { snapshot ->
+              // Clear the inventories before loading any new ones
+              state.sharedInventories = snapshot.documents.map { doc ->
+                doc.toObject(Inventory::class.java)
+              } as ArrayList<Inventory>
+            }
         }
-        // TODO: Find a non blocking way of doing this
-        startActivity(intent)
-        finish()
-      }
-    // Add inventory if my email is in the invitedUsers list
-    db.collection("inventories")
-      .where(Filter.arrayContains("invitedUsers", state.user.ref))
-      .get().addOnSuccessListener { snapshot ->
-        // Clear the inventories before loading any new ones
-        state.sharedInventories.clear()
-        snapshot.documents.iterator().forEach { inventorySnapshot ->
-          val inventory = inventorySnapshot.toObject(Inventory::class.java)
-          inventory?.id = inventorySnapshot.id
-          inventory?.let { state.sharedInventories.add(it) }
-        }
-        // TODO: Find a non blocking way of doing this
-        startActivity(intent)
-        finish()
-      }
+      )
+    }
+
+    startActivity(intent)
+    finish()
   }
 }
