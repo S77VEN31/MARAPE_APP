@@ -1,7 +1,6 @@
 package tec.ac.cr.marape.app.adapter
 
-import android.app.AlertDialog
-import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.R
+import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.User
 
-class UserView(private var userList:MutableList<User>, private var idInventory: String): RecyclerView.Adapter<UserView.UserViewHolder>() {
+class UserView(private var userList:MutableList<User>, var inventory: Inventory): RecyclerView.Adapter<UserView.UserViewHolder>() {
+  private val db = FirebaseFirestore.getInstance()
 
   inner class UserViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
     val username:TextView = itemView.findViewById(R.id.entry_user_name);
@@ -31,7 +32,6 @@ class UserView(private var userList:MutableList<User>, private var idInventory: 
 
 
   override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-    val db = FirebaseFirestore.getInstance()
     val currentUser = userList[position]
     holder.username.text = currentUser.name
     holder.email.text = currentUser.email
@@ -49,21 +49,45 @@ class UserView(private var userList:MutableList<User>, private var idInventory: 
     }
 
     holder.addUser.setOnClickListener {
-      db.collection("inventories").document(idInventory)
-        .update("invitedUsers", FieldValue.arrayUnion(currentUser.email))
-        .addOnSuccessListener {
-          Toast.makeText(holder.itemView.context, "Usuario agregado al inventario", Toast.LENGTH_SHORT).show()
-
-          if (userList.contains(currentUser)) {
-            userList.remove(currentUser)
-          }
-          notifyDataSetChanged()
-        }
-        .addOnFailureListener {
-          Toast.makeText(holder.itemView.context, "Error al agregar usuario al inventario", Toast.LENGTH_SHORT).show()
-        }
+      sendMessage(holder, currentUser)
     }
 
+  }
+
+  private fun addDatabase(currentUser: User, onComplete: (Boolean) -> Unit) {
+    db.collection("inventories").document(inventory.id)
+      .update("invitedUsers", FieldValue.arrayUnion(currentUser.email))
+      .addOnSuccessListener {
+        if (userList.contains(currentUser)) {
+          userList.remove(currentUser)
+        }
+        onComplete(true)
+      }
+      .addOnFailureListener {
+        onComplete(false)
+      }
+  }
+
+  private fun addLocal(currentUser: User){
+    val mutableInvitedUsers = inventory.invitedUsers.toMutableList()
+    val newInvitee = currentUser.email
+    mutableInvitedUsers.add(newInvitee)
+    inventory.invitedUsers = mutableInvitedUsers.toList()
+    Log.i("TAG", "Inventario actualizado: $inventory")
+  }
+
+  private fun sendMessage(holder: UserViewHolder, currentUser: User){
+    addDatabase(currentUser) { success ->
+      if (success) {
+        Toast.makeText(holder.itemView.context, "Usuario agregado al inventario",
+          Toast.LENGTH_SHORT).show()
+        addLocal(currentUser)
+        notifyDataSetChanged()
+      } else {
+        Toast.makeText(holder.itemView.context, "Error al agregar usuario al inventario",
+          Toast.LENGTH_SHORT).show()
+      }
+    }
   }
 
   override fun getItemCount(): Int {
