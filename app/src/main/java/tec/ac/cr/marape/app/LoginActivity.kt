@@ -130,7 +130,6 @@ class LoginActivity : AppCompatActivity() {
           db.collection("inventories")
             .where(Filter.equalTo("ownerEmail", state.user.email))
             .get().await().let { snapshot ->
-              // Clear the inventories before loading any new ones
               state.inventories = snapshot.documents.map { doc ->
                 doc.toObject(Inventory::class.java)
               } as ArrayList<Inventory>
@@ -140,7 +139,6 @@ class LoginActivity : AppCompatActivity() {
           db.collection("inventories")
             .where(Filter.arrayContains("invitedUsers", state.user.ref))
             .get().await().let { snapshot ->
-              // Clear the inventories before loading any new ones
               state.sharedInventories = snapshot.documents.map { doc ->
                 doc.toObject(Inventory::class.java)
               } as ArrayList<Inventory>
