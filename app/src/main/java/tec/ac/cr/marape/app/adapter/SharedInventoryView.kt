@@ -12,6 +12,7 @@ import tec.ac.cr.marape.app.model.Inventory
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.reflect.KFunction3
 
 class SharedInventoryView(var inventories: ArrayList<Inventory>) :
   RecyclerView.Adapter<SharedInventoryView.ViewHolder>() {
@@ -20,7 +21,7 @@ class SharedInventoryView(var inventories: ArrayList<Inventory>) :
   private val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
 
   private lateinit var toggleHandler: (Inventory, Boolean, Int) -> Unit
-  private lateinit var detailButtonHandler: (Inventory) -> Unit
+  private lateinit var detailButtonHandler: (Inventory, Int) -> Unit
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val itemView =
@@ -36,28 +37,25 @@ class SharedInventoryView(var inventories: ArrayList<Inventory>) :
     holder.creationDate.text = formatter.format(Date(currentInventory.creationDate)).toString()
     holder.statusSwitch.isChecked = currentInventory.active
 
-
-
-
     holder.statusSwitch.setOnCheckedChangeListener { _, isChecked ->
       toggleHandler(currentInventory, isChecked, position)
     }
 
     holder.detailsButton.setOnClickListener {
-      detailButtonHandler(currentInventory)
+      detailButtonHandler(currentInventory, position)
     }
   }
 
   fun toggle (position: Int, inventory: Inventory, isChecked: Boolean) {
     inventories[position].active = isChecked
-    // Implement notifyItemChanged
+    // Todo: Discuss if we should notify the change or not
   }
 
   fun setToggleHandler(handler: (Inventory, Boolean, Int) -> Unit) {
     toggleHandler = handler
   }
 
-  fun setDetailButtonHandler(handler: (Inventory) -> Unit) {
+  fun setDetailButtonHandler(handler: (Inventory, Int) -> Unit)  {
     detailButtonHandler = handler
   }
 

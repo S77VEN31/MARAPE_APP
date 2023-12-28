@@ -2,23 +2,23 @@ package tec.ac.cr.marape.app.ui.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.content.Intent
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.adapter.SharedInventoryView
 import tec.ac.cr.marape.app.databinding.FragmentHomeBinding
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.state.State
 
-import tec.ac.cr.marape.app.ui.home.HomeViewModel
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import tec.ac.cr.marape.app.InventoryDetailsActivity
 
 
 class HomeFragment : Fragment() {
@@ -53,7 +53,7 @@ class HomeFragment : Fragment() {
     recyclerView.layoutManager = LinearLayoutManager(activity)
 
     customAdapter.setToggleHandler(::handleInventoryToggle)
-    // Aquí puedes agregar el manejo para el botón de detalles si lo necesitas
+    customAdapter.setDetailButtonHandler(::handleInventoryDetails)
   }
 
   private fun handleInventoryToggle(inventory: Inventory, isChecked: Boolean, position: Int) {
@@ -61,6 +61,15 @@ class HomeFragment : Fragment() {
       .addOnSuccessListener {
         customAdapter.toggle(position, inventory, isChecked)
       }
+  }
+
+  private fun handleInventoryDetails( inventory: Inventory, position: Int) {
+    val intent = Intent(requireContext(), InventoryDetailsActivity::class.java)
+    intent.putExtra("position", position)
+    intent.putExtra("inventory", inventory);
+    // Todo: Add inventory position to intent
+    startActivity(intent)
+    requireActivity().finish()
   }
 
   @Suppress("UNCHECKED_CAST")

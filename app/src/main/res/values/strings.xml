@@ -35,4 +35,11 @@
     <string name="edit_inventory_name">Nombre del Inventario</string>
     <string name="edit_inventory_creation_date">Fecha de Creación</string>
 
+    <string name="inventory_details_title">Detalles inventario</string>
+    <string name="inventory_details_name">Nombre</string>
+    <string name="inventory_details_creation_date">Fecha de Creación</string>
+    <string name="inventory_details_status">Estado</string>
+    <string name="inventory_details_owner">Propietario</string>
+    <string name="inventory_details_guests">Ver invitados</string>
+    <string name="inventory_details_products">Ver productos</string>
 </resources>

@@ -39,6 +39,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".InventoryDetailsActivity" android:exported="false">
+
+        </activity>
         <activity
             android:name=".CreateInventoryActivity"
             android:exported="false"
