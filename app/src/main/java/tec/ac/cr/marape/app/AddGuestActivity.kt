@@ -32,12 +32,7 @@ class AddGuestActivity : AppCompatActivity() {
     if(inventory != null){
       userList = getUsers(inventory);
       val adapter = UserView(userList, inventory)
-
-      if(userList.isEmpty()){
-        showAlertDialog()
-      }else{
-        recyclerView.adapter = adapter
-      }
+      recyclerView.adapter = adapter
 
       searchUser.addTextChangedListener { searchText ->
         val query = searchText.toString().lowercase().trim();
