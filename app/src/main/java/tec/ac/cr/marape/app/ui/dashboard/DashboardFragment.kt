@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import tec.ac.cr.marape.app.AddGuestActivity
 import tec.ac.cr.marape.app.CreateInventoryActivity
 import tec.ac.cr.marape.app.R
 import tec.ac.cr.marape.app.adapter.InventoryView
@@ -64,6 +65,7 @@ class DashboardFragment : Fragment() {
     customAdapter.setDeleteHandler(::handleInventoryDeletion)
     customAdapter.setDisablingHandler(::handleDisablingInventory)
     customAdapter.setOnClickListener(::handleItemClick)
+    customAdapter.setAddCollaboratorClickListener(::handleAddPartner)
 
     recyclerView!!.adapter = customAdapter
     recyclerView!!.layoutManager = LinearLayoutManager(activity)
@@ -108,6 +110,12 @@ class DashboardFragment : Fragment() {
   private fun handleItemClick(view: View, inventory: Inventory, position: Int) {
     val intent = Intent(requireContext(), EditInventoryActivity::class.java)
     intent.putExtra("position", position)
+    intent.putExtra("inventory", inventory)
+    launcher.launch(intent)
+  }
+
+  private fun handleAddPartner(inventory: Inventory){
+    val intent = Intent(activity, AddGuestActivity::class.java)
     intent.putExtra("inventory", inventory)
     launcher.launch(intent)
   }
