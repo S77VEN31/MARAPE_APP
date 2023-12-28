@@ -9,13 +9,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.User
@@ -124,7 +125,7 @@ class LoginActivity : AppCompatActivity() {
     val intent = Intent(this, MainActivity::class.java)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
 
-    runBlocking {
+    lifecycleScope.launch {
       awaitAll(
         async {
           db.collection("inventories")
@@ -145,9 +146,9 @@ class LoginActivity : AppCompatActivity() {
             }
         }
       )
-    }
 
-    startActivity(intent)
-    finish()
+      startActivity(intent)
+      finish()
+    }
   }
 }
