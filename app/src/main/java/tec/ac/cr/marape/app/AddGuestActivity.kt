@@ -3,11 +3,13 @@ package tec.ac.cr.marape.app
 import android.app.AlertDialog
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.EditText
+import androidx.annotation.RequiresApi
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +29,7 @@ class AddGuestActivity : AppCompatActivity() {
   private var position: Int = 0
   private lateinit var inventory: Inventory
 
+  @RequiresApi(Build.VERSION_CODES.TIRAMISU)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_add_guest)
@@ -44,22 +47,28 @@ class AddGuestActivity : AppCompatActivity() {
 
   private fun getUsers(invitedUsers: List<String>, onComplete: (MutableList<User>) -> Unit) {
     val availableUsers = mutableListOf<User>()
-    db.collection("users")
+
+    val usersCollection = if (invitedUsers.isNotEmpty()) {
+      db.collection("users")
         .whereNotIn("email", invitedUsers)
-        .get()
-        .addOnSuccessListener { result ->
-            for (document in result) {
-                val user = document.toObject(User::class.java)
-                if(user.email != currentUserEmail){
-                  availableUsers.add(user)
-                }
-            }
-            onComplete(availableUsers)
+    } else {
+      db.collection("users")
+    }
+
+    usersCollection.get()
+      .addOnSuccessListener { result ->
+        for (document in result) {
+          val user = document.toObject(User::class.java)
+          if (user.email != currentUserEmail) {
+            availableUsers.add(user)
+          }
         }
-        .addOnFailureListener { exception ->
-            Log.d(TAG, "Error getting documents", exception)
-            onComplete(availableUsers)
-        }
+        onComplete(availableUsers)
+      }
+      .addOnFailureListener { exception ->
+        Log.d(TAG, "Error getting documents", exception)
+        onComplete(availableUsers)
+      }
   }
 
   private fun showUsers(inventory: Inventory){
