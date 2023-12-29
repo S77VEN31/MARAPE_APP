@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature android:name="android.hardware.camera.autofocus " />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".Marape"
@@ -31,12 +32,11 @@
             android:name=".ScanProduct"
             android:exported="true"
             >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            
         </activity>
+        <activity
+            android:name=".CreateProductActivity"
+            android:exported="false" />
         <activity
             android:name=".EditInventoryActivity"
             android:exported="false" />
@@ -45,7 +45,8 @@
             android:exported="false" />
         <activity
             android:name=".AddGuestActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Agregar Invitado" />
         <activity
             android:name=".GuestListActivity"
             android:exported="false" />
@@ -73,13 +74,10 @@
             android:name=".MainActivity"
             android:exported="false">
 
-            <!-- NOTE: descomentar esto para hacer que esta actividad sea la principal -->
-            <!--
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            -->
         </activity>
     </application>
 

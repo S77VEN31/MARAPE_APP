@@ -55,6 +55,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.5")
+    implementation("com.google.code.gson:gson:2.10")
     testImplementation("junit:junit:4.13.2")
     testImplementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 

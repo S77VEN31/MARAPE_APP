@@ -20,22 +20,22 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import tec.ac.cr.marape.app.AddGuestActivity
 import tec.ac.cr.marape.app.CreateInventoryActivity
+import tec.ac.cr.marape.app.EditInventoryActivity
 import tec.ac.cr.marape.app.R
-import tec.ac.cr.marape.app.adapter.InventoryView
+import tec.ac.cr.marape.app.adapter.InventoryAdapter
 import tec.ac.cr.marape.app.databinding.FragmentDashboardBinding
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.state.State
-import tec.ac.cr.marape.app.EditInventoryActivity
-import java.io.Serializable
+
+const val CREATED_INVENTORY = 1
+const val EDITED_INVENTORY = 2
+const val ADDED_GUEST_INVENTORY = 3
 
 class DashboardFragment : Fragment() {
 
@@ -43,12 +43,9 @@ class DashboardFragment : Fragment() {
   private var recyclerView: RecyclerView? = null
   private lateinit var state: State
   private lateinit var launcher: ActivityResultLauncher<Intent>
-  private lateinit var viewModel: Lazy<DashboardViewModel>
   private lateinit var db: FirebaseFirestore
   private lateinit var inventoriesRef: CollectionReference
-  private val CREATED_INVENTORY = 1
-  private val EDITED_INVENTORY = 2
-  private lateinit var customAdapter: InventoryView
+  private lateinit var inventoryAdapter: InventoryAdapter
 
 
   private val binding get() = _binding!!
@@ -61,11 +58,12 @@ class DashboardFragment : Fragment() {
     recyclerView = binding.ownedInventoriesRecycler
     recyclerView!!.setHasFixedSize(false)
 
-    customAdapter.setDeleteHandler(::handleInventoryDeletion)
-    customAdapter.setDisablingHandler(::handleDisablingInventory)
-    customAdapter.setOnClickListener(::handleItemClick)
+    inventoryAdapter.setDeleteHandler(::handleInventoryDeletion)
+    inventoryAdapter.setDisablingHandler(::handleDisablingInventory)
+    inventoryAdapter.setOnClickListener(::handleItemClick)
+    inventoryAdapter.setAddCollaboratorClickListener(::handleAddPartner)
 
-    recyclerView!!.adapter = customAdapter
+    recyclerView!!.adapter = inventoryAdapter
     recyclerView!!.layoutManager = LinearLayoutManager(activity)
 
     launcher = registerForActivityResult(StartActivityForResult(), ::resultCallback)
@@ -83,7 +81,7 @@ class DashboardFragment : Fragment() {
           }
 
           override fun onQueryTextChange(newText: String?): Boolean {
-            customAdapter.filter.filter(newText)
+            inventoryAdapter.filter.filter(newText)
             return true
           }
 
@@ -99,14 +97,30 @@ class DashboardFragment : Fragment() {
     recyclerView!!.adapter?.notifyDataSetChanged()
   }
 
-  private fun handleDisablingInventory(view: View, inventory: Inventory, checked: Boolean, position: Int) {
-    inventoriesRef.document(inventory.id).update("active", checked).addOnFailureListener {
-      Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
-    }
+  private fun handleDisablingInventory(
+    view: View,
+    inventory: Inventory,
+    checked: Boolean,
+    position: Int
+  ) {
+    inventoriesRef.document(inventory.id).update("active", checked)
+      .addOnSuccessListener {
+        inventoryAdapter.toggle(position, inventory, checked)
+      }
+      .addOnFailureListener {
+        Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+      }
   }
 
   private fun handleItemClick(view: View, inventory: Inventory, position: Int) {
     val intent = Intent(requireContext(), EditInventoryActivity::class.java)
+    intent.putExtra("position", position)
+    intent.putExtra("inventory", inventory)
+    launcher.launch(intent)
+  }
+
+  private fun handleAddPartner(inventory: Inventory, position: Int) {
+    val intent = Intent(activity, AddGuestActivity::class.java)
     intent.putExtra("position", position)
     intent.putExtra("inventory", inventory)
     launcher.launch(intent)
@@ -119,7 +133,7 @@ class DashboardFragment : Fragment() {
       .setCancelable(true)
       .setPositiveButton(R.string.account_deletion_confirm_button_text) { _, _ ->
         inventoriesRef.document(inventory.id).delete().addOnSuccessListener {
-          customAdapter.remove(inventory)
+          inventoryAdapter.remove(position, inventory)
         }
       }
       .setNegativeButton(R.string.action_cancel) { self, _ ->
@@ -134,17 +148,27 @@ class DashboardFragment : Fragment() {
       CREATED_INVENTORY -> {
         val createdInventory = result.data?.getSerializableExtra("created", Inventory::class.java)
         createdInventory?.let { inventory ->
-          customAdapter.add(inventory)
+          inventoryAdapter.add(inventory)
         }
       }
+
       EDITED_INVENTORY -> {
         val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)
         val editedInventory = result.data?.getSerializableExtra("edited", Inventory::class.java)
         if (position != null && position != RecyclerView.NO_POSITION) {
-          editedInventory?.let {inventory ->
-            customAdapter.update(position, inventory)
+          editedInventory?.let { inventory ->
+            inventoryAdapter.update(position, inventory)
           }
         }
+      }
+
+      ADDED_GUEST_INVENTORY -> {
+        val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)
+        val addGuestInventory = result.data?.getSerializableExtra("addGuest") as Inventory
+        if (position != null && position != RecyclerView.NO_POSITION) {
+          inventoryAdapter.update(position, addGuestInventory)
+        }
+
       }
     }
   }
@@ -154,23 +178,14 @@ class DashboardFragment : Fragment() {
     launcher.launch(intent)
   }
 
-  @Suppress("UNCHECKED_CAST")
-  class ViewModelProducer(val state: State) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-      return DashboardViewModel(state.inventories) as T
-    }
-  }
-
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
   ): View {
     state = State.getInstance(null)
     _binding = FragmentDashboardBinding.inflate(inflater, container, false)
-    viewModel = viewModels<DashboardViewModel>(factoryProducer = { ViewModelProducer(state) })
     db = FirebaseFirestore.getInstance()
     inventoriesRef = db.collection("inventories")
-    customAdapter = InventoryView(viewModel.value.inventories)
-
+    inventoryAdapter = InventoryAdapter(state.inventories)
     return binding.root
   }
 
