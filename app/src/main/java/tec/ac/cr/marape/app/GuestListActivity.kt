@@ -1,9 +1,11 @@
 package tec.ac.cr.marape.app
 
 import android.content.ContentValues.TAG
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
@@ -15,21 +17,26 @@ import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.User
 import me.xdrop.fuzzywuzzy.FuzzySearch
 
+const val DELETE_GUEST_INVENTORY = 4
+
 class GuestListActivity : AppCompatActivity() {
   private val db = FirebaseFirestore.getInstance()
   private lateinit var searchGuest: EditText
   private lateinit var recyclerView: RecyclerView
+  private var position: Int = 0
+  private lateinit var inventory:Inventory
 
     override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(savedInstanceState)
       setContentView(R.layout.activity_guest_list)
 
-      val inventory: Inventory? = intent.getSerializableExtra("inventory") as? Inventory
+      inventory = intent.getSerializableExtra("inventory") as Inventory
+      position = intent.getIntExtra("position", 0)
       searchGuest = findViewById(R.id.entry_guest_search)
       recyclerView = findViewById(R.id.recycle_guests)
       recyclerView.layoutManager = LinearLayoutManager(this)
-
-
+      supportActionBar?.setDisplayHomeAsUpEnabled(true)
+      
       Log.i("TAG", "Inventario actual: $inventory")
       inventory?.let {
         showGuests(inventory)
@@ -102,4 +109,20 @@ class GuestListActivity : AppCompatActivity() {
        guestList
     }
   }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when (item.itemId) {
+      android.R.id.home -> {
+        val result = Intent()
+        result.putExtra("addGuest", inventory)
+        result.putExtra("position", position)
+        setResult(DELETE_GUEST_INVENTORY, result)
+        finish()
+        true
+      }
+      else -> super.onOptionsItemSelected(item)
+    }
+  }
+
+
 }

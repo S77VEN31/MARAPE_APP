@@ -24,20 +24,31 @@
             android:exported="false" />
         <activity
             android:name=".GuestListActivity"
-            android:exported="false" />
-        <activity
-            android:name=".RegisterActivity"
-            android:exported="false" />
-        <activity
-            android:name=".LoginActivity"
-            android:exported="true">
+            android:exported="true"
+            android:label="Lista invitados">
 
-            <!-- NOTE: comentar esta vara para que la LoginActivity deje de ser la principal -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false">
+
+            <!-- NOTE: comentar esta vara para que la LoginActivity deje de ser la principal -->
+            <!--
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            -->
         </activity>
         <activity
             android:name=".CreateInventoryActivity"
