@@ -130,7 +130,46 @@ class CreateProductActivity : AppCompatActivity() {
     })
   }
 
+  private fun validate(): Boolean {
+    val validationErrors = mutableListOf<Pair<EditText, String>>()
+    if (binding.createProductName.text.isEmpty()) {
+      validationErrors.add(binding.createProductName to "El nombre no puede estar vacío.")
+    }
+
+    if (binding.createProductPrice.text.isEmpty()) {
+      validationErrors.add(binding.createProductPrice to "El precio no puede estar vacío")
+    }
+
+    if (binding.createProductBrand.text.isEmpty()) {
+      validationErrors.add(binding.createProductBrand to "La marca no puede estar vacía.")
+    }
+
+    if (binding.createProductMaterial.text.isEmpty()) {
+      validationErrors.add(binding.createProductMaterial to "El material no puede estar vacío.")
+    }
+
+    if (binding.createProductSize.text.isEmpty()) {
+      validationErrors.add(binding.createProductSize to "El tamaño no puede estar vacío.")
+    }
+
+    if (binding.createProductColor.text.isEmpty()) {
+      validationErrors.add(binding.createProductColor to "El color no puede estar vacío.")
+    }
+
+    if (binding.createProductAmount.text.isEmpty()) {
+      validationErrors.add(binding.createProductAmount to "La cantidad no puede estar vacía.")
+    }
+
+    validationErrors.forEach { (view, error) ->
+      view.error = error
+    }
+
+    return validationErrors.isEmpty()
+  }
+
+
   fun createProduct(view: View) {
+    if (!validate()) return
 
     val tasks = selectedImages.map { image ->
       val timestamp = Date().time
