@@ -26,16 +26,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import tec.ac.cr.marape.app.AddGuestActivity
 import tec.ac.cr.marape.app.CreateInventoryActivity
+import tec.ac.cr.marape.app.EditInventoryActivity
 import tec.ac.cr.marape.app.R
 import tec.ac.cr.marape.app.adapter.InventoryView
 import tec.ac.cr.marape.app.databinding.FragmentDashboardBinding
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.state.State
-import tec.ac.cr.marape.app.EditInventoryActivity
-import java.io.Serializable
+
+const val ADDED_GUEST_INVENTORY = 3
 
 class DashboardFragment : Fragment() {
 
@@ -64,6 +65,7 @@ class DashboardFragment : Fragment() {
     customAdapter.setDeleteHandler(::handleInventoryDeletion)
     customAdapter.setDisablingHandler(::handleDisablingInventory)
     customAdapter.setOnClickListener(::handleItemClick)
+    customAdapter.setAddCollaboratorClickListener(::handleAddPartner)
 
     recyclerView!!.adapter = customAdapter
     recyclerView!!.layoutManager = LinearLayoutManager(activity)
@@ -99,7 +101,12 @@ class DashboardFragment : Fragment() {
     recyclerView!!.adapter?.notifyDataSetChanged()
   }
 
-  private fun handleDisablingInventory(view: View, inventory: Inventory, checked: Boolean, position: Int) {
+  private fun handleDisablingInventory(
+    view: View,
+    inventory: Inventory,
+    checked: Boolean,
+    position: Int
+  ) {
     inventoriesRef.document(inventory.id).update("active", checked).addOnFailureListener {
       Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
     }
@@ -107,6 +114,13 @@ class DashboardFragment : Fragment() {
 
   private fun handleItemClick(view: View, inventory: Inventory, position: Int) {
     val intent = Intent(requireContext(), EditInventoryActivity::class.java)
+    intent.putExtra("position", position)
+    intent.putExtra("inventory", inventory)
+    launcher.launch(intent)
+  }
+
+  private fun handleAddPartner(inventory: Inventory, position: Int) {
+    val intent = Intent(activity, AddGuestActivity::class.java)
     intent.putExtra("position", position)
     intent.putExtra("inventory", inventory)
     launcher.launch(intent)
@@ -137,14 +151,24 @@ class DashboardFragment : Fragment() {
           customAdapter.add(inventory)
         }
       }
+
       EDITED_INVENTORY -> {
         val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)
         val editedInventory = result.data?.getSerializableExtra("edited", Inventory::class.java)
         if (position != null && position != RecyclerView.NO_POSITION) {
-          editedInventory?.let {inventory ->
+          editedInventory?.let { inventory ->
             customAdapter.update(position, inventory)
           }
         }
+      }
+
+      ADDED_GUEST_INVENTORY -> {
+        val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)
+        val addGuestInventory = result.data?.getSerializableExtra("addGuest") as Inventory
+        if (position != null && position != RecyclerView.NO_POSITION) {
+          customAdapter.update(position, addGuestInventory)
+        }
+
       }
     }
   }
