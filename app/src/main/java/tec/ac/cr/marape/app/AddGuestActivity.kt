@@ -4,12 +4,12 @@ import android.app.AlertDialog
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.EditText
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -71,18 +71,20 @@ class AddGuestActivity : AppCompatActivity() {
       }
   }
 
-  private fun showUsers(inventory: Inventory){
+  private fun showUsers(inventory: Inventory) {
     getUsers(inventory.invitedUsers) { users ->
       val adapter = UserView(users, inventory)
       recyclerView.adapter = adapter
 
       searchUser.addTextChangedListener { searchText ->
-        val query = searchText.toString().lowercase().trim();
+        val query = searchText.toString().lowercase().trim()
 
         if (users.isNotEmpty()) {
           val filteredList = searchUser(users, query)
           adapter.updateData(filteredList)
-        } else { showAlertDialog() }
+        } else {
+          showAlertDialog()
+        }
       }
     }
   }
@@ -101,20 +103,21 @@ class AddGuestActivity : AppCompatActivity() {
   private fun searchUser(userList: MutableList<User>, query: String): MutableList<User> {
     return if (query.isNotEmpty()) {
       val searchResults = mutableListOf<User>()
-
       for (user in userList) {
         val userFields = listOf(user.name, user.email, user.phone, user.country)
         // Checks if any of the strings contain the query
         val matches = userFields.any { field ->
           field.lowercase().contains(query.lowercase())
         }
-        if (matches) { searchResults.add(user) }
+        if (matches) {
+          searchResults.add(user)
+        }
       }
-
       searchResults
-    } else { userList }
+    } else {
+      userList
+    }
   }
-
 
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -127,6 +130,7 @@ class AddGuestActivity : AppCompatActivity() {
         finish()
         true
       }
+
       else -> super.onOptionsItemSelected(item)
     }
   }
