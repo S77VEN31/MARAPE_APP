@@ -1,15 +1,22 @@
 package tec.ac.cr.marape.app
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import tec.ac.cr.marape.app.databinding.ActivityCreateProductBinding
 import tec.ac.cr.marape.app.model.Product
 import tec.ac.cr.marape.app.networking.RemoteApi
+import java.util.Date
 import java.util.Timer
 import kotlin.concurrent.schedule
 
@@ -21,13 +28,27 @@ class CreateProductActivity : AppCompatActivity() {
 
   private val product = Product()
   private var timer = Timer()
+  private lateinit var launcher: ActivityResultLauncher<PickVisualMediaRequest>
   private lateinit var db: FirebaseFirestore
+  private lateinit var storage: FirebaseStorage
+  private var selectedImages = emptyList<Uri>()
+
+
+  private fun handleImageSelection(result: List<Uri>) {
+    selectedImages = result as ArrayList<Uri>
+    binding.createProductImageCount.text = result.size.toString()
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     _binding = ActivityCreateProductBinding.inflate(layoutInflater)
-    setContentView(binding.root)
     db = FirebaseFirestore.getInstance()
+    storage = FirebaseStorage.getInstance()
+    launcher = registerForActivityResult(
+      ActivityResultContracts.PickMultipleVisualMedia(),
+      ::handleImageSelection
+    )
+    setContentView(binding.root)
 
     binding.createProductName.addTextChangedListener {
       product.name = it.toString()
@@ -110,6 +131,14 @@ class CreateProductActivity : AppCompatActivity() {
   }
 
   fun createProduct(view: View) {
+
+    val tasks = selectedImages.map { image ->
+      val timestamp = Date().time
+      val child = storage.reference.child("product-images/${timestamp}")
+      product.images.add(child.path)
+      child.putFile(image)
+    } // TODO: Check if there's an error down the line and delete the images, or cancel the upload.
+
     val products = db.collection("products")
     val doc = when (product.barcode) {
       "" -> products.document()
@@ -123,6 +152,16 @@ class CreateProductActivity : AppCompatActivity() {
         Toast.LENGTH_LONG
       ).show()
       finish()
+    }.addOnFailureListener {
+      // TODO: This might or might not do anything, that depends on whether or not the images have
+      //  already been uploaded to the cloud.
+      tasks.forEach { task ->
+        task.cancel()
+      }
     }
+  }
+
+  fun addImages(view: View) {
+    launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
   }
 }
