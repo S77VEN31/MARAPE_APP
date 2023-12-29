@@ -44,7 +44,7 @@
     <string name="product_our_price_hint">Nuestro Precio(Opcional)</string>
     <string name="edit_product_save">Guardar</string>
 
-    <string name="guest_search">Buscar invitado</string>
+    <string name="user_search">Buscar usuario</string>
     <string name="guest_add">Agregar invitado</string>
 
 

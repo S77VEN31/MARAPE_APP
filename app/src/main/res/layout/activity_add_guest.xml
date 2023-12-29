@@ -15,7 +15,7 @@
         android:drawableEnd="@drawable/ic_round_search"
         android:drawableTint="?android:attr/colorForeground"
         android:ems="10"
-        android:hint="@string/guest_search"
+        android:hint="@string/user_search"
         android:inputType="text"
         android:padding="8dp"
         android:textSize="20sp"
