@@ -10,6 +10,7 @@ data class Product(
   var description: String = "",
   var color: String = "",
   var material: String = "",
+  var amount: Int = 0,
   var size: String = "",
   var images: List<String> = emptyList(),
   var targetPrice: Float = 0.0f,
