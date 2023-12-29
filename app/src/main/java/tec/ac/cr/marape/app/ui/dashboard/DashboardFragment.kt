@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import tec.ac.cr.marape.app.AddGuestActivity
 import tec.ac.cr.marape.app.CreateInventoryActivity
 import tec.ac.cr.marape.app.EditInventoryActivity
 import tec.ac.cr.marape.app.R
@@ -34,6 +35,7 @@ import tec.ac.cr.marape.app.state.State
 
 const val CREATED_INVENTORY = 1
 const val EDITED_INVENTORY = 2
+const val ADDED_GUEST_INVENTORY = 3
 
 class DashboardFragment : Fragment() {
 
@@ -59,6 +61,7 @@ class DashboardFragment : Fragment() {
     inventoryAdapter.setDeleteHandler(::handleInventoryDeletion)
     inventoryAdapter.setDisablingHandler(::handleDisablingInventory)
     inventoryAdapter.setOnClickListener(::handleItemClick)
+    inventoryAdapter.setAddCollaboratorClickListener(::handleAddPartner)
 
     recyclerView!!.adapter = inventoryAdapter
     recyclerView!!.layoutManager = LinearLayoutManager(activity)
@@ -116,6 +119,13 @@ class DashboardFragment : Fragment() {
     launcher.launch(intent)
   }
 
+  private fun handleAddPartner(inventory: Inventory, position: Int) {
+    val intent = Intent(activity, AddGuestActivity::class.java)
+    intent.putExtra("position", position)
+    intent.putExtra("inventory", inventory)
+    launcher.launch(intent)
+  }
+
   private fun handleInventoryDeletion(view: View, inventory: Inventory, position: Int) {
     AlertDialog.Builder(requireContext())
       .setTitle(R.string.inventory_deletion_title)
@@ -150,6 +160,15 @@ class DashboardFragment : Fragment() {
             inventoryAdapter.update(position, inventory)
           }
         }
+      }
+
+      ADDED_GUEST_INVENTORY -> {
+        val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)
+        val addGuestInventory = result.data?.getSerializableExtra("addGuest") as Inventory
+        if (position != null && position != RecyclerView.NO_POSITION) {
+          inventoryAdapter.update(position, addGuestInventory)
+        }
+
       }
     }
   }

@@ -29,6 +29,7 @@ class InventoryAdapter(var inventories: ArrayList<Inventory>) :
   private lateinit var deleteHandler: (View, Inventory, Int) -> Unit
   private lateinit var disablingHandler: (View, Inventory, Boolean, Int) -> Unit
   private lateinit var clickHandler: (View, Inventory, Int) -> Unit
+  private lateinit var clickAddCollaborator: (Inventory, Int) -> Unit
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val itemView =
@@ -46,6 +47,7 @@ class InventoryAdapter(var inventories: ArrayList<Inventory>) :
     holder.creationDate.text = formatter.format(Date(currentInventory.creationDate)).toString()
     holder.statusSwitch.isChecked = currentInventory.active
     holder.collaborators.text = currentInventory.invitedUsers.size.toString()
+
     holder.deleteInventoryButton.setOnClickListener {
       deleteHandler(it, currentInventory, position)
     }
@@ -56,6 +58,11 @@ class InventoryAdapter(var inventories: ArrayList<Inventory>) :
     holder.itemView.setOnClickListener {
       clickHandler(it, currentInventory, position)
     }
+
+    holder.addCollaboratorButton.setOnClickListener {
+      clickAddCollaborator(currentInventory, position)
+    }
+
   }
 
 
@@ -115,6 +122,11 @@ class InventoryAdapter(var inventories: ArrayList<Inventory>) :
   fun setOnClickListener(listener: (View, Inventory, Int) -> Unit) {
     clickHandler = listener
   }
+
+  fun setAddCollaboratorClickListener(listener: (Inventory, Int) -> Unit) {
+    clickAddCollaborator = listener
+  }
+
 
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val inventoryName: TextView = itemView.findViewById(R.id.entry_inventory_name)
