@@ -2,9 +2,11 @@ package tec.ac.cr.marape.app
 
 import android.app.AlertDialog
 import android.content.ContentValues.TAG
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.widget.EditText
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,25 +17,28 @@ import tec.ac.cr.marape.app.adapter.UserView
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.User
 
+const val ADDED_GUEST_INVENTORY = 3
+
 class AddGuestActivity : AppCompatActivity() {
   private val db = FirebaseFirestore.getInstance()
   private val currentUserEmail: String = FirebaseAuth.getInstance().currentUser?.email ?: ""
   private lateinit var recyclerView: RecyclerView
   private lateinit var searchUser: EditText
+  private var position: Int = 0
+  private lateinit var inventory: Inventory
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_add_guest)
 
-    val inventory: Inventory? = intent.getSerializableExtra("inventory") as? Inventory
+    inventory = intent.getSerializableExtra("inventory") as Inventory
+    position = intent.getIntExtra("position", 0)
     searchUser = findViewById(R.id.entry_user_search)
     recyclerView = findViewById(R.id.recycle_users)
     recyclerView.layoutManager = LinearLayoutManager(this)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    Log.i("TAG", "Inventario actual: $inventory")
-    inventory?.let {
-      showUsers(inventory)
-    }
+    showUsers(inventory)
   }
 
 
@@ -90,16 +95,31 @@ class AddGuestActivity : AppCompatActivity() {
 
       for (user in userList) {
         val userFields = listOf(user.name, user.email, user.phone, user.country)
-
         // Checks if any of the strings contain the query
         val matches = userFields.any { field ->
           field.lowercase().contains(query.lowercase())
         }
-
         if (matches) { searchResults.add(user) }
       }
 
       searchResults
     } else { userList }
   }
+
+
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when (item.itemId) {
+      android.R.id.home -> {
+        val result = Intent()
+        result.putExtra("addGuest", inventory)
+        result.putExtra("position", position)
+        setResult(ADDED_GUEST_INVENTORY, result)
+        finish()
+        true
+      }
+      else -> super.onOptionsItemSelected(item)
+    }
+  }
+
 }

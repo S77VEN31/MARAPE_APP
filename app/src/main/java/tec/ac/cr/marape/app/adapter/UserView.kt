@@ -18,11 +18,11 @@ class UserView(private var userList:MutableList<User>, var inventory: Inventory)
   private val db = FirebaseFirestore.getInstance()
 
   inner class UserViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-    val username:TextView = itemView.findViewById(R.id.entry_user_name);
-    val email:TextView = itemView.findViewById(R.id.entry_user_email);
-    val phone:TextView = itemView.findViewById(R.id.entry_user_telephone);
-    val country:TextView = itemView.findViewById(R.id.entry_user_country);
-    val addUser:ImageButton = itemView.findViewById(R.id.add_user);
+    val username:TextView = itemView.findViewById(R.id.entry_user_name)
+    val email:TextView = itemView.findViewById(R.id.entry_user_email)
+    val phone:TextView = itemView.findViewById(R.id.entry_user_telephone)
+    val country:TextView = itemView.findViewById(R.id.entry_user_country)
+    val addUser:ImageButton = itemView.findViewById(R.id.add_user)
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):  UserViewHolder{
@@ -73,7 +73,6 @@ class UserView(private var userList:MutableList<User>, var inventory: Inventory)
     val newInvitee = currentUser.email
     mutableInvitedUsers.add(newInvitee)
     inventory.invitedUsers = mutableInvitedUsers.toList()
-    Log.i("TAG", "Inventario actualizado: $inventory")
   }
 
   private fun sendMessage(holder: UserViewHolder, currentUser: User){
