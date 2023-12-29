@@ -21,7 +21,8 @@
             android:exported="false" />
         <activity
             android:name=".AddGuestActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Agregar Invitado" />
         <activity
             android:name=".GuestListActivity"
             android:exported="false" />
