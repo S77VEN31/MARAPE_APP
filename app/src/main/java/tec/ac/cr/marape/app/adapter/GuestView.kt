@@ -1,5 +1,6 @@
 package tec.ac.cr.marape.app.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +11,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.R
+import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.User
+import tec.ac.cr.marape.app.state.State
 
-class GuestView (private var guestList:MutableList<User>, private var idInventory: String):
+class GuestView (private var guestList:MutableList<User>,var inventory: Inventory):
   RecyclerView.Adapter<GuestView.GuestViewHolder>() {
+    private val db = FirebaseFirestore.getInstance()
+
 
   inner class GuestViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
     val username: TextView = itemView.findViewById(R.id.entry_guest_name)
@@ -48,21 +53,8 @@ class GuestView (private var guestList:MutableList<User>, private var idInventor
     }
 
     holder.deleteGuest.setOnClickListener{
-      db.collection("inventories").document(idInventory).update("invitedUsers",
-        FieldValue.arrayRemove(currentGuest.email)).addOnSuccessListener{
-          Toast.makeText(holder.itemView.context, "Usuario eliminado del inventario",
-            Toast.LENGTH_SHORT).show()
-
-          if(guestList.contains(currentGuest)){
-            guestList.remove(currentGuest)
-          }
-          notifyDataSetChanged()
-      }.addOnFailureListener {
-        Toast.makeText(holder.itemView.context, "Error al eliminar el invitado",
-          Toast.LENGTH_SHORT).show()
-      }
+      sendMessage(holder, currentGuest)
     }
-
   }
 
   override fun getItemCount(): Int {
@@ -72,6 +64,42 @@ class GuestView (private var guestList:MutableList<User>, private var idInventor
   fun updateDataGuest(newList: MutableList<User>){
     guestList = newList
     notifyDataSetChanged()
+  }
+
+  private fun removeDatabase(currentUser: User, onComplete: (Boolean) -> Unit) {
+    db.collection("inventories").document(inventory.id)
+      .update("invitedUsers", FieldValue.arrayRemove(currentUser.email))
+      .addOnSuccessListener {
+        if(guestList.contains(currentUser)){
+          guestList.remove(currentUser)
+        }
+        onComplete(true)
+      }
+      .addOnFailureListener {
+        onComplete(false)
+      }
+  }
+
+  private fun removeLocal(currentUser: User){
+    val mutableInvitedUsers = inventory.invitedUsers.toMutableList()
+    val removeInvite = currentUser.email
+    mutableInvitedUsers.remove(removeInvite)
+    inventory.invitedUsers = mutableInvitedUsers.toList()
+    Log.i("TAG", "Inventario actualizado: $inventory")
+  }
+
+  private fun sendMessage(holder: GuestViewHolder, currentUser: User){
+    removeDatabase(currentUser) { success ->
+      if (success) {
+        Toast.makeText(holder.itemView.context, "Usuario eliminado del inventario",
+          Toast.LENGTH_SHORT).show()
+        removeLocal(currentUser)
+        notifyDataSetChanged()
+      } else {
+        Toast.makeText(holder.itemView.context, "Error al eliminar el invitado",
+          Toast.LENGTH_SHORT).show()
+      }
+    }
   }
 
 }

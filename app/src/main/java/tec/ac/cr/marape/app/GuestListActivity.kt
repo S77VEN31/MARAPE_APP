@@ -16,68 +16,60 @@ import tec.ac.cr.marape.app.model.User
 import me.xdrop.fuzzywuzzy.FuzzySearch
 
 class GuestListActivity : AppCompatActivity() {
-  private lateinit var guestList: MutableList<User>
+  private val db = FirebaseFirestore.getInstance()
+  private lateinit var searchGuest: EditText
+  private lateinit var recyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(savedInstanceState)
       setContentView(R.layout.activity_guest_list)
 
-      //val inventory = intent.getStringExtra("idInventory")
-      val searchGuest: EditText = findViewById(R.id.entry_guest_search)
-      val recyclerView: RecyclerView = findViewById(R.id.recycle_guests)
+      val inventory: Inventory? = intent.getSerializableExtra("inventory") as? Inventory
+      searchGuest = findViewById(R.id.entry_guest_search)
+      recyclerView = findViewById(R.id.recycle_guests)
       recyclerView.layoutManager = LinearLayoutManager(this)
 
-      val inventory = "2y4HukQgHtV8UBFuKGML"
-      if(inventory != null){
-        guestList = getGuests(inventory)
-        val adapter = GuestView(guestList, inventory)
-        recyclerView.adapter = adapter
 
-        /*if(guestList.isEmpty()){
-          showAlertDialog()
+      Log.i("TAG", "Inventario actual: $inventory")
+      inventory?.let {
+        showGuests(inventory)
+      }
+    }
+
+  private fun showGuests(inventory: Inventory){
+    getGuests(inventory.invitedUsers) { guests ->
+      val adapter = GuestView(guests, inventory)
+      recyclerView.adapter = adapter
+
+      searchGuest.addTextChangedListener { searchText ->
+        val query = searchText.toString().lowercase().trim()
+
+        if(guests.isNotEmpty()){
+          val filteredList = fuzzySearchGuest(guests, query)
+          adapter.updateDataGuest(filteredList)
         }else{
-          recyclerView.adapter = adapter
-        }*/
-
-        searchGuest.addTextChangedListener { searchText ->
-          val query = searchText.toString().lowercase().trim()
-          println(query)
-
-          /*if(guestList.isNotEmpty()){
-            val filteredList = fuzzySearchGuest(guestList, query)
-            adapter.updateDataGuest(filteredList)
-          }else{
-            showAlertDialog()
-          }*/
+          showAlertDialog()
         }
       }
     }
+  }
 
-
-  private fun getGuests(idInventory: String): MutableList<User>{
-    val db = FirebaseFirestore.getInstance()
-    val userList = mutableListOf<User>()
-
-    db.collection("inventories").document(idInventory).get().addOnSuccessListener {
-      inventoryDoc -> val invitedUsers = inventoryDoc.toObject(Inventory::class.java)?.invitedUsers
-
-      Log.i(TAG, "USUARIOS INVITADOS "+ invitedUsers)
-      if(invitedUsers != null){
-        db.collection("users").get().addOnSuccessListener { result ->
-          for(document in result){
-            val user = document.toObject(User::class.java)
-            if(user.email in invitedUsers){
-              userList.add(user)
-            }
-          }
-        }.addOnFailureListener {exception ->
-          Log.d(TAG, "Error getting documents", exception)
+  private fun getGuests(invitedUsers: List<String>, onComplete: (MutableList<User>) -> Unit) {
+    val availableGuests = mutableListOf<User>()
+    db.collection("users")
+      .whereIn("email", invitedUsers)
+      .get()
+      .addOnSuccessListener { result ->
+        for (document in result) {
+          val user = document.toObject(User::class.java)
+          availableGuests.add(user)
         }
-      }else{
-        Log.d(TAG, "No invited users found")
+        onComplete(availableGuests)
       }
-    }
-    return userList
+      .addOnFailureListener { exception ->
+        Log.d(TAG, "Error getting documents", exception)
+        onComplete(availableGuests)
+      }
   }
 
   private fun showAlertDialog(){
