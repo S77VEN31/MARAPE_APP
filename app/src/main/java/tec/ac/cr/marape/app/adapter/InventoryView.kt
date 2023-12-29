@@ -31,7 +31,7 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
   private lateinit var deleteHandler: (View, Inventory, Int) -> Unit
   private lateinit var disablingHandler: (View, Inventory, Boolean, Int) -> Unit
   private lateinit var clickHandler: (View, Inventory, Int) -> Unit
-  private lateinit var clickAddCollaborator: (Inventory) -> Unit
+  private lateinit var clickAddCollaborator: (Inventory, Int) -> Unit
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val itemView =
@@ -63,7 +63,7 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
     }
 
     holder.addCollaboratorButton.setOnClickListener{
-      clickAddCollaborator(currentInventory)
+      clickAddCollaborator(currentInventory, position)
     }
 
   }
@@ -119,7 +119,7 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
     clickHandler = listener
   }
 
-  fun setAddCollaboratorClickListener(listener: (Inventory) -> Unit) {
+  fun setAddCollaboratorClickListener(listener: (Inventory, Int) -> Unit) {
     clickAddCollaborator = listener
   }
 

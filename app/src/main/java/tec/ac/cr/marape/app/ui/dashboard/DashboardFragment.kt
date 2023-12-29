@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -37,6 +38,8 @@ import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.state.State
 import tec.ac.cr.marape.app.EditInventoryActivity
 import java.io.Serializable
+
+const val ADDED_GUEST_INVENTORY = 3
 
 class DashboardFragment : Fragment() {
 
@@ -114,8 +117,9 @@ class DashboardFragment : Fragment() {
     launcher.launch(intent)
   }
 
-  private fun handleAddPartner(inventory: Inventory){
+  private fun handleAddPartner(inventory: Inventory, position: Int){
     val intent = Intent(activity, AddGuestActivity::class.java)
+    intent.putExtra("position", position)
     intent.putExtra("inventory", inventory)
     launcher.launch(intent)
   }
@@ -153,6 +157,14 @@ class DashboardFragment : Fragment() {
             customAdapter.update(position, inventory)
           }
         }
+      }
+      ADDED_GUEST_INVENTORY ->{
+        val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)
+        val addGuestInventory = result.data?.getSerializableExtra("addGuest") as Inventory
+        if(position != null && position != RecyclerView.NO_POSITION){
+          customAdapter.update(position, addGuestInventory)
+        }
+
       }
     }
   }
