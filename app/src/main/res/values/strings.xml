@@ -39,6 +39,7 @@
     <string name="product_quantity_hint">Cantidad</string>
     <string name="product_price_hint">Precio</string>
     <string name="product_description_hint">Descripción</string>
+    <string name="product_color_hint">Color</string>
     <string name="product_size_hint">Talla</string>
     <string name="product_material_hint">Material</string>
     <string name="product_our_price_hint">Nuestro Precio(Opcional)</string>
