@@ -15,6 +15,6 @@ data class Inventory(
   var creationDate: Long = 0,
   var active: Boolean = false,
   var ownerEmail: String = "",
-  var invitedUsers: List<DocumentReference> = emptyList(),
-  var items: List<DocumentReference> = emptyList()
+  var invitedUsers: List<String> = emptyList(),
+  var items: List<String> = emptyList()
 ) : Serializable
