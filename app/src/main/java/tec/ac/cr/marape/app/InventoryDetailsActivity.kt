@@ -5,13 +5,21 @@ package tec.ac.cr.marape.app
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
+
+
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.databinding.ActivityInventoryDetailsBinding
+import android.content.Intent
+import android.view.View
+
+
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.User
+
+
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
@@ -58,6 +66,14 @@ class InventoryDetailsActivity : AppCompatActivity() {
       }
     }
   }
+
+fun listInvitedUsers(view: View) {
+  // launch the activity to list the users
+  val intent = Intent(this, InvitedUsersListActivity::class.java)
+  intent.putExtra("inventory", inventory)
+  startActivity(intent)
+
+}
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
