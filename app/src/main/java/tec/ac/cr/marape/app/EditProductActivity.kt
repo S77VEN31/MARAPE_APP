@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.model.Product
 
@@ -21,6 +22,8 @@ class EditProductActivity : AppCompatActivity() {
   private lateinit var size: EditText
   private lateinit var ourPrice: EditText
   private lateinit var save: Button
+  private lateinit var productId: String
+  private lateinit var productRef: DocumentReference
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -37,11 +40,16 @@ class EditProductActivity : AppCompatActivity() {
     ourPrice = findViewById(R.id.edit_product_our_price)
     save = findViewById(R.id.edit_product_save_changes)
 
+    productId = intent.getStringExtra("productId")!!
+    productRef = db.collection("products").document(productId)
 
-    fillOutFields("weq123132342")
+    fillOutFields()
+
     save.setOnClickListener {
       if (!validateFields()){
-        updateProduct("weq123132342")
+        updateProduct()
+      } else {
+        Toast.makeText(this, "Debe completar todos los campos", Toast.LENGTH_SHORT).show()
       }
     }
 
@@ -53,9 +61,7 @@ class EditProductActivity : AppCompatActivity() {
       || material.text.isNullOrEmpty() || size.text.isNullOrEmpty() || ourPrice.text.isNullOrEmpty())
   }
 
-  private fun updateProduct(productId: String){
-    val productRef = db.collection("products").document(productId)
-
+  private fun updateProduct(){
     productRef.update(
       "name", name.text.toString(),
       "brand", brand.text.toString(),
@@ -73,9 +79,8 @@ class EditProductActivity : AppCompatActivity() {
     }
   }
 
-  
-  private fun fillOutFields(productId: String){
-    val productRef = db.collection("products").document(productId)
+
+  private fun fillOutFields(){
     productRef.get()
       .addOnSuccessListener { documentSnapshot ->
         if (documentSnapshot.exists()) {
