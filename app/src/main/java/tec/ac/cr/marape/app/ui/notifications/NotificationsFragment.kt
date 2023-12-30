@@ -1,6 +1,7 @@
 package tec.ac.cr.marape.app.ui.notifications
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -58,7 +59,34 @@ class NotificationsFragment : Fragment() {
     binding.deleteAccount.setOnClickListener {
       deleteAccount()
     }
+
+    binding.switchPriceTarget.setOnClickListener {
+      val currentState = binding.switchPriceTarget.isChecked
+      savePreference(currentState)
+    }
+
   }
+
+  /*
+  // Obtener una instancia de SharedPreferences
+val sharedPreferences = getSharedPreferences("PreferenciasUsuario", Context.MODE_PRIVATE)
+
+// Guardar el estado del switch en SharedPreferences
+val estadoSwitch = miSwitch.isChecked
+val editor = sharedPreferences.edit()
+editor.putBoolean("switch_estado", estadoSwitch)
+editor.apply()
+
+// Recuperar el estado guardado del switch
+val estadoGuardado = sharedPreferences.getBoolean("switch_estado", false)
+miSwitch.isChecked = estadoGuardado
+
+   */
+
+  private fun savePreference(currentState: Boolean){
+
+  }
+
 
   private fun deleteAccount() {
     val builder = AlertDialog.Builder(context)
