@@ -1,11 +1,11 @@
 package tec.ac.cr.marape.app
 
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
@@ -24,15 +24,16 @@ class InvitedUsersListActivity : AppCompatActivity() {
   @RequiresApi(Build.VERSION_CODES.TIRAMISU)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    binding = ActivityInvitedUsersListBinding.inflate(layoutInflater)
     setContentView(binding.root)
 
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    inventory = intent.getSerializableExtra("inventory") as Inventory
     db = FirebaseFirestore.getInstance()
+    inventory = intent.getSerializableExtra("inventory")!! as Inventory
     lifecycleScope.launch {
       invitedUsers = inventory.invitedUsers.map { invitedUser ->
-        db.document("users/${invitedUser}").get().await().toObject(User::class.java) as User
+        db.document("users/${invitedUser}").get().await().toObject(User::class.java)!!
       }
       Log.d("InvitedUsersListActivity", "invitedUsers: ${invitedUsers}")
     }
@@ -50,7 +51,6 @@ class InvitedUsersListActivity : AppCompatActivity() {
       else -> super.onOptionsItemSelected(item)
     }
   }
-
 
 
 }
