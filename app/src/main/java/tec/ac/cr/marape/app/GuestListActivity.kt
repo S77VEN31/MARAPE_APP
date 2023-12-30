@@ -63,20 +63,25 @@ class GuestListActivity : AppCompatActivity() {
 
   private fun getGuests(invitedUsers: List<String>, onComplete: (MutableList<User>) -> Unit) {
     val availableGuests = mutableListOf<User>()
-    db.collection("users")
-      .whereIn("email", invitedUsers)
-      .get()
-      .addOnSuccessListener { result ->
-        for (document in result) {
-          val user = document.toObject(User::class.java)
-          availableGuests.add(user)
+    if (invitedUsers.isNotEmpty()){
+      db.collection("users")
+        .whereIn("email", invitedUsers)
+        .get()
+        .addOnSuccessListener { result ->
+          for (document in result) {
+            val user = document.toObject(User::class.java)
+            availableGuests.add(user)
+          }
+          onComplete(availableGuests)
         }
-        onComplete(availableGuests)
-      }
-      .addOnFailureListener { exception ->
-        Log.d(TAG, "Error getting documents", exception)
-        onComplete(availableGuests)
-      }
+        .addOnFailureListener { exception ->
+          Log.d(TAG, "Error getting documents", exception)
+          onComplete(availableGuests)
+        }
+    } else {
+      onComplete(availableGuests)
+    }
+
   }
 
   private fun showAlertDialog(){
