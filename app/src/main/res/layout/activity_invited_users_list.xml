@@ -15,7 +15,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/invited_user_item" />
+        tools:listitem="@layout/layout_invited_user_item" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

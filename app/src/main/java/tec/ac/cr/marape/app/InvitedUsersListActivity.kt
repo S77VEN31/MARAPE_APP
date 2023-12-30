@@ -7,9 +7,11 @@ import android.view.MenuItem
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import tec.ac.cr.marape.app.adapter.InvitedUsersListAdapter
 import tec.ac.cr.marape.app.databinding.ActivityInvitedUsersListBinding
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.User
@@ -35,7 +37,8 @@ class InvitedUsersListActivity : AppCompatActivity() {
       invitedUsers = inventory.invitedUsers.map { invitedUser ->
         db.document("users/${invitedUser}").get().await().toObject(User::class.java)!!
       }
-      Log.d("InvitedUsersListActivity", "invitedUsers: ${invitedUsers}")
+      binding.invitedUsersList.adapter = InvitedUsersListAdapter(invitedUsers)
+      binding.invitedUsersList.layoutManager = LinearLayoutManager(this@InvitedUsersListActivity)
     }
 
 
