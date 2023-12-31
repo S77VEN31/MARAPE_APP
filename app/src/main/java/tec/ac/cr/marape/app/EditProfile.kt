@@ -103,6 +103,8 @@ class EditProfile : AppCompatActivity() {
           "Cambios guardados correctamente",
           Toast.LENGTH_SHORT
         ).show()
+
+
           finish()
       }
       .addOnFailureListener {
@@ -113,6 +115,4 @@ class EditProfile : AppCompatActivity() {
         ).show()
       }
   }
-
-
 }
