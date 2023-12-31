@@ -110,6 +110,4 @@ class EditProfile : AppCompatActivity() {
         ).show()
       }
   }
-
-
 }
