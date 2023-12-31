@@ -1,18 +1,22 @@
 package tec.ac.cr.marape.app
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.databinding.ActivityCreateProductBinding
 import tec.ac.cr.marape.app.model.Product
-import tec.ac.cr.marape.app.networking.RemoteApi
-import java.util.Timer
-import kotlin.concurrent.schedule
 
+
+const val FOUND_IN_API = 1
+const val FOUND_IN_DATABASE = 2
 
 class CreateProductActivity : AppCompatActivity() {
 
@@ -20,14 +24,39 @@ class CreateProductActivity : AppCompatActivity() {
   private val binding get() = _binding!!
 
   private val product = Product()
-  private var timer = Timer()
   private lateinit var db: FirebaseFirestore
+  private lateinit var launcher: ActivityResultLauncher<Intent>
+
+  private fun resultCallback(result: ActivityResult) {
+    when (result.resultCode) {
+      FOUND_IN_API -> {
+        val prod = result.data!!.getSerializableExtra("product") as Product
+        // Llenar los campos.
+        binding.createProductName.setText(prod.name)
+        binding.createProductBrand.setText(prod.brand)
+        binding.createProductDescription.setText(prod.description)
+        binding.createProductColor.setText(prod.color)
+        binding.createProductMaterial.setText(prod.material)
+        binding.createProductSize.setText(prod.size)
+      }
+
+      FOUND_IN_DATABASE -> {
+        finish()
+      }
+    }
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     _binding = ActivityCreateProductBinding.inflate(layoutInflater)
     setContentView(binding.root)
     db = FirebaseFirestore.getInstance()
+    launcher =
+      registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ::resultCallback)
+
+    binding.scanProduct.setOnClickListener {
+
+    }
 
     binding.createProductName.addTextChangedListener {
       product.name = it.toString()
@@ -38,12 +67,7 @@ class CreateProductActivity : AppCompatActivity() {
     }
 
     binding.createProductBarcode.doAfterTextChanged {
-      timer.cancel()
-      timer = Timer()
-      timer.schedule(500L) {
-        product.barcode = it.toString()
-        fetchTargetPrice(product.barcode)
-      }
+      product.barcode = it.toString()
     }
 
     binding.createProductAmount.addTextChangedListener {
@@ -76,6 +100,7 @@ class CreateProductActivity : AppCompatActivity() {
     }
   }
 
+  /*
   private fun fetchTargetPrice(code: String) {
     RemoteApi.getProduct(code, { res ->
       if (res.products.isNotEmpty()) {
@@ -107,7 +132,7 @@ class CreateProductActivity : AppCompatActivity() {
         ).show()
       }
     })
-  }
+  }*/
 
   fun createProduct(view: View) {
     val products = db.collection("products")
