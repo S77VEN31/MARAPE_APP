@@ -6,12 +6,8 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.zxing.integration.android.IntentIntegrator
-import com.google.zxing.integration.android.IntentResult
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.model.Product
-import tec.ac.cr.marape.app.state.State
-import android.content.pm.ActivityInfo
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 
@@ -19,7 +15,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 const val FROM_VIEW_PRODUCT = 1
 class ViewProduct : AppCompatActivity() {
 
-  private lateinit var txtBarcode: TextView
   private lateinit var btnScan: Button
 
   private lateinit var txtBrand: TextView
@@ -56,11 +51,6 @@ class ViewProduct : AppCompatActivity() {
 
     btnScan.setOnClickListener {
       // Iniciar la actividad de escaneo
-
-//      val integrator = IntentIntegrator(this)
-//      integrator.setOrientationLocked(false)
-//      integrator.setBeepEnabled(false)
-//      integrator.initiateScan()
       val intent = Intent(this, BCScan::class.java)
       intent.putExtra("from", FROM_VIEW_PRODUCT)
       launcher.launch(intent)
@@ -81,26 +71,6 @@ class ViewProduct : AppCompatActivity() {
       }
 
   }
-
-//  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//    super.onActivityResult(requestCode, resultCode, data)
-//
-//
-//    // Manejar el resultado del escaneo
-//    val result: IntentResult? = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-//
-//    if (result != null) {
-//      if (result.contents != null) {
-//        val scannedBarcode = result.contents
-//        buscarProducto(scannedBarcode)
-//      } else {
-//        Toast.makeText(this, "No se ha escaneado ningún código de barras", Toast.LENGTH_SHORT)
-//          .show()
-//      }
-//    } else {
-//      Toast.makeText(this, "Escaneo cancelado", Toast.LENGTH_SHORT).show()
-//    }
-//  }
 
   private fun mostrarDatos(producto: Product) {
 
