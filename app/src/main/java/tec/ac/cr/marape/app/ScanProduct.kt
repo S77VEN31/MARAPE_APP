@@ -15,7 +15,7 @@ class ScanProduct : AppCompatActivity() {
   private var requestCamera: ActivityResultLauncher<String>? = null
   private lateinit var binding: ActivityScanProductBinding
   private lateinit var scannedCode: String
-  private val fragment = FragmentScanData()
+//  private val fragment = FragmentScanData()
 
 
   private val resultLauncher =
@@ -40,13 +40,13 @@ class ScanProduct : AppCompatActivity() {
     setContentView(binding.root)
 
 
-    supportFragmentManager.beginTransaction()
-      .replace(R.id.fragmentContainerView, fragment)
-      .commit()
+//    supportFragmentManager.beginTransaction()
+//      .replace(R.id.fragmentContainerView, fragment)
+//      .commit()
 
-    findViewById<Button>(R.id.btnCancel).setOnClickListener {
+    binding.btnCancel.setOnClickListener {
       if (::scannedCode.isInitialized && scannedCode.isNotEmpty()) {
-        fragment.updateTV_Code(scannedCode)
+        binding.tvCode.text = scannedCode
         Toast.makeText(this, "asd: $scannedCode", Toast.LENGTH_SHORT).show()
       }
 //      fragment.hacerVisible()
@@ -78,17 +78,16 @@ class ScanProduct : AppCompatActivity() {
             true
           )
         }
-
-        fragment.updateTV_Code(code)
-        fragment.updateTV_Name(prod.title)
-        fragment.updateTV_Brand(prod.brand)
-        fragment.updateTV_Description(prod.description)
-        fragment.updateTV_Color(prod.color)
-        fragment.updateTV_Material(prod.material)
-        fragment.updateTV_Size(prod.size)
+        binding.tvCode.text = code
+        binding.tvName.text = prod.title
+        binding.tvBrand.text = prod.brand
+        binding.tvDescription.text = prod.description
+        binding.tvColor.text = prod.color
+        binding.tvMaterial.text = prod.material
+        binding.tvSize.text = prod.size
 
         target?.let {
-          fragment.updateTV_TargetPrice(it.price)
+          binding.tvTargetPrice.text = it.price
         }
       }
     }, {
