@@ -70,7 +70,6 @@ class DashboardFragment : Fragment() {
     launcher = registerForActivityResult(StartActivityForResult(), ::resultCallback)
 
     binding.floatingActionButton.setOnClickListener(::createInventory)
-    binding.floatingActionButton2.setOnClickListener(::scan)
 
 
     (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
@@ -181,10 +180,6 @@ class DashboardFragment : Fragment() {
     launcher.launch(intent)
   }
 
-  private fun scan(view: View) {
-    val intent = Intent(activity, ScanProduct::class.java)
-    launcher.launch(intent)
-  }
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
   ): View {
