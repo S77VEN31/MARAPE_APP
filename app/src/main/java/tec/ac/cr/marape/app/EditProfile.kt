@@ -64,21 +64,6 @@ class EditProfile : AppCompatActivity() {
     if (position != -1) {
       spinner.setSelection(position)
     }
-
-    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-      override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        val itemSeleccionado = elementos[position]
-        Toast.makeText(
-          this@EditProfile,
-          "Seleccionaste: $itemSeleccionado",
-          Toast.LENGTH_SHORT
-        ).show()
-      }
-
-      override fun onNothingSelected(parent: AdapterView<*>?) {
-        Toast.makeText(this@EditProfile, "Nada", Toast.LENGTH_SHORT).show()
-      }
-    }
   }
 
   fun saveChanges(view: View) {
