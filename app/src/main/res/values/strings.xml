@@ -17,7 +17,11 @@
     <string name="action_cancel">Cancelar</string>
 
     <string name="add_product">Agregar Producto</string>
-    <string name="create_inventory">Crear Inventario</string>
+
+    <!-- TODO: refactor these 2 strings into a single one, no need for 2 separate strings -->
+    <string name="create_inventory">Crear</string>
+    <string name="create_product">Crear</string>
+
     <string name="create_product_name_hint">Nombre</string>
     <string name="create_product_empty_name_error">El nombre no puede estar vacío</string>
     <string name="user_profile_username">Nombre de Usuario</string>
@@ -35,4 +39,28 @@
     <string name="edit_inventory_name">Nombre del Inventario</string>
     <string name="edit_inventory_creation_date">Fecha de Creación</string>
 
+    <string name="create_product_brand">Marca</string>
+    <string name="create_product_amount">Cantidad</string>
+    <string name="create_product_price">Precio</string>
+    <string name="create_product_code">Codigo</string>
+    <string name="create_product_description">Descripción</string>
+    <string name="create_product_color">Color</string>
+    <string name="create_product_material">Material</string>
+    <string name="create_product_size">Tamaño</string>
+    <string name="create_product_our_price">Precio Nuestro (Opcional)</string>
+    <string name="create_product_add_image">Agregar Imagen</string>
+
+    <string name="barcode_not_found_error">Código de barras no encontrado.</string>
+    <string name="create_product_success">Producto creado con éxito.</string>
+    <string name="product_brand_hint">Marca</string>
+    <string name="product_quantity_hint">Cantidad</string>
+    <string name="product_price_hint">Precio</string>
+    <string name="product_description_hint">Descripción</string>
+    <string name="product_size_hint">Talla</string>
+    <string name="product_material_hint">Material</string>
+    <string name="product_our_price_hint">Nuestro Precio(Opcional)</string>
+    <string name="edit_product_save">Guardar</string>
+
+    <string name="user_search">Buscar usuario</string>
+    <string name="guest_add">Agregar invitado</string>
 </resources>

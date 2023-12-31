@@ -79,6 +79,10 @@ class LoginActivity : AppCompatActivity() {
         //Verificar Usuario
         mAuth.signInWithEmailAndPassword(email, contrasenia).addOnSuccessListener {
           db.collection("users").document(email).get().addOnSuccessListener(::doInitialLogin)
+            .addOnFailureListener {
+              Toast.makeText(this@LoginActivity, it.toString(), Toast.LENGTH_LONG).show()
+              dialog.cancel()
+            }
         }.addOnFailureListener {
           Toast.makeText(
             this@LoginActivity, it.message, Toast.LENGTH_SHORT
@@ -133,7 +137,8 @@ class LoginActivity : AppCompatActivity() {
 
     db.collection("inventories")
       .where(Filter.equalTo("ownerEmail", state.user.email))
-      .get().addOnSuccessListener { snapshot ->
+      .get()
+      .addOnSuccessListener { snapshot ->
         // Clear the inventories before loading any new ones
         state.inventories.clear()
         snapshot.documents.iterator().forEach { inventorySnapshot ->

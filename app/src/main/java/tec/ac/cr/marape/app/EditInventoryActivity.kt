@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -18,11 +17,12 @@ import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
 
+const val EDITED_INVENTORY = 2
+
 class EditInventoryActivity : AppCompatActivity() {
 
   private val locale = Locale("es", "CR")
   private val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
-  private val EDITED_INVENTORY = 2
   private lateinit var states: Array<String>
   private lateinit var inventory: Inventory
   private var position: Int = RecyclerView.NO_POSITION

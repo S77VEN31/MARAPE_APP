@@ -17,11 +17,11 @@ import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
 
-class InventoryView(var inventories: ArrayList<Inventory>) :
-  RecyclerView.Adapter<InventoryView.ViewHolder>(), Filterable {
+class InventoryAdapter(var inventories: ArrayList<Inventory>) :
+  RecyclerView.Adapter<InventoryAdapter.ViewHolder>(), Filterable {
 
 
-  var inventoriesFull = ArrayList(inventories)
+  var filteredInventories = ArrayList(inventories)
 
   private val locale = Locale("es", "CR")
   private val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
@@ -29,6 +29,7 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
   private lateinit var deleteHandler: (View, Inventory, Int) -> Unit
   private lateinit var disablingHandler: (View, Inventory, Boolean, Int) -> Unit
   private lateinit var clickHandler: (View, Inventory, Int) -> Unit
+  private lateinit var clickAddCollaborator: (Inventory, Int) -> Unit
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val itemView =
@@ -37,15 +38,16 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
   }
 
   override fun getItemCount(): Int {
-    return inventories.size
+    return filteredInventories.size
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val currentInventory = inventories[position]
+    val currentInventory = filteredInventories[position]
     holder.inventoryName.text = currentInventory.name
     holder.creationDate.text = formatter.format(Date(currentInventory.creationDate)).toString()
     holder.statusSwitch.isChecked = currentInventory.active
     holder.collaborators.text = currentInventory.invitedUsers.size.toString()
+
     holder.deleteInventoryButton.setOnClickListener {
       deleteHandler(it, currentInventory, position)
     }
@@ -56,6 +58,57 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
     holder.itemView.setOnClickListener {
       clickHandler(it, currentInventory, position)
     }
+
+    holder.addCollaboratorButton.setOnClickListener {
+      clickAddCollaborator(currentInventory, position)
+    }
+
+  }
+
+
+  // Removing an item uses its ID, because there's no way to know where that item might be in the
+  // physical list, so instead of just using its position I'm looking for it in both arrays to
+  // remove it
+  fun remove(position: Int, inventory: Inventory) {
+    val idx = inventories.indexOfFirst {
+      it.id == inventory.id
+    }
+    if (idx != -1) {
+      inventories.removeAt(idx)
+    }
+
+    filteredInventories.removeAt(position)
+    notifyItemRemoved(position)
+  }
+
+  fun add(inventory: Inventory) {
+    inventories.add(0, inventory)
+    filteredInventories.add(0, inventory)
+    notifyItemInserted(0)
+  }
+
+  // TODO: Make this function also work for all cases, right now if I update an inventory while in
+  //  search mode it won't update the correct one
+  fun update(position: Int, inventory: Inventory) {
+    val idx = inventories.indexOfFirst {
+      it.id.compareTo(inventory.id) == 0
+    }
+    // These are NOT the same indices, because the user could update
+    // an inventory in search mode, and that inventory will have a different index
+    // in either list, so it's best to not use the same index, the position can be used
+    // to update the filteredInventories array because that's the one that's being shown
+    // on screen.
+    inventories[idx] = inventory
+    filteredInventories[position] = inventory
+    notifyItemChanged(position)
+  }
+
+  fun toggle(position: Int, inventory: Inventory, state: Boolean) {
+    val idx = inventories.indexOfFirst {
+      it.id.compareTo(inventory.id) == 0
+    }
+    inventories[idx].active = state
+    filteredInventories[position].active = state
   }
 
   fun setDeleteHandler(handler: (View, Inventory, Int) -> Unit) {
@@ -69,6 +122,11 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
   fun setOnClickListener(listener: (View, Inventory, Int) -> Unit) {
     clickHandler = listener
   }
+
+  fun setAddCollaboratorClickListener(listener: (Inventory, Int) -> Unit) {
+    clickAddCollaborator = listener
+  }
+
 
   class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val inventoryName: TextView = itemView.findViewById(R.id.entry_inventory_name)
@@ -85,31 +143,23 @@ class InventoryView(var inventories: ArrayList<Inventory>) :
 
   private val itemsFilter: Filter = object : Filter() {
     override fun performFiltering(constraint: CharSequence?): FilterResults {
-      val filteredList = ArrayList<Inventory>()
 
-      if (constraint == null || constraint.length == 0) {
-        filteredList.addAll(inventoriesFull)
-      } else {
-        val query = constraint.toString().lowercase().trim()
-        for (item in inventoriesFull) {
-          // TODO: Add the rest of the fuzzy searching capabilities, somehow.
-          if (FuzzySearch.ratio(query, item.name) > 20) {
-            filteredList.add(item)
-          }
-        }
+      val query = constraint?.toString() ?: ""
+
+      filteredInventories = if (query.isEmpty()) inventories else {
+        inventories.filter {
+          FuzzySearch.ratio(query, it.name) > 20
+        } as ArrayList<Inventory>
       }
 
-      val results = FilterResults()
-      results.values = filteredList
-      return results
+      return FilterResults().apply { values = filteredInventories }
     }
 
-    private var first = true
 
     @SuppressLint("NotifyDataSetChanged")
     override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-      inventories.clear()
-      inventories.addAll(results?.values as List<Inventory>)
+      filteredInventories =
+        if (results?.values == null) ArrayList() else results.values as ArrayList<Inventory>
       notifyDataSetChanged()
     }
 
