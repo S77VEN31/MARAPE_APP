@@ -30,15 +30,12 @@ class ViewProduct : AppCompatActivity() {
   private lateinit var txtTargetPrice: TextView
 
   private lateinit var db: FirebaseFirestore
-  private lateinit var state: State
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_view_product)
 
     db = FirebaseFirestore.getInstance()
-    state = State.getInstance(this)
-
 
     btnScan = findViewById(R.id.button4)
 
@@ -57,7 +54,7 @@ class ViewProduct : AppCompatActivity() {
       // Iniciar la actividad de escaneo
 
       val integrator = IntentIntegrator(this)
-      integrator.setOrientationLocked(true)
+      integrator.setOrientationLocked(false)
       integrator.setBeepEnabled(false)
       integrator.initiateScan()
     }
@@ -93,7 +90,7 @@ class ViewProduct : AppCompatActivity() {
       .addOnSuccessListener { document ->
         if (document != null && document.exists()) {
           // Muestra los datos en los TextViews
-          val producto = document.data
+          val producto = document.toObject(Product::class.java)!!
           mostrarDatos(producto)
         } else {
           limpiarDatos()
@@ -102,34 +99,19 @@ class ViewProduct : AppCompatActivity() {
         }
       }
   }
-  private fun mostrarDatos(producto: Map<String, Any>?) {
-    // Carga los datos del producto en el estado
-    state.product = Product(
-      id = producto?.get("id").toString(),
-      name = producto?.get("name").toString(),
-      barcode = producto?.get("barcode").toString(),
-      brand = producto?.get("brand").toString(),
-      description = producto?.get("description").toString(),
-      color = producto?.get("color").toString(),
-      material = producto?.get("material").toString(),
-      amount = (producto?.get("amount") as? Long)?.toInt() ?: 0,
-      size = producto?.get("size").toString(),
-      images = (producto?.get("images") as? List<*>)?.map { it.toString() } ?: emptyList(),
-      targetPrice = (producto?.get("targetPrice") as? Double)?.toFloat() ?: 0.0f,
-      price = (producto?.get("price") as? Double)?.toFloat() ?: 0.0f
-    )
+  private fun mostrarDatos(producto: Product) {
 
     // Carga los datos del producto en los elementos de la interfaz de usuario
-    txtBrand.text = "${state.product.brand}"
-    txtColor.text = "${state.product.color}"
-    txtDescription.text = "${state.product.description}"
-    txtId.text = "${state.product.id}"
-    txtImage.text = "${state.product.images.joinToString(", ")}"
-    txtMaterial.text = "${state.product.material}"
-    txtName.text = "${state.product.name}"
-    txtPrice.text = "${state.product.price}"
-    txtSize.text = "${state.product.size}"
-    txtTargetPrice.text = "${state.product.targetPrice}"
+    txtBrand.text = producto.brand
+    txtColor.text = producto.color
+    txtDescription.text = producto.description
+    txtId.text = producto.id
+    txtImage.text = producto.images.joinToString(", ")
+    txtMaterial.text = producto.material
+    txtName.text = producto.name
+    txtPrice.text = producto.price.toString()
+    txtSize.text = producto.size
+    txtTargetPrice.text = producto.targetPrice.toString()
   }
 
   private fun limpiarDatos() {
