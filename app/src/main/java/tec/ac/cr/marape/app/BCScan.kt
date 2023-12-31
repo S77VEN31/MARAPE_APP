@@ -3,6 +3,7 @@ package tec.ac.cr.marape.app
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.SurfaceHolder
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -152,6 +153,16 @@ class BCScan : AppCompatActivity() {
         ).show()
       }
     })
+  }
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when (item.itemId) {
+      android.R.id.home -> {
+        finish()
+        true
+      }
+
+      else -> super.onOptionsItemSelected(item)
+    }
   }
 
   override fun onPause() {
