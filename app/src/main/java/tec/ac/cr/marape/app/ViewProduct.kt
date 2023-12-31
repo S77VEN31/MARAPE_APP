@@ -12,7 +12,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.model.Product
 import tec.ac.cr.marape.app.state.State
 import android.content.pm.ActivityInfo
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 
+
+const val FROM_VIEW_PRODUCT = 1
 class ViewProduct : AppCompatActivity() {
 
   private lateinit var txtBarcode: TextView
@@ -30,7 +34,7 @@ class ViewProduct : AppCompatActivity() {
   private lateinit var txtTargetPrice: TextView
 
   private lateinit var db: FirebaseFirestore
-
+  private lateinit var launcher: ActivityResultLauncher<Intent>
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_view_product)
@@ -53,52 +57,51 @@ class ViewProduct : AppCompatActivity() {
     btnScan.setOnClickListener {
       // Iniciar la actividad de escaneo
 
-      val integrator = IntentIntegrator(this)
-      integrator.setOrientationLocked(false)
-      integrator.setBeepEnabled(false)
-      integrator.initiateScan()
+//      val integrator = IntentIntegrator(this)
+//      integrator.setOrientationLocked(false)
+//      integrator.setBeepEnabled(false)
+//      integrator.initiateScan()
+      val intent = Intent(this, BCScan::class.java)
+      intent.putExtra("from", FROM_VIEW_PRODUCT)
+      launcher.launch(intent)
     }
 
-
-  }
-
-  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    super.onActivityResult(requestCode, resultCode, data)
-
-
-    // Manejar el resultado del escaneo
-    val result: IntentResult? = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-
-    if (result != null) {
-      if (result.contents != null) {
-        val scannedBarcode = result.contents
-        buscarProducto(scannedBarcode)
-      } else {
-        Toast.makeText(this, "No se ha escaneado ningún código de barras", Toast.LENGTH_SHORT).show()
-      }
-    } else {
-      Toast.makeText(this, "Escaneo cancelado", Toast.LENGTH_SHORT).show()
-    }
-  }
-
-  private fun buscarProducto(barcode: String) {
-    val cleanedBarcode = barcode.trim() // Elimina espacios en blanco al principio y al final
-
-    db.collection("products")
-      .document(cleanedBarcode)
-      .get()
-      .addOnSuccessListener { document ->
-        if (document != null && document.exists()) {
-          // Muestra los datos en los TextViews
-          val producto = document.toObject(Product::class.java)!!
-          mostrarDatos(producto)
-        } else {
-          limpiarDatos()
-          // En caso en que el código de barras no exista
-          Toast.makeText(this@ViewProduct, "Producto no encontrado", Toast.LENGTH_SHORT).show()
+    launcher =
+      registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        when (result.resultCode) {
+          NOT_FOUND ->{
+            limpiarDatos()
+            Toast.makeText(this, "No se encontró el producto", Toast.LENGTH_SHORT).show()
+          }
+          FOUND_IN_DATABASE -> {
+            val product = result.data?.getSerializableExtra("product") as Product
+            mostrarDatos(product)
+          }
         }
       }
+
   }
+
+//  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//    super.onActivityResult(requestCode, resultCode, data)
+//
+//
+//    // Manejar el resultado del escaneo
+//    val result: IntentResult? = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+//
+//    if (result != null) {
+//      if (result.contents != null) {
+//        val scannedBarcode = result.contents
+//        buscarProducto(scannedBarcode)
+//      } else {
+//        Toast.makeText(this, "No se ha escaneado ningún código de barras", Toast.LENGTH_SHORT)
+//          .show()
+//      }
+//    } else {
+//      Toast.makeText(this, "Escaneo cancelado", Toast.LENGTH_SHORT).show()
+//    }
+//  }
+
   private fun mostrarDatos(producto: Product) {
 
     // Carga los datos del producto en los elementos de la interfaz de usuario

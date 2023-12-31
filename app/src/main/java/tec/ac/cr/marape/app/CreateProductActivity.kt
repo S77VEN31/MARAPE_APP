@@ -17,6 +17,8 @@ import tec.ac.cr.marape.app.model.Product
 
 const val FOUND_IN_API = 1
 const val FOUND_IN_DATABASE = 2
+const val NOT_FOUND = 3
+
 
 class CreateProductActivity : AppCompatActivity() {
 
@@ -30,6 +32,7 @@ class CreateProductActivity : AppCompatActivity() {
 
   private fun resultCallback(result: ActivityResult) {
     when (result.resultCode) {
+
       FOUND_IN_API -> {
         val prod = result.data!!.getSerializableExtra("product") as Product
         // Llenar los campos.

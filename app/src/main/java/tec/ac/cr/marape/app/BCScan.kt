@@ -12,6 +12,9 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.databinding.ActivityBcscanBinding
+import tec.ac.cr.marape.app.model.LookupResponse
+import tec.ac.cr.marape.app.model.Product
+import tec.ac.cr.marape.app.networking.RemoteApi
 import java.io.IOException
 
 class BCScan : AppCompatActivity() {
@@ -80,9 +83,73 @@ class BCScan : AppCompatActivity() {
           binding.tvBarcodeValue.post {
             intentData = barcodes.valueAt(0).displayValue
             binding.tvBarcodeValue.text = intentData
-
+            buscarProducto(intentData)
           }
         }
+      }
+    })
+  }
+
+  private fun buscarProducto(barcode: String) {
+
+    db.collection("products")
+      .document(barcode)
+      .get()
+      .addOnSuccessListener { document ->
+        if (document != null && document.exists()) {
+          val product = document.toObject(Product::class.java)!!
+          val intent = Intent()
+          intent.putExtra("product", product)
+          setResult(FOUND_IN_DATABASE, intent)
+          finish()
+        } else {
+          // En caso en que el código de barras no exista en la DB
+          val from = intent.getIntExtra("from", -1)
+          if (from == FROM_VIEW_PRODUCT) {
+            setResult(NOT_FOUND)
+            finish()
+          } else {
+            fetchApiData(barcode)
+          }
+        }
+      }
+  }
+
+  private fun fetchApiData(code: String) {
+    RemoteApi.getProduct(code, { res ->
+      setResult(NOT_FOUND)
+      if (res.products.isNotEmpty()) {
+        val product = Product()
+        val prod = res.products[0]
+        val target = prod.stores.find {
+          it.name.contains(
+            "target",
+            true
+          )
+        }
+        product.barcode = code
+        product.name = prod.title
+        product.brand = prod.brand
+        product.description = prod.description
+        product.color = prod.color
+        product.material = prod.material
+        product.size = prod.size
+        target?.let {
+          product.targetPrice = it.price.toFloat()
+        }
+        val intent = Intent()
+        intent.putExtra("product", product)
+        setResult(FOUND_IN_API, intent)
+      }
+      finish()
+
+    }, {
+      runOnUiThread {
+        Toast.makeText(
+          this,
+          it.message,
+          Toast.LENGTH_LONG
+        ).show()
       }
     })
   }
