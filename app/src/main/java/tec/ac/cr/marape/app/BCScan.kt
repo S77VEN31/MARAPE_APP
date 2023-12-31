@@ -30,7 +30,7 @@ class BCScan : AppCompatActivity() {
     supportActionBar?.title = resources.getString(R.string.title_scan_product)
 
     binding.btnScan.setOnClickListener {
-      intentData = "9780140157376"
+//      intentData = "9780140157376"
 
       if (intentData != "") {
         val resultIntent = Intent()
@@ -71,8 +71,7 @@ class BCScan : AppCompatActivity() {
     })
     barcodeDetector.setProcessor(object : Detector.Processor<Barcode> {
       override fun release() {
-        // TODO: mensaje fin del escaneo
-//        Toast.makeText(applicationContext, "Escaneo: $intentData", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(applicationContext, "Escaneo finalizado", Toast.LENGTH_SHORT).show()
       }
 
       override fun receiveDetections(detections: Detector.Detections<Barcode>) {
@@ -81,6 +80,7 @@ class BCScan : AppCompatActivity() {
           binding.tvBarcodeValue.post {
             intentData = barcodes.valueAt(0).displayValue
             binding.tvBarcodeValue.text = intentData
+
           }
         }
       }
