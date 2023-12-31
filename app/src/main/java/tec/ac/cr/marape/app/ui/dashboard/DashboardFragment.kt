@@ -28,6 +28,7 @@ import tec.ac.cr.marape.app.AddGuestActivity
 import tec.ac.cr.marape.app.CreateInventoryActivity
 import tec.ac.cr.marape.app.EditInventoryActivity
 import tec.ac.cr.marape.app.R
+import tec.ac.cr.marape.app.ScanProduct
 import tec.ac.cr.marape.app.adapter.InventoryAdapter
 import tec.ac.cr.marape.app.databinding.FragmentDashboardBinding
 import tec.ac.cr.marape.app.model.Inventory
@@ -69,6 +70,8 @@ class DashboardFragment : Fragment() {
     launcher = registerForActivityResult(StartActivityForResult(), ::resultCallback)
 
     binding.floatingActionButton.setOnClickListener(::createInventory)
+    binding.floatingActionButton2.setOnClickListener(::scan)
+
 
     (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
       override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -178,6 +181,10 @@ class DashboardFragment : Fragment() {
     launcher.launch(intent)
   }
 
+  private fun scan(view: View) {
+    val intent = Intent(activity, ScanProduct::class.java)
+    launcher.launch(intent)
+  }
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
   ): View {

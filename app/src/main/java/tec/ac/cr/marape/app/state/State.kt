@@ -2,6 +2,7 @@ package tec.ac.cr.marape.app.state
 
 import android.content.Context
 import tec.ac.cr.marape.app.model.Inventory
+import tec.ac.cr.marape.app.model.Product
 import tec.ac.cr.marape.app.model.User
 
 class State(var context: Context) {

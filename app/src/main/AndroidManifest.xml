@@ -2,7 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera.autofocus " />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
@@ -16,6 +23,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Proyecto"
         tools:targetApi="31">
+        <activity
+            android:name=".BCScan"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ScanProduct"
+            android:exported="false"
+            >
+
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
+            
+        </activity>
+        <activity
+            android:name=".ViewProduct"
+            android:exported="false" />
         <activity
             android:name=".EditProfile"
             android:exported="false" />
@@ -42,7 +68,7 @@
             android:name=".LoginActivity"
             android:exported="true">
 
-            <!-- NOTE: comentar esta vara para que la LoginActivity deje de ser la principal -->
+<!--            NOTE: comentar esta vara para que la LoginActivity deje de ser la principal-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -57,13 +83,10 @@
             android:name=".MainActivity"
             android:exported="false">
 
-            <!-- NOTE: descomentar esto para hacer que esta actividad sea la principal -->
-            <!--
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
+            </intent-filter>-->
         </activity>
     </application>
 
