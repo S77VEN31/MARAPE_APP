@@ -12,7 +12,7 @@
         android:layout_height="51dp"
         android:background="@drawable/style_border"
         android:onClick="saveChanges"
-        android:text="Editar Perfil"
+        android:text="@string/edit_profile_save"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
