@@ -72,7 +72,6 @@ class CreateProductActivity : AppCompatActivity() {
       }
     }
     binding.scanProduct.setOnClickListener {
-//      fragment.hacerVisible()
       requestCamera?.launch(android.Manifest.permission.CAMERA)
     }
     binding.createProductName.addTextChangedListener {
@@ -116,40 +115,6 @@ class CreateProductActivity : AppCompatActivity() {
       product.price = it.toString().toFloat()
     }
   }
-
-  /*
-  private fun fetchTargetPrice(code: String) {
-    RemoteApi.getProduct(code, { res ->
-      if (res.products.isNotEmpty()) {
-        val prod = res.products[0]
-        val target = prod.stores.find {
-          it.name.contains(
-            "target",
-            true
-          )
-        }
-
-        binding.createProductName.setText(prod.title)
-        binding.createProductBrand.setText(prod.brand)
-        binding.createProductDescription.setText(prod.description)
-        binding.createProductColor.setText(prod.color)
-        binding.createProductMaterial.setText(prod.material)
-        binding.createProductSize.setText(prod.size)
-
-        target?.let {
-          binding.createProductPrice.setText(it.price)
-        }
-      }
-    }, {
-      runOnUiThread {
-        Toast.makeText(
-          this@CreateProductActivity,
-          R.string.barcode_not_found_error,
-          Toast.LENGTH_LONG
-        ).show()
-      }
-    })
-  }*/
 
   fun createProduct(view: View) {
     val products = db.collection("products")

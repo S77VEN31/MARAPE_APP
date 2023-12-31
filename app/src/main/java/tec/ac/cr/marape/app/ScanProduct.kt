@@ -15,8 +15,6 @@ class ScanProduct : AppCompatActivity() {
   private var requestCamera: ActivityResultLauncher<String>? = null
   private lateinit var binding: ActivityScanProductBinding
   private lateinit var scannedCode: String
-//  private val fragment = FragmentScanData()
-
 
   private val resultLauncher =
     registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -24,7 +22,6 @@ class ScanProduct : AppCompatActivity() {
         val data: Intent? = result.data
         scannedCode = data?.getStringExtra("scanned_code")!!
 
-//        fragment.hacerVisible()
         fetchApiData(scannedCode)
         Toast.makeText(this, "Código escaneado: $scannedCode", Toast.LENGTH_SHORT).show()
       }
@@ -39,17 +36,11 @@ class ScanProduct : AppCompatActivity() {
     binding = ActivityScanProductBinding.inflate(layoutInflater)
     setContentView(binding.root)
 
-
-//    supportFragmentManager.beginTransaction()
-//      .replace(R.id.fragmentContainerView, fragment)
-//      .commit()
-
     binding.btnCancel.setOnClickListener {
       if (::scannedCode.isInitialized && scannedCode.isNotEmpty()) {
         binding.tvCode.text = scannedCode
         Toast.makeText(this, "asd: $scannedCode", Toast.LENGTH_SHORT).show()
       }
-//      fragment.hacerVisible()
     }
     requestCamera = registerForActivityResult(
       ActivityResultContracts
@@ -63,7 +54,6 @@ class ScanProduct : AppCompatActivity() {
       }
     }
     binding.btnScan.setOnClickListener {
-//      fragment.hacerVisible()
       requestCamera?.launch(android.Manifest.permission.CAMERA)
     }
   }
