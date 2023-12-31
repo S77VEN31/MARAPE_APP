@@ -1,5 +1,6 @@
 package tec.ac.cr.marape.app.ui.notifications
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
@@ -47,16 +48,24 @@ class NotificationsFragment : Fragment() {
   }
 
   private fun activityResultHandler(result: ActivityResult) {
+    when (result.resultCode) {
+      Activity.RESULT_OK -> {
+        setUserData()
+      }
+    }
+  }
 
+  private fun setUserData() {
+    binding.etEmail.text = state.user.email
+    binding.etUser.text = state.user.name
+    binding.etCountry.text = state.user.country
+    binding.etPhone.text = state.user.phone
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    binding.etEmail.text = state.user.email
-    binding.etUser.text = state.user.name
-    binding.etCountry.text = state.user.country
-    binding.etPhone.text = state.user.phone
+    setUserData()
 
     // Botón para cerrar sesión
     binding.btnSignOff.setOnClickListener {

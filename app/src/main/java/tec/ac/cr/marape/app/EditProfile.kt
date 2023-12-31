@@ -1,6 +1,6 @@
 package tec.ac.cr.marape.app
 
-import android.content.Intent
+import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -11,9 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import tec.ac.cr.marape.app.R
 import tec.ac.cr.marape.app.state.State
-import tec.ac.cr.marape.app.ui.notifications.NotificationsFragment
 
 class EditProfile : AppCompatActivity() {
 
@@ -83,7 +81,7 @@ class EditProfile : AppCompatActivity() {
     }
   }
 
-  fun saveChanges(view: android.view.View) {
+  fun saveChanges(view: View) {
     val newUserName = etUserName.text.toString()
     val newCountry = spinner.selectedItem.toString()
     val newPhone = etPhone.text.toString()
@@ -103,7 +101,8 @@ class EditProfile : AppCompatActivity() {
           "Cambios guardados correctamente",
           Toast.LENGTH_SHORT
         ).show()
-          finish()
+        setResult(Activity.RESULT_OK)
+        finish()
       }
       .addOnFailureListener {
         Toast.makeText(
