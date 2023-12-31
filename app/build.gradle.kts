@@ -63,7 +63,6 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation ("com.google.android.gms:play-services-vision:20.1.3")
-    implementation ("com.journeyapps:zxing-android-embedded:4.2.0")
 
 
 

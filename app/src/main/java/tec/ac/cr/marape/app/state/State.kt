@@ -6,7 +6,6 @@ import tec.ac.cr.marape.app.model.Product
 import tec.ac.cr.marape.app.model.User
 
 class State(var context: Context) {
-  public lateinit var product: Product
   public lateinit var user: User
   public lateinit var inventories: ArrayList<Inventory>
 

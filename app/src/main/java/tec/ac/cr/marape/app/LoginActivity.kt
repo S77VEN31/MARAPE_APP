@@ -152,12 +152,5 @@ class LoginActivity : AppCompatActivity() {
       }
   }
 
-  fun prueba(view: View) {
-    // Lógica para iniciar la actividad de registro
-    val intent = Intent(this, ViewProduct::class.java)
-    startActivity(intent)
-    finish()
-  }
-
 }
 
