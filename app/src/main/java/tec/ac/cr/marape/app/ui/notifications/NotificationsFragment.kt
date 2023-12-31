@@ -34,12 +34,7 @@ class NotificationsFragment : Fragment() {
     val root: View = binding.root
 
     mAuth = FirebaseAuth.getInstance()
-
-    // This should never fail
-    context?.let {
-      state = State.getInstance(it)
-    }
-
+    state = State.getInstance(requireContext())
     return root
   }
 
@@ -51,13 +46,13 @@ class NotificationsFragment : Fragment() {
     binding.etCountry.text = state.user.country
     binding.etPhone.text = state.user.phone
 
-
     // Botón para cerrar sesión
     binding.btnSignOff.setOnClickListener {
       mAuth.signOut()
       // Aquí puedes realizar la transición a la actividad LoginActivity
       val intent = Intent(requireContext(), LoginActivity::class.java)
       startActivity(intent)
+      requireActivity().finish()
     }
 
     // Botón para eliminar la cuenta
@@ -89,6 +84,9 @@ class NotificationsFragment : Fragment() {
           Toast.LENGTH_SHORT
         ).show()
       }
+    }
+    builder.setNegativeButton(R.string.action_cancel) { self, _ ->
+      self.cancel()
     }
     builder.create().show()
   }

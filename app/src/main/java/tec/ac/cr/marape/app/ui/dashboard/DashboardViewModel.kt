@@ -1,14 +1,21 @@
 package tec.ac.cr.marape.app.ui.dashboard
 
-import android.view.View
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
+import tec.ac.cr.marape.app.model.Inventory
 
-class DashboardViewModel : ViewModel() {
+class DashboardViewModel(var inventories: ArrayList<Inventory>) : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is dashboard Fragment"
+  @SuppressLint("CheckResult")
+  fun add(inventory: Inventory) {
+    inventories.apply {
+      add(0, inventory)
     }
-    val text: LiveData<String> = _text
+  }
+
+  fun remove(inventory: Inventory) {
+    inventories.apply {
+      remove(inventory)
+    }
+  }
 }

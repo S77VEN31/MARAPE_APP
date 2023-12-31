@@ -49,15 +49,17 @@ class RegisterActivity : AppCompatActivity() {
   }
 
   fun verifyCredentials(view: View) {
-    var userName = userNameEntry.text.toString()
-    var email = emailEntry.text.toString()
-    var password = passwordEntry.text.toString()
-    var confirmPassword = confirmPasswordEntry.text.toString()
+    val userName = userNameEntry.text.toString()
+    val email = emailEntry.text.toString()
+    val password = passwordEntry.text.toString()
+    val confirmPassword = confirmPasswordEntry.text.toString()
 
     when {
       userName.isEmpty() -> userNameEntry.error = "El nombre de usuario no puede estar vacio"
       userName.length < 5 -> userNameEntry.error = "El nombre no puede ser menor a 5 caracteres"
-      !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> emailEntry.error =  "El correo es invalido"
+      !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> emailEntry.error =
+        "El correo es invalido"
+
       password.isEmpty() -> passwordEntry.error = "La contraseña no puede estar vacia"
       password.length < 8 -> passwordEntry.error =
         "La contraseña no puede ser menor de 8 caracteres"
@@ -87,13 +89,13 @@ class RegisterActivity : AppCompatActivity() {
             //Redireccionar al MainActivity
             val principal = Intent(this, MainActivity::class.java)
             //Iniciar la activity
-            startActivity(principal)
-
             Toast.makeText(
               this@RegisterActivity,
               "Registrado Correctamente",
               Toast.LENGTH_SHORT
             ).show()
+            startActivity(principal)
+            finish()
           }.addOnFailureListener {
             Toast.makeText(
               this@RegisterActivity,

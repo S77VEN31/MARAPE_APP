@@ -22,8 +22,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                    getDefaultProguardFile("proguard-android-optimize.txt"),
-                    "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -41,9 +40,10 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     // NOTE: Dependencia opcional de analitica, la agregué porque si
     implementation("com.google.firebase:firebase-analytics")
-    // implementation("com.google.firebase:firebase-firestore:24.0.0")
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-auth")
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -54,6 +54,8 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.5")
     testImplementation("junit:junit:4.13.2")
+    testImplementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 

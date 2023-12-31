@@ -103,12 +103,7 @@ class EditProfile : AppCompatActivity() {
           "Cambios guardados correctamente",
           Toast.LENGTH_SHORT
         ).show()
-
-
-        //Redireccionar al perfil del usuario
-        val perfil = Intent(this, MainActivity::class.java)
-        //Iniciar la activity
-        startActivity(perfil)
+          finish()
       }
       .addOnFailureListener {
         Toast.makeText(

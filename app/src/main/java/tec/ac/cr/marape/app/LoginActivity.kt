@@ -9,7 +9,10 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
+import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.User
 import tec.ac.cr.marape.app.state.State
 
@@ -34,7 +37,8 @@ class LoginActivity : AppCompatActivity() {
 
     btnInicio = findViewById(R.id.btnInicio)
     emailEntry = findViewById(R.id.edit_email)
-    passwordEntry = findViewById(R.id.contrasenia)
+
+    passwordEntry = findViewById(R.id.login_contrasenia)
 
     dialogoInicio = AlertDialog.Builder(this)
 
@@ -45,10 +49,11 @@ class LoginActivity : AppCompatActivity() {
 
   }
 
-  fun callRegisterActivity(view: View) {
+  fun launchRegisterActivity(view: View) {
     // Lógica para iniciar la actividad de registro
     val intent = Intent(this, RegisterActivity::class.java)
     startActivity(intent)
+    finish()
   }
 
   fun verifyCredentialsHome(view: View) {
@@ -65,57 +70,82 @@ class LoginActivity : AppCompatActivity() {
         "La contraseña no puede ser menor de 8 caracteres"
 
       else -> {
+        // TODO: Fix this, whoever made this forgot to use the builder like it was intended to be used.
         dialogoInicio.setTitle("Iniciar Sesión")
         dialogoInicio.setMessage("Iniciando sesión, espere un momento...")
         dialogoInicio.setCancelable(false)
-        dialogoInicio.show()
+        val dialog = dialogoInicio.show()
 
         //Verificar Usuario
         mAuth.signInWithEmailAndPassword(email, contrasenia).addOnSuccessListener {
-          db.collection("users").document(email).get().addOnSuccessListener {
-            val user = it.toObject(User::class.java)
-            user?.let {
-              state.user = it
-
-              //Redireccionar al MainActivity
-              val principal = Intent(this, MainActivity::class.java)
-              //Iniciar la activity
-              startActivity(principal)
-            } ?: run {
-              // TODO: Same as below, either fix the issue or at least tell the user that there's been something wrong
-              finish()
-            }
-          }
+          db.collection("users").document(email).get().addOnSuccessListener(::doInitialLogin)
         }.addOnFailureListener {
           Toast.makeText(
-            this@LoginActivity,
-            it.message,
-            Toast.LENGTH_SHORT
+            this@LoginActivity, it.message, Toast.LENGTH_SHORT
           ).show()
+          dialog.cancel()
         }
       }
     }
+  }
+
+  private fun doInitialLogin(userRef: DocumentSnapshot) {
+    val user = userRef.toObject(User::class.java)
+    user?.let { got ->
+      state.user = got
+      //Redireccionar al MainActivity
+      launchMainActivity()
+    } ?: run {
+      // TODO: Same as below, either fix the issue or at least tell the user that there's been something wrong
+      finish()
+    }
+
   }
 
   override fun onStart() {
     super.onStart()
     mAuth.currentUser?.let {
       it.email?.let {
-        db.collection("users").document(it).get().addOnSuccessListener {
-          it.toObject(User::class.java)?.let {
-            state.user = it
-            val principal = Intent(this, MainActivity::class.java)
-            startActivity(principal)
+        db.collection("users").document(it).get().addOnSuccessListener(::reLoginUser)
+          .addOnFailureListener {
+            Toast.makeText(this@LoginActivity, R.string.login_error, Toast.LENGTH_SHORT).show()
+            // TODO: see if this changes anything
+            //finish()
           }
-        }.addOnFailureListener {
-          Toast.makeText(this@LoginActivity, R.string.login_error, Toast.LENGTH_SHORT).show()
-          // TODO: actually fix the issue instead of just killing the app
-          finish()
-        }
       } ?: run {
         // TODO: Actually fix the underlying issue or at least tell the user that there's something wrong gonig on
         finish()
       }
     }
   }
+
+
+  private fun reLoginUser(userRef: DocumentSnapshot) {
+    userRef.toObject(User::class.java)?.let {
+      state.user = it
+      launchMainActivity()
+    }
+  }
+
+  private fun launchMainActivity() {
+    val intent = Intent(this, MainActivity::class.java)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
+
+    db.collection("inventories")
+      .where(Filter.equalTo("ownerEmail", state.user.email))
+      .get().addOnSuccessListener { snapshot ->
+        // Clear the inventories before loading any new ones
+        state.inventories.clear()
+        snapshot.documents.iterator().forEach { inventorySnapshot ->
+          val inventory = inventorySnapshot.toObject(Inventory::class.java)
+          inventory?.id = inventorySnapshot.id
+          inventory?.let { state.inventories.add(it) }
+        }
+        // TODO: Find a non blocking way of doing this
+        startActivity(intent)
+        finish()
+      }
+  }
+
 }
+
