@@ -2,8 +2,8 @@ package tec.ac.cr.marape.app
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
@@ -28,6 +28,8 @@ class EditProfile : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_edit_profile)
 
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
     mAuth = FirebaseAuth.getInstance()
     db = FirebaseFirestore.getInstance()
     state = State.getInstance(this)
@@ -45,10 +47,21 @@ class EditProfile : AppCompatActivity() {
     etUserName.setText(state.user.name)
     etPhone.setText(state.user.phone)
 
-    spinnerExample()
+    setupCountriesSpinner()
   }
 
-  fun spinnerExample() {
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when (item.itemId) {
+      android.R.id.home -> {
+        finish()
+        true
+      }
+
+      else -> super.onOptionsItemSelected(item)
+    }
+  }
+
+  private fun setupCountriesSpinner() {
     val elementos = listOf(
       "Argentina", "Brasil", "Canadá", "Dinamarca", "Egipto",
       "Francia", "Grecia", "Honduras", "India", "Japón",
