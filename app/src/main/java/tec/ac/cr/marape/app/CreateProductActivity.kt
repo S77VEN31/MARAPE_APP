@@ -26,6 +26,7 @@ class CreateProductActivity : AppCompatActivity() {
   private val product = Product()
   private lateinit var db: FirebaseFirestore
   private lateinit var launcher: ActivityResultLauncher<Intent>
+  private var requestCamera: ActivityResultLauncher<String>? = null
 
   private fun resultCallback(result: ActivityResult) {
     when (result.resultCode) {
@@ -54,10 +55,21 @@ class CreateProductActivity : AppCompatActivity() {
     launcher =
       registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ::resultCallback)
 
-    binding.scanProduct.setOnClickListener {
-
+    requestCamera = registerForActivityResult(
+      ActivityResultContracts
+        .RequestPermission(),
+    ) {
+      if (it) {
+        val intent = Intent(this, BCScan::class.java)
+        launcher.launch(intent)
+      } else {
+        Toast.makeText(this, "Permiso denegado", Toast.LENGTH_SHORT).show()
+      }
     }
-
+    binding.scanProduct.setOnClickListener {
+//      fragment.hacerVisible()
+      requestCamera?.launch(android.Manifest.permission.CAMERA)
+    }
     binding.createProductName.addTextChangedListener {
       product.name = it.toString()
     }
