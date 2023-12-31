@@ -7,10 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
-import tec.ac.cr.marape.app.LoginActivity
 import tec.ac.cr.marape.app.EditProfile
+import tec.ac.cr.marape.app.LoginActivity
 import tec.ac.cr.marape.app.R
 import tec.ac.cr.marape.app.databinding.FragmentNotificationsBinding
 import tec.ac.cr.marape.app.state.State
@@ -22,6 +25,7 @@ class NotificationsFragment : Fragment() {
   private val binding get() = _binding!!
 
   private lateinit var mAuth: FirebaseAuth
+  private lateinit var launcher: ActivityResultLauncher<Intent>
 
   private lateinit var state: State
 
@@ -31,11 +35,19 @@ class NotificationsFragment : Fragment() {
     savedInstanceState: Bundle?
   ): View {
     _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
+    launcher = registerForActivityResult(
+      ActivityResultContracts.StartActivityForResult(),
+      ::activityResultHandler
+    )
     val root: View = binding.root
 
     mAuth = FirebaseAuth.getInstance()
     state = State.getInstance(requireContext())
     return root
+  }
+
+  private fun activityResultHandler(result: ActivityResult) {
+
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,7 +63,7 @@ class NotificationsFragment : Fragment() {
       mAuth.signOut()
       // Aquí puedes realizar la transición a la actividad LoginActivity
       val intent = Intent(requireContext(), LoginActivity::class.java)
-      startActivity(intent)
+      launcher.launch(intent)
       requireActivity().finish()
     }
 
@@ -63,7 +75,7 @@ class NotificationsFragment : Fragment() {
     // Botón para editar perfil
     binding.floatingActionButton.setOnClickListener {
       val edit = Intent(requireContext(), EditProfile::class.java)
-      startActivity(edit)
+      launcher.launch(edit)
     }
 
   }
@@ -75,7 +87,8 @@ class NotificationsFragment : Fragment() {
     builder.setTitle(R.string.account_deletion_title)
     builder.setPositiveButton(R.string.account_deletion_confirm_button_text) { _, _ ->
       mAuth.currentUser?.delete()?.addOnSuccessListener {
-        startActivity(Intent(requireContext(), LoginActivity::class.java))
+        launcher.launch(Intent(requireContext(), LoginActivity::class.java))
+        requireActivity().finish()
       }?.addOnFailureListener {
         Toast.makeText(
           requireContext(),
