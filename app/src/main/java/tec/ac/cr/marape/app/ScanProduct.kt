@@ -2,12 +2,11 @@ package tec.ac.cr.marape.app
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import tec.ac.cr.marape.app.databinding.ActivityScanProductBinding
 import tec.ac.cr.marape.app.networking.RemoteApi
 
@@ -22,7 +21,7 @@ class ScanProduct : AppCompatActivity() {
     registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
       if (result.resultCode == Activity.RESULT_OK) {
         val data: Intent? = result.data
-        scannedCode = data?.getStringExtra("scanned_code").toString()
+        scannedCode = data?.getStringExtra("scanned_code")!!
 
 //        fragment.hacerVisible()
         fetchApiData(scannedCode)
@@ -78,23 +77,25 @@ class ScanProduct : AppCompatActivity() {
             true
           )
         }
-        binding.tvCode.text = code
-        binding.tvName.text = prod.title
-        binding.tvBrand.text = prod.brand
-        binding.tvDescription.text = prod.description
-        binding.tvColor.text = prod.color
-        binding.tvMaterial.text = prod.material
-        binding.tvSize.text = prod.size
+        runOnUiThread {
+          binding.tvCode.text = code
+          binding.tvName.text = prod.title
+          binding.tvBrand.text = prod.brand
+          binding.tvDescription.text = prod.description
+          binding.tvColor.text = prod.color
+          binding.tvMaterial.text = prod.material
+          binding.tvSize.text = prod.size
 
-        target?.let {
-          binding.tvTargetPrice.text = it.price
+          target?.let {
+            binding.tvTargetPrice.text = it.price
+          }
         }
       }
     }, {
       runOnUiThread {
         Toast.makeText(
           this@ScanProduct,
-          R.string.barcode_not_found_error,
+          it.message,
           Toast.LENGTH_LONG
         ).show()
       }
