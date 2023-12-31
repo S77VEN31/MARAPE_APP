@@ -47,7 +47,16 @@
 
     <string name="tv_code">Código: </string>
     <string name="tv_name">Nombre: </string>
+    <string name="tv_brand">Marca: </string>
+    <string name="tv_price">Precio: </string>
     <string name="tv_target_price">Precio target: </string>
+    <string name="tv_description">Descripción: </string>
+    <string name="tv_size">Talla: </string>
+    <string name="tv_color">Color: </string>
+    <string name="tv_material">Material: </string>
+    <string name="tv_images">Imágenes: </string>
+    <string name="empty_text" />
+
 
 
     <string name="create_product_brand">Marca</string>

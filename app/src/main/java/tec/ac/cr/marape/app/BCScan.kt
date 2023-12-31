@@ -1,6 +1,8 @@
 package tec.ac.cr.marape.app
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.SurfaceHolder
@@ -28,7 +30,9 @@ class BCScan : AppCompatActivity() {
 
     binding.btnScan.setOnClickListener{
       if (intentData!=""){
-        Toast.makeText(applicationContext,"Código: $intentData", Toast.LENGTH_SHORT).show()
+        val resultIntent = Intent()
+        resultIntent.putExtra("scanned_code", intentData)
+        setResult(Activity.RESULT_OK, resultIntent)
         finish()
       }else{
         Toast.makeText(applicationContext, "Ningún código encontrado", Toast.LENGTH_SHORT).show()
@@ -54,38 +58,33 @@ class BCScan : AppCompatActivity() {
           e.printStackTrace()
         }
       }
-
       override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-
       }
-
       override fun surfaceDestroyed(holder: SurfaceHolder) {
         cameraSource.stop()
       }
     })
     barcodeDetector.setProcessor(object :Detector.Processor<Barcode>{
       override fun release() {
-        Toast.makeText(applicationContext, "Escaneo: $intentData", Toast.LENGTH_SHORT).show()
+        // TODO: mensaje fin del escaneo
+//        Toast.makeText(applicationContext, "Escaneo: $intentData", Toast.LENGTH_SHORT).show()
       }
 
       override fun receiveDetections(detections: Detector.Detections<Barcode>) {
         val barcodes = detections.detectedItems
         if (barcodes.size()!=0){
           binding.tvBarcodeValue.post{
-            binding.btnScan.text = "Buscar"
             intentData = barcodes.valueAt(0).displayValue
             binding.tvBarcodeValue.text = intentData
-//            finish()
           }
         }
       }
-
     })
   }
 
   override fun onPause() {
     super.onPause()
-    cameraSource!!.release()
+    cameraSource.release()
   }
 
   override fun onResume() {
