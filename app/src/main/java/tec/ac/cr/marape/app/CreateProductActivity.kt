@@ -36,6 +36,7 @@ class CreateProductActivity : AppCompatActivity() {
       FOUND_IN_API -> {
         val prod = result.data!!.getSerializableExtra("product") as Product
         // Llenar los campos.
+        binding.createProductBarcode.setText(prod.barcode)
         binding.createProductName.setText(prod.name)
         binding.createProductBrand.setText(prod.brand)
         binding.createProductDescription.setText(prod.description)
@@ -45,6 +46,7 @@ class CreateProductActivity : AppCompatActivity() {
       }
 
       FOUND_IN_DATABASE -> {
+        Toast.makeText(this, "Producto agregado al inventario", Toast.LENGTH_SHORT).show()
         finish()
       }
     }
