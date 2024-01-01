@@ -26,18 +26,17 @@
         <activity
             android:name=".BCScan"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ScanProduct"
-            android:exported="false"
-            >
+            android:exported="false">
 
             <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>-->
-            
+
         </activity>
         <activity
             android:name=".ViewProduct"
@@ -65,7 +64,14 @@
         <activity
             android:name=".GuestListActivity"
             android:exported="false"
-            android:label="Lista de Invitados" />
+            android:label="Lista invitados">
+
+            <!-- <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter> -->
+        </activity>
         <activity
             android:name=".RegisterActivity"
             android:exported="false"
@@ -75,7 +81,7 @@
             android:exported="true"
             android:label="Iniciar Sesión">
 
-<!--            NOTE: comentar esta vara para que la LoginActivity deje de ser la principal-->
+            <!--            NOTE: comentar esta vara para que la LoginActivity deje de ser la principal-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
