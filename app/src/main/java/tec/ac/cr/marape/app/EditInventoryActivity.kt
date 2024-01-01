@@ -48,12 +48,7 @@ class EditInventoryActivity : AppCompatActivity() {
     // TODO: See if there's a better way of passing the position here
     position = intent.getIntExtra("position", RecyclerView.NO_POSITION)
 
-    intent.getSerializableExtra("inventory", Inventory::class.java)?.let {
-      inventory = it
-    } ?: run {
-      // WARNING: If for some reason the inventory is null the activity will just finish
-      finish()
-    }
+    inventory = intent.getSerializableExtra("inventory") as Inventory
 
     inventoryName.text = inventory.name
     inventoryCreationDate.text = formatter.format(Date(inventory.creationDate)).toString()
