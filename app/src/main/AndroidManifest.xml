@@ -27,11 +27,11 @@
             android:exported="true"
             android:label="Lista invitados">
 
-            <intent-filter>
+            <!-- <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter> -->
         </activity>
 
         <activity
@@ -39,16 +39,14 @@
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
-            android:exported="false">
+            android:exported="true">
 
             <!-- NOTE: comentar esta vara para que la LoginActivity deje de ser la principal -->
-            <!--
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            -->
         </activity>
         <activity
             android:name=".CreateInventoryActivity"
