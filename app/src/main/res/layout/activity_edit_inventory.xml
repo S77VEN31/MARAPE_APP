@@ -45,13 +45,6 @@
                 android:hint="@string/edit_inventory_creation_date"
                 android:inputType="text" />
 
-            <Spinner
-                android:id="@+id/edit_inventory_products"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/style_border" />
-
         </LinearLayout>
 
         <LinearLayout
