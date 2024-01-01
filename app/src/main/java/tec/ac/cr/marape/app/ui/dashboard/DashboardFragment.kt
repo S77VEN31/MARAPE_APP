@@ -26,16 +26,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.CreateInventoryActivity
+import tec.ac.cr.marape.app.DELETE_GUEST_INVENTORY
+import tec.ac.cr.marape.app.EditInventoryActivity
+import tec.ac.cr.marape.app.GuestListActivity
 import tec.ac.cr.marape.app.R
 import tec.ac.cr.marape.app.adapter.InventoryView
 import tec.ac.cr.marape.app.databinding.FragmentDashboardBinding
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.state.State
-import tec.ac.cr.marape.app.EditInventoryActivity
-import java.io.Serializable
 
 class DashboardFragment : Fragment() {
 
@@ -64,6 +64,7 @@ class DashboardFragment : Fragment() {
     customAdapter.setDeleteHandler(::handleInventoryDeletion)
     customAdapter.setDisablingHandler(::handleDisablingInventory)
     customAdapter.setOnClickListener(::handleItemClick)
+    customAdapter.setCollaboratorsHandler(::handleListCollaborators)
 
     recyclerView!!.adapter = customAdapter
     recyclerView!!.layoutManager = LinearLayoutManager(activity)
@@ -99,10 +100,22 @@ class DashboardFragment : Fragment() {
     recyclerView!!.adapter?.notifyDataSetChanged()
   }
 
-  private fun handleDisablingInventory(view: View, inventory: Inventory, checked: Boolean, position: Int) {
+  private fun handleDisablingInventory(
+    view: View,
+    inventory: Inventory,
+    checked: Boolean,
+    position: Int
+  ) {
     inventoriesRef.document(inventory.id).update("active", checked).addOnFailureListener {
       Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
     }
+  }
+
+  private fun handleListCollaborators(view: View, inventory: Inventory, position: Int) {
+    val intent = Intent(requireContext(), GuestListActivity::class.java)
+    intent.putExtra("inventory", inventory)
+    intent.putExtra("position", position)
+    launcher.launch(intent)
   }
 
   private fun handleItemClick(view: View, inventory: Inventory, position: Int) {
@@ -132,18 +145,27 @@ class DashboardFragment : Fragment() {
   private fun resultCallback(result: ActivityResult) {
     when (result.resultCode) {
       CREATED_INVENTORY -> {
-        val createdInventory = result.data?.getSerializableExtra("created", Inventory::class.java)
-        createdInventory?.let { inventory ->
+        val createdInventory = result.data?.getSerializableExtra("created") as Inventory
+        createdInventory.let { inventory ->
           customAdapter.add(inventory)
         }
       }
+
       EDITED_INVENTORY -> {
         val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)
-        val editedInventory = result.data?.getSerializableExtra("edited", Inventory::class.java)
-        if (position != null && position != RecyclerView.NO_POSITION) {
-          editedInventory?.let {inventory ->
-            customAdapter.update(position, inventory)
+        val editedInventory = result.data?.getSerializableExtra("edited") as Inventory
+        if (position != RecyclerView.NO_POSITION) {
+          editedInventory.let { inventory ->
+            customAdapter.update(position!!, inventory)
           }
+        }
+      }
+
+      DELETE_GUEST_INVENTORY -> {
+        val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)
+        val updated = result.data?.getSerializableExtra("addGuest") as Inventory
+        if (position != RecyclerView.NO_POSITION) {
+          customAdapter.update(position!!, updated)
         }
       }
     }
