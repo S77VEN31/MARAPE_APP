@@ -37,10 +37,7 @@ class GuestListActivity : AppCompatActivity() {
     recyclerView.layoutManager = LinearLayoutManager(this)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    Log.i("TAG", "Inventario actual: $inventory")
-    inventory.let {
-      showGuests(inventory)
-    }
+    showGuests(inventory)
   }
 
   private fun showGuests(inventory: Inventory) {
