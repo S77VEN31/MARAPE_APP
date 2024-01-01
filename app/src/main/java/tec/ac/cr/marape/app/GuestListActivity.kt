@@ -2,20 +2,20 @@ package tec.ac.cr.marape.app
 
 import android.content.ContentValues.TAG
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
+import me.xdrop.fuzzywuzzy.FuzzySearch
 import tec.ac.cr.marape.app.adapter.GuestView
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.User
-import me.xdrop.fuzzywuzzy.FuzzySearch
 
 const val DELETE_GUEST_INVENTORY = 4
 
@@ -24,26 +24,26 @@ class GuestListActivity : AppCompatActivity() {
   private lateinit var searchGuest: EditText
   private lateinit var recyclerView: RecyclerView
   private var position: Int = 0
-  private lateinit var inventory:Inventory
+  private lateinit var inventory: Inventory
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-      super.onCreate(savedInstanceState)
-      setContentView(R.layout.activity_guest_list)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_guest_list)
 
-      inventory = intent.getSerializableExtra("inventory") as Inventory
-      position = intent.getIntExtra("position", 0)
-      searchGuest = findViewById(R.id.entry_guest_search)
-      recyclerView = findViewById(R.id.recycle_guests)
-      recyclerView.layoutManager = LinearLayoutManager(this)
-      supportActionBar?.setDisplayHomeAsUpEnabled(true)
-      
-      Log.i("TAG", "Inventario actual: $inventory")
-      inventory?.let {
-        showGuests(inventory)
-      }
+    inventory = intent.getSerializableExtra("inventory") as Inventory
+    position = intent.getIntExtra("position", 0)
+    searchGuest = findViewById(R.id.entry_guest_search)
+    recyclerView = findViewById(R.id.recycle_guests)
+    recyclerView.layoutManager = LinearLayoutManager(this)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    Log.i("TAG", "Inventario actual: $inventory")
+    inventory.let {
+      showGuests(inventory)
     }
+  }
 
-  private fun showGuests(inventory: Inventory){
+  private fun showGuests(inventory: Inventory) {
     getGuests(inventory.invitedUsers) { guests ->
       val adapter = GuestView(guests, inventory)
       recyclerView.adapter = adapter
@@ -51,10 +51,10 @@ class GuestListActivity : AppCompatActivity() {
       searchGuest.addTextChangedListener { searchText ->
         val query = searchText.toString().lowercase().trim()
 
-        if(guests.isNotEmpty()){
+        if (guests.isNotEmpty()) {
           val filteredList = fuzzySearchGuest(guests, query)
           adapter.updateDataGuest(filteredList)
-        }else{
+        } else {
           showAlertDialog()
         }
       }
@@ -63,7 +63,7 @@ class GuestListActivity : AppCompatActivity() {
 
   private fun getGuests(invitedUsers: List<String>, onComplete: (MutableList<User>) -> Unit) {
     val availableGuests = mutableListOf<User>()
-    if (invitedUsers.isNotEmpty()){
+    if (invitedUsers.isNotEmpty()) {
       db.collection("users")
         .whereIn("email", invitedUsers)
         .get()
@@ -84,34 +84,39 @@ class GuestListActivity : AppCompatActivity() {
 
   }
 
-  private fun showAlertDialog(){
+  private fun showAlertDialog() {
     val builder = AlertDialog.Builder(this)
-    builder.setTitle("Sin invitados").setMessage("No ha invitado a ningún usuario a este inventario")
-      .setPositiveButton("Aceptar") {
-        dialog, _ -> dialog.dismiss()
+    builder.setTitle("Sin invitados")
+      .setMessage("No ha invitado a ningún usuario a este inventario")
+      .setPositiveButton("Aceptar") { dialog, _ ->
+        dialog.dismiss()
       }
     val dialog = builder.create()
     dialog.show()
   }
 
-  private fun fuzzySearchGuest(guestList: MutableList<User>, query: String): MutableList<User>{
-    return if(query.isNotEmpty()) {
+  private fun fuzzySearchGuest(guestList: MutableList<User>, query: String): MutableList<User> {
+    return if (query.isNotEmpty()) {
       val newList = mutableListOf<User>()
 
-      for (user in guestList){
+      for (user in guestList) {
         val userFields = listOf(user.name, user.email)
 
-        val matches = userFields.any { field -> FuzzySearch.ratio(query.lowercase(),
-          field.lowercase()) >= 80 }
+        val matches = userFields.any { field ->
+          FuzzySearch.ratio(
+            query.lowercase(),
+            field.lowercase()
+          ) >= 80
+        }
 
-        if(matches){
+        if (matches) {
           newList.add(user)
         }
 
       }
       newList
-    }else{
-       guestList
+    } else {
+      guestList
     }
   }
 
@@ -125,6 +130,7 @@ class GuestListActivity : AppCompatActivity() {
         finish()
         true
       }
+
       else -> super.onOptionsItemSelected(item)
     }
   }
