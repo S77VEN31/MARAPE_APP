@@ -2,6 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera.autofocus " />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:name=".Marape"
         android:allowBackup="true"
@@ -14,17 +24,46 @@
         android:theme="@style/Theme.Proyecto"
         tools:targetApi="31">
         <activity
-            android:name=".EditInventoryActivity"
+            android:name=".BCScan"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ScanProduct"
+            android:exported="false">
+
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
+
+        </activity>
+        <activity
+            android:name=".ViewProduct"
             android:exported="false" />
+        <activity
+            android:name=".EditProfile"
+            android:exported="false"
+            android:label="Editar Perfil" />
+        <activity
+            android:name=".CreateProductActivity"
+            android:exported="false"
+            android:label="Crear Producto" />
+        <activity
+            android:name=".EditInventoryActivity"
+            android:exported="false"
+            android:label="Editar Inventario" />
         <activity
             android:name=".EditProductActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Editar Producto" />
         <activity
             android:name=".AddGuestActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Agregar Invitado" />
         <activity
             android:name=".GuestListActivity"
-            android:exported="true"
+            android:exported="false"
             android:label="Lista invitados">
 
             <!-- <intent-filter>
@@ -33,15 +72,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter> -->
         </activity>
-
         <activity
             android:name=".RegisterActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Registrarse" />
         <activity
             android:name=".LoginActivity"
-            android:exported="true">
+            android:exported="true"
+            android:label="Iniciar Sesión">
 
-            <!-- NOTE: comentar esta vara para que la LoginActivity deje de ser la principal -->
+            <!--            NOTE: comentar esta vara para que la LoginActivity deje de ser la principal-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,18 +91,15 @@
         <activity
             android:name=".CreateInventoryActivity"
             android:exported="false"
-            android:label="@string/create_inventory" />
+            android:label="Crear Inventario" />
         <activity
             android:name=".MainActivity"
             android:exported="false">
 
-            <!-- NOTE: descomentar esto para hacer que esta actividad sea la principal -->
-            <!--
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
+            </intent-filter>-->
         </activity>
     </application>
 
