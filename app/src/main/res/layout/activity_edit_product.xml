@@ -8,20 +8,18 @@
 
     <ScrollView
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/edit_product"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center|center_vertical"
+            android:layout_gravity="center_horizontal"
             android:orientation="vertical">
 
             <EditText
@@ -74,19 +72,25 @@
                 android:hint="@string/product_description_hint"
                 android:inputType="text" />
 
-            <Spinner
+            <EditText
                 android:id="@+id/edit_product_color"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_margin="10dp"
-                android:background="@drawable/style_border" />
+                android:background="@drawable/style_border"
+                android:ems="10"
+                android:hint="@string/product_color_hint"
+                android:inputType="text" />
 
-            <Spinner
+            <EditText
                 android:id="@+id/edit_product_material"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_margin="10dp"
-                android:background="@drawable/style_border" />
+                android:background="@drawable/style_border"
+                android:ems="10"
+                android:hint="@string/product_material_hint"
+                android:inputType="text" />
 
             <EditText
                 android:id="@+id/edit_product_size"
@@ -112,13 +116,13 @@
             <Button
                 android:id="@+id/edit_product_save_changes"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
                 android:background="@drawable/style_border"
                 android:text="@string/edit_product_save" />
+
         </LinearLayout>
+
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
