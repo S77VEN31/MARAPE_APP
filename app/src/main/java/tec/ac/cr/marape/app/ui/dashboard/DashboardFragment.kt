@@ -156,7 +156,7 @@ class DashboardFragment : Fragment() {
 
       EDITED_INVENTORY -> {
         val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)!!
-        val editedInventory = result.data?.getSerializableExtra("edited") as Inventory
+        val editedInventory = result.data?.getSerializableExtra("inventory") as Inventory
         if (position != RecyclerView.NO_POSITION) {
           editedInventory.let { inventory ->
             inventoryAdapter.update(position, inventory)
