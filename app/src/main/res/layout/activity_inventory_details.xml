@@ -153,6 +153,7 @@
         app:backgroundTint="?attr/colorPrimary"
         app:layout_constraintBottom_toTopOf="@+id/floatingActionButtonShareShared"
         app:layout_constraintEnd_toEndOf="parent" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButtonShareShared"
         android:layout_width="wrap_content"
@@ -160,7 +161,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         android:clickable="true"
-        android:src="@drawable/add_fill0_wght400_grad0_opsz24"
+        android:src="@drawable/share_fill0_wght400_grad0_opsz24"
         android:tint="?attr/colorOnPrimary"
         android:tintMode="src_in"
         app:backgroundTint="?attr/colorPrimary"
