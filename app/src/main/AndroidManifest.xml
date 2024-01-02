@@ -24,6 +24,9 @@
         android:theme="@style/Theme.Proyecto"
         tools:targetApi="31">
         <activity
+            android:name=".InvitedUsersListGuestActivity"
+            android:exported="false" />
+        <activity
             android:name=".BCScan"
             android:exported="false"
             android:screenOrientation="portrait" />
@@ -88,6 +91,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".InventoryDetailsActivity"
+            android:exported="false" />
         <activity
             android:name=".CreateInventoryActivity"
             android:exported="false"

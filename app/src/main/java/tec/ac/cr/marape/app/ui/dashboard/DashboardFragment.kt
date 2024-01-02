@@ -27,8 +27,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.AddGuestActivity
 import tec.ac.cr.marape.app.CreateInventoryActivity
 import tec.ac.cr.marape.app.DELETE_GUEST_INVENTORY
-import tec.ac.cr.marape.app.EditInventoryActivity
 import tec.ac.cr.marape.app.GuestListActivity
+import tec.ac.cr.marape.app.InventoryDetailsActivity
 import tec.ac.cr.marape.app.R
 import tec.ac.cr.marape.app.adapter.InventoryAdapter
 import tec.ac.cr.marape.app.databinding.FragmentDashboardBinding
@@ -102,16 +102,11 @@ class DashboardFragment : Fragment() {
   }
 
   private fun handleDisablingInventory(
-    view: View,
-    inventory: Inventory,
-    checked: Boolean,
-    position: Int
+    view: View, inventory: Inventory, checked: Boolean, position: Int
   ) {
-    inventoriesRef.document(inventory.id).update("active", checked)
-      .addOnSuccessListener {
+    inventoriesRef.document(inventory.id).update("active", checked).addOnSuccessListener {
         inventoryAdapter.toggle(position, inventory, checked)
-      }
-      .addOnFailureListener {
+      }.addOnFailureListener {
         Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
       }
   }
@@ -124,7 +119,7 @@ class DashboardFragment : Fragment() {
   }
 
   private fun handleItemClick(view: View, inventory: Inventory, position: Int) {
-    val intent = Intent(requireContext(), EditInventoryActivity::class.java)
+    val intent = Intent(requireContext(), InventoryDetailsActivity::class.java)
     intent.putExtra("position", position)
     intent.putExtra("inventory", inventory)
     launcher.launch(intent)
@@ -138,19 +133,15 @@ class DashboardFragment : Fragment() {
   }
 
   private fun handleInventoryDeletion(view: View, inventory: Inventory, position: Int) {
-    AlertDialog.Builder(requireContext())
-      .setTitle(R.string.inventory_deletion_title)
-      .setMessage(R.string.inventory_deletion_message)
-      .setCancelable(true)
+    AlertDialog.Builder(requireContext()).setTitle(R.string.inventory_deletion_title)
+      .setMessage(R.string.inventory_deletion_message).setCancelable(true)
       .setPositiveButton(R.string.account_deletion_confirm_button_text) { _, _ ->
         inventoriesRef.document(inventory.id).delete().addOnSuccessListener {
           inventoryAdapter.remove(position, inventory)
         }
-      }
-      .setNegativeButton(R.string.action_cancel) { self, _ ->
+      }.setNegativeButton(R.string.action_cancel) { self, _ ->
         self.cancel()
-      }
-      .show()
+      }.show()
   }
 
   @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -164,11 +155,11 @@ class DashboardFragment : Fragment() {
       }
 
       EDITED_INVENTORY -> {
-        val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)
+        val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)!!
         val editedInventory = result.data?.getSerializableExtra("edited") as Inventory
         if (position != RecyclerView.NO_POSITION) {
           editedInventory.let { inventory ->
-            inventoryAdapter.update(position!!, inventory)
+            inventoryAdapter.update(position, inventory)
           }
         }
       }

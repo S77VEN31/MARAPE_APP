@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Proyecto</string>
-    <string name="title_home">Home</string>
+    <string name="title_home">Compartidos</string>
     <string name="title_owned_inventories">Mis Inventarios</string>
     <string name="title_notifications">Perfil</string>
     <string name="title_activity_login">Login</string>
@@ -40,6 +40,13 @@
     <string name="edit_inventory_name">Nombre del Inventario</string>
     <string name="edit_inventory_creation_date">Fecha de Creación</string>
 
+    <string name="inventory_details_title">Detalles inventario</string>
+    <string name="inventory_details_name">Nombre</string>
+    <string name="inventory_details_creation_date">Fecha de Creación</string>
+    <string name="inventory_details_status">Estado</string>
+    <string name="inventory_details_owner">Propietario</string>
+    <string name="inventory_details_guests">Ver invitados</string>
+    <string name="inventory_details_products">Ver productos</string>
     <string name="btn_scan_product_scan">Scan</string>
     <string name="btn_scan_product_add">Agregar</string>
     <string name="btn_scan_product_cancel">Cancelar</string>
@@ -56,7 +63,6 @@
     <string name="tv_material">Material: </string>
     <string name="tv_images">Imágenes: </string>
     <string name="empty_text" />
-
 
 
     <string name="create_product_brand">Marca</string>
@@ -85,7 +91,7 @@
     <string name="user_search">Buscar usuario</string>
     <string name="guest_add">Agregar invitado</string>
 
-  
+
     <string name="edit_profile_save">Guardar</string>
     <string name="text_price_target">Precio Target</string>
 </resources>
