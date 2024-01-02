@@ -29,6 +29,7 @@ class EditProductActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_edit_product)
 
+    // TODO: refactor this into using bindings instead.
     name = findViewById(R.id.edit_product_name)
     brand = findViewById(R.id.edit_product_brand)
     quantity = findViewById(R.id.edit_product_quantity)
