@@ -83,5 +83,8 @@
 
     <string name="user_search">Buscar usuario</string>
     <string name="guest_add">Agregar invitado</string>
+
+  
     <string name="edit_profile_save">Guardar</string>
+    <string name="text_price_target">Precio Target</string>
 </resources>
