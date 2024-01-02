@@ -2,24 +2,19 @@
 
 package tec.ac.cr.marape.app
 
+
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
-
-
+import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.databinding.ActivityInventoryDetailsBinding
-import android.content.Intent
-import android.view.View
-
-
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.User
-
-
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
@@ -44,36 +39,34 @@ class InventoryDetailsActivity : AppCompatActivity() {
 
     // TODO: The position will be used to update the inventory in the local sharedInventories array.
     intent.getIntExtra("position", RecyclerView.NO_POSITION)
-    intent.getSerializableExtra("inventory", Inventory::class.java)?.let {
-      inventory = it
+    inventory = intent.getSerializableExtra("inventory") as Inventory
 
-      binding.sharedInventoryName.text = inventory.name
-      binding.sharedInventoryCreationDate.text = formatter.format(Date(inventory.creationDate))
+    binding.sharedInventoryName.text = inventory.name
+    binding.sharedInventoryCreationDate.text = formatter.format(Date(inventory.creationDate))
 
-      // TODO: Find a different way of doing this, somethig more idiomatic, or somethingdsds
-      // that uses the string resources.
-      binding.sharedInventoryStatus.text = if (inventory.active) {
-        "Activo"
-      } else {
-        "Inactivo"
-      }
+    // TODO: Find a different way of doing this, somethig more idiomatic, or somethingdsds
+    // that uses the string resources.
+    binding.sharedInventoryStatus.text = if (inventory.active) {
+      "Activo"
+    } else {
+      "Inactivo"
+    }
 
-      db.document(
-        "/users/${inventory.ownerEmail}"
-      ).get().addOnSuccessListener { doc ->
-        owner = doc.toObject(User::class.java)!!
-        binding.sharedInventoryOwner.text = owner.name
-      }
+    db.document(
+      "/users/${inventory.ownerEmail}"
+    ).get().addOnSuccessListener { doc ->
+      owner = doc.toObject(User::class.java)!!
+      binding.sharedInventoryOwner.text = owner.name
     }
   }
 
-fun listInvitedUsers(view: View) {
-  // launch the activity to list the users
-  val intent = Intent(this, InvitedUsersListActivity::class.java)
-  intent.putExtra("inventory", inventory)
-  startActivity(intent)
+  fun listInvitedUsers(view: View) {
+    // launch the activity to list the users
+    val intent = Intent(this, InvitedUsersListActivity::class.java)
+    intent.putExtra("inventory", inventory)
+    startActivity(intent)
 
-}
+  }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
