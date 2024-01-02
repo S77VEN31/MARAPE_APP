@@ -62,29 +62,16 @@ class NotificationsFragment : Fragment() {
 
     binding.switchPriceTarget.setOnClickListener {
       val currentState = binding.switchPriceTarget.isChecked
-      savePreference(currentState)
+      savePreference(currentState, state.user.email)
     }
 
   }
 
-  /*
-  // Obtener una instancia de SharedPreferences
-val sharedPreferences = getSharedPreferences("PreferenciasUsuario", Context.MODE_PRIVATE)
-
-// Guardar el estado del switch en SharedPreferences
-val estadoSwitch = miSwitch.isChecked
-val editor = sharedPreferences.edit()
-editor.putBoolean("switch_estado", estadoSwitch)
-editor.apply()
-
-// Recuperar el estado guardado del switch
-val estadoGuardado = sharedPreferences.getBoolean("switch_estado", false)
-miSwitch.isChecked = estadoGuardado
-
-   */
-
-  private fun savePreference(currentState: Boolean){
-
+  private fun savePreference(currentState: Boolean, email: String){
+    val sharedPreferences = requireContext().getSharedPreferences("user_preferences_$email", Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+    editor.putBoolean("price_target", currentState)
+    editor.apply()
   }
 
 
