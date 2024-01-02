@@ -2,6 +2,7 @@ package tec.ac.cr.marape.app.ui.notifications
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -80,14 +81,28 @@ class NotificationsFragment : Fragment() {
     binding.deleteAccount.setOnClickListener {
       deleteAccount()
     }
-
+        
     // Botón para editar perfil
     binding.floatingActionButton.setOnClickListener {
       val edit = Intent(requireContext(), EditProfile::class.java)
       launcher.launch(edit)
     }
+    
+    
+    binding.switchPriceTarget.setOnClickListener {
+      val currentState = binding.switchPriceTarget.isChecked
+      savePreference(currentState, state.user.email)
+    }
 
   }
+
+  private fun savePreference(currentState: Boolean, email: String){
+    val sharedPreferences = requireContext().getSharedPreferences("user_preferences_$email", Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+    editor.putBoolean("price_target", currentState)
+    editor.apply()
+  }
+
 
   private fun deleteAccount() {
     val builder = AlertDialog.Builder(context)
