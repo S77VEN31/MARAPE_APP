@@ -32,7 +32,7 @@ class EditProfile : AppCompatActivity() {
 
     mAuth = FirebaseAuth.getInstance()
     db = FirebaseFirestore.getInstance()
-    state = State.getInstance(this)
+    state = State.getInstance()
 
     etEmail = findViewById(R.id.edit_email)
     etUserName = findViewById(R.id.edit_user)

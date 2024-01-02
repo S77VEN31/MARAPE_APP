@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
 
     db = FirebaseFirestore.getInstance()
-    state = State.getInstance(baseContext)
+    state = State.getInstance()
 
 
     binding = ActivityMainBinding.inflate(layoutInflater)

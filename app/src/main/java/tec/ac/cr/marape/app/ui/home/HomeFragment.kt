@@ -38,7 +38,7 @@ class HomeFragment : Fragment() {
     inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
   ): View {
     _binding = FragmentHomeBinding.inflate(inflater, container, false)
-    state = State.getInstance(null)
+    state = State.getInstance()
     viewModel = viewModels<HomeViewModel>(factoryProducer = { ViewModelProducer(state) })
     db = FirebaseFirestore.getInstance()
     sharedInventoriesRef = db.collection("inventories")

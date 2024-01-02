@@ -44,7 +44,7 @@ class NotificationsFragment : Fragment() {
     val root: View = binding.root
 
     mAuth = FirebaseAuth.getInstance()
-    state = State.getInstance(requireContext())
+    state = State.getInstance()
     return root
   }
 

@@ -46,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
     mAuth = FirebaseAuth.getInstance()
 
     db = FirebaseFirestore.getInstance()
-    state = State.getInstance(baseContext)
+    state = State.getInstance()
 
   }
 

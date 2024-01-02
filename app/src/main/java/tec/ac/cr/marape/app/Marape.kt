@@ -9,7 +9,7 @@ class Marape : Application() {
   private lateinit var db: FirebaseFirestore
   override fun onCreate() {
     super.onCreate()
-    state = State.getInstance(baseContext)
+    state = State.getInstance()
     db = FirebaseFirestore.getInstance()
 
     state.inventories = ArrayList()

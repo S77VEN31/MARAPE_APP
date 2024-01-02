@@ -191,7 +191,7 @@ class DashboardFragment : Fragment() {
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
   ): View {
-    state = State.getInstance(null)
+    state = State.getInstance()
     _binding = FragmentDashboardBinding.inflate(inflater, container, false)
     db = FirebaseFirestore.getInstance()
     inventoriesRef = db.collection("inventories")

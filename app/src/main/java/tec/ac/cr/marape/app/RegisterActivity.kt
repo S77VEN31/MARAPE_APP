@@ -44,7 +44,7 @@ class RegisterActivity : AppCompatActivity() {
     dialogo = AlertDialog.Builder(this)
 
     db = FirebaseFirestore.getInstance()
-    state = State.getInstance(baseContext)
+    state = State.getInstance()
 
   }
 

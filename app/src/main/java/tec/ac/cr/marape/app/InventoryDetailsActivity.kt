@@ -38,7 +38,7 @@ class InventoryDetailsActivity : AppCompatActivity() {
   @RequiresApi(Build.VERSION_CODES.TIRAMISU)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    state = State.getInstance(this)
+    state = State.getInstance()
     binding = ActivityInventoryDetailsBinding.inflate(layoutInflater)
     launcher =
       registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ::resultHandler)

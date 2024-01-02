@@ -31,7 +31,7 @@ class CreateInventoryActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    state = State.getInstance(this.baseContext)
+    state = State.getInstance()
     db = FirebaseFirestore.getInstance()
     states = resources.getStringArray(R.array.create_inventory_states)
     emptyNameError = resources.getString(R.string.create_product_empty_name_error)
