@@ -2,7 +2,6 @@ package tec.ac.cr.marape.app
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -16,7 +15,7 @@ import tec.ac.cr.marape.app.databinding.ActivityInvitedUsersListBinding
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.User
 
-class InvitedUsersListActivity : AppCompatActivity() {
+class InvitedUsersListGuestActivity : AppCompatActivity() {
 
   private lateinit var inventory: Inventory
   private lateinit var db: FirebaseFirestore
@@ -38,7 +37,7 @@ class InvitedUsersListActivity : AppCompatActivity() {
         db.document("users/${invitedUser}").get().await().toObject(User::class.java)!!
       }
       binding.invitedUsersList.adapter = InvitedUsersListAdapter(invitedUsers)
-      binding.invitedUsersList.layoutManager = LinearLayoutManager(this@InvitedUsersListActivity)
+      binding.invitedUsersList.layoutManager = LinearLayoutManager(this@InvitedUsersListGuestActivity)
     }
 
 
