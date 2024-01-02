@@ -4,11 +4,14 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
-import android.widget.EditText
+import android.widget.SearchView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.addTextChangedListener
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
@@ -21,10 +24,11 @@ const val DELETE_GUEST_INVENTORY = 4
 
 class GuestListActivity : AppCompatActivity() {
   private val db = FirebaseFirestore.getInstance()
-  private lateinit var searchGuest: EditText
   private lateinit var recyclerView: RecyclerView
   private var position: Int = 0
   private lateinit var inventory: Inventory
+  private lateinit var guests: MutableList<User>
+  private lateinit var adapter: GuestView
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -32,49 +36,66 @@ class GuestListActivity : AppCompatActivity() {
 
     inventory = intent.getSerializableExtra("inventory") as Inventory
     position = intent.getIntExtra("position", 0)
-    searchGuest = findViewById(R.id.entry_guest_search)
+    // searchGuest = findViewById(R.id.entry_guest_search)
     recyclerView = findViewById(R.id.recycle_guests)
     recyclerView.layoutManager = LinearLayoutManager(this)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    (this as MenuHost).addMenuProvider(object : MenuProvider {
+      override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.search_inventory, menu)
+        val searchItem: MenuItem = menu.findItem(R.id.search_inventory)
+        (searchItem.actionView as SearchView).setOnQueryTextListener(object :
+          SearchView.OnQueryTextListener {
+          override fun onQueryTextSubmit(query: String?): Boolean {
+            return false
+          }
+
+          override fun onQueryTextChange(searchText: String?): Boolean {
+            val query = searchText.toString().lowercase().trim()
+
+            if (guests.isNotEmpty()) {
+              val filteredList = fuzzySearchGuest(guests, query)
+              adapter.updateDataGuest(filteredList)
+            } else {
+              showAlertDialog()
+            }
+            return true
+          }
+
+        })
+      }
+
+      override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        return false
+      }
+
+    }, this)
 
     showGuests(inventory)
   }
 
   private fun showGuests(inventory: Inventory) {
     getGuests(inventory.invitedUsers) { guests ->
-      val adapter = GuestView(guests, inventory)
+      adapter = GuestView(guests, inventory)
       recyclerView.adapter = adapter
-
-      searchGuest.addTextChangedListener { searchText ->
-        val query = searchText.toString().lowercase().trim()
-
-        if (guests.isNotEmpty()) {
-          val filteredList = fuzzySearchGuest(guests, query)
-          adapter.updateDataGuest(filteredList)
-        } else {
-          showAlertDialog()
-        }
-      }
+      this.guests = guests
     }
   }
 
   private fun getGuests(invitedUsers: List<String>, onComplete: (MutableList<User>) -> Unit) {
     val availableGuests = mutableListOf<User>()
     if (invitedUsers.isNotEmpty()) {
-      db.collection("users")
-        .whereIn("email", invitedUsers)
-        .get()
-        .addOnSuccessListener { result ->
-          for (document in result) {
-            val user = document.toObject(User::class.java)
-            availableGuests.add(user)
-          }
-          onComplete(availableGuests)
+      db.collection("users").whereIn("email", invitedUsers).get().addOnSuccessListener { result ->
+        for (document in result) {
+          val user = document.toObject(User::class.java)
+          availableGuests.add(user)
         }
-        .addOnFailureListener { exception ->
-          Log.d(TAG, "Error getting documents", exception)
-          onComplete(availableGuests)
-        }
+        onComplete(availableGuests)
+      }.addOnFailureListener { exception ->
+        Log.d(TAG, "Error getting documents", exception)
+        onComplete(availableGuests)
+      }
     } else {
       onComplete(availableGuests)
     }
@@ -101,8 +122,7 @@ class GuestListActivity : AppCompatActivity() {
 
         val matches = userFields.any { field ->
           FuzzySearch.ratio(
-            query.lowercase(),
-            field.lowercase()
+            query.lowercase(), field.lowercase()
           ) >= 80
         }
 
