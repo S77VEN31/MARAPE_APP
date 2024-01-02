@@ -9,6 +9,7 @@
     tools:layout_editor_absoluteY="33dp">
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -38,7 +39,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <EditText
-            android:id="@+id/correo"
+            android:id="@+id/edit_email"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_margin="10dp"
@@ -100,6 +101,5 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
