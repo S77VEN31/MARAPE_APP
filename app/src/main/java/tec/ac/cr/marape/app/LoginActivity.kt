@@ -36,7 +36,8 @@ class LoginActivity : AppCompatActivity() {
 
 
     btnInicio = findViewById(R.id.btnInicio)
-    emailEntry = findViewById(R.id.correo)
+    emailEntry = findViewById(R.id.edit_email)
+
     passwordEntry = findViewById(R.id.login_contrasenia)
 
     dialogoInicio = AlertDialog.Builder(this)
@@ -122,6 +123,7 @@ class LoginActivity : AppCompatActivity() {
     }
   }
 
+
   private fun reLoginUser(userRef: DocumentSnapshot) {
     userRef.toObject(User::class.java)?.let {
       state.user = it
@@ -151,3 +153,4 @@ class LoginActivity : AppCompatActivity() {
   }
 
 }
+

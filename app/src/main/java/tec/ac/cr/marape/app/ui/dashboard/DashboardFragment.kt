@@ -26,7 +26,9 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.AddGuestActivity
 import tec.ac.cr.marape.app.CreateInventoryActivity
+import tec.ac.cr.marape.app.DELETE_GUEST_INVENTORY
 import tec.ac.cr.marape.app.EditInventoryActivity
+import tec.ac.cr.marape.app.GuestListActivity
 import tec.ac.cr.marape.app.R
 import tec.ac.cr.marape.app.adapter.InventoryAdapter
 import tec.ac.cr.marape.app.databinding.FragmentDashboardBinding
@@ -62,6 +64,7 @@ class DashboardFragment : Fragment() {
     inventoryAdapter.setDisablingHandler(::handleDisablingInventory)
     inventoryAdapter.setOnClickListener(::handleItemClick)
     inventoryAdapter.setAddCollaboratorClickListener(::handleAddPartner)
+    inventoryAdapter.setCollaboratorsHandler(::handleListCollaborators)
 
     recyclerView!!.adapter = inventoryAdapter
     recyclerView!!.layoutManager = LinearLayoutManager(activity)
@@ -69,6 +72,7 @@ class DashboardFragment : Fragment() {
     launcher = registerForActivityResult(StartActivityForResult(), ::resultCallback)
 
     binding.floatingActionButton.setOnClickListener(::createInventory)
+
 
     (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
       override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -112,6 +116,13 @@ class DashboardFragment : Fragment() {
       }
   }
 
+  private fun handleListCollaborators(view: View, inventory: Inventory, position: Int) {
+    val intent = Intent(requireContext(), GuestListActivity::class.java)
+    intent.putExtra("inventory", inventory)
+    intent.putExtra("position", position)
+    launcher.launch(intent)
+  }
+
   private fun handleItemClick(view: View, inventory: Inventory, position: Int) {
     val intent = Intent(requireContext(), EditInventoryActivity::class.java)
     intent.putExtra("position", position)
@@ -146,19 +157,27 @@ class DashboardFragment : Fragment() {
   private fun resultCallback(result: ActivityResult) {
     when (result.resultCode) {
       CREATED_INVENTORY -> {
-        val createdInventory = result.data?.getSerializableExtra("created", Inventory::class.java)
-        createdInventory?.let { inventory ->
+        val createdInventory = result.data?.getSerializableExtra("created") as Inventory
+        createdInventory.let { inventory ->
           inventoryAdapter.add(inventory)
         }
       }
 
       EDITED_INVENTORY -> {
         val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)
-        val editedInventory = result.data?.getSerializableExtra("edited", Inventory::class.java)
-        if (position != null && position != RecyclerView.NO_POSITION) {
-          editedInventory?.let { inventory ->
-            inventoryAdapter.update(position, inventory)
+        val editedInventory = result.data?.getSerializableExtra("edited") as Inventory
+        if (position != RecyclerView.NO_POSITION) {
+          editedInventory.let { inventory ->
+            inventoryAdapter.update(position!!, inventory)
           }
+        }
+      }
+
+      DELETE_GUEST_INVENTORY -> {
+        val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)
+        val updated = result.data?.getSerializableExtra("addGuest") as Inventory
+        if (position != RecyclerView.NO_POSITION) {
+          inventoryAdapter.update(position!!, updated)
         }
       }
 

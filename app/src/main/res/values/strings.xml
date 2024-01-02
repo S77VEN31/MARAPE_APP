@@ -4,6 +4,7 @@
     <string name="title_owned_inventories">Mis Inventarios</string>
     <string name="title_notifications">Perfil</string>
     <string name="title_activity_login">Login</string>
+    <string name="title_scan_product">Escanear Producto</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_register">RegisterActivity</string>
@@ -39,6 +40,25 @@
     <string name="edit_inventory_name">Nombre del Inventario</string>
     <string name="edit_inventory_creation_date">Fecha de Creación</string>
 
+    <string name="btn_scan_product_scan">Scan</string>
+    <string name="btn_scan_product_add">Agregar</string>
+    <string name="btn_scan_product_cancel">Cancelar</string>
+
+
+    <string name="tv_code">Código: </string>
+    <string name="tv_name">Nombre: </string>
+    <string name="tv_brand">Marca: </string>
+    <string name="tv_price">Precio: </string>
+    <string name="tv_target_price">Precio target: </string>
+    <string name="tv_description">Descripción: </string>
+    <string name="tv_size">Talla: </string>
+    <string name="tv_color">Color: </string>
+    <string name="tv_material">Material: </string>
+    <string name="tv_images">Imágenes: </string>
+    <string name="empty_text" />
+
+
+
     <string name="create_product_brand">Marca</string>
     <string name="create_product_amount">Cantidad</string>
     <string name="create_product_price">Precio</string>
@@ -63,5 +83,8 @@
 
     <string name="user_search">Buscar usuario</string>
     <string name="guest_add">Agregar invitado</string>
+
+  
+    <string name="edit_profile_save">Guardar</string>
     <string name="text_price_target">Precio Target</string>
 </resources>
