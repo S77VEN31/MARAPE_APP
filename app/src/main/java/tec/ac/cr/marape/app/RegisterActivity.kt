@@ -32,9 +32,9 @@ class RegisterActivity : AppCompatActivity() {
     setContentView(R.layout.activity_register)
 
 
-    btnRegister = findViewById(R.id.btnRegister)
-    userNameEntry = findViewById(R.id.nombre)
-    emailEntry = findViewById(R.id.correo)
+    btnRegister = findViewById(R.id.btnEditar)
+    userNameEntry = findViewById(R.id.edit_user)
+    emailEntry = findViewById(R.id.edit_email)
     passwordEntry = findViewById(R.id.contrasenia)
     confirmPasswordEntry = findViewById(R.id.confirmarContrasena)
 
@@ -107,6 +107,12 @@ class RegisterActivity : AppCompatActivity() {
         }
       }
     }
+  }
+
+  fun callLoginActivity(view: View) {
+    // Lógica para iniciar la actividad de registro
+    val intent = Intent(this, LoginActivity::class.java)
+    startActivity(intent)
   }
 
 }

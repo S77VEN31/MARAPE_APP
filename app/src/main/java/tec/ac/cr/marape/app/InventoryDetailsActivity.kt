@@ -52,9 +52,9 @@ class InventoryDetailsActivity : AppCompatActivity() {
 
     loadInventoryData(intent)
 
-    /*if (state.user.email.compareTo(inventory.ownerEmail) != 0) {
+    if (state.user.email.compareTo(inventory!!.ownerEmail) != 0) {
       binding.floatingActionButtonEditShared.visibility = View.GONE
-    }*/
+    }
   }
 
   private fun loadInventoryData(intent: Intent) {
@@ -83,9 +83,8 @@ class InventoryDetailsActivity : AppCompatActivity() {
 
   fun listInvitedUsers(view: View) {
     // launch the activity to list the users
-    val clazz = if (state.user.email.compareTo(inventory!!.ownerEmail) == 0) {
-      // TODO: Aquí se tiene que poner la clase para la actividad
-      TODO("TODO: Aquí se debe de colocar la clase que muestra los invitados.")
+    val clazz: Class<*> = if (state.user.email.compareTo(inventory!!.ownerEmail) == 0) {
+      GuestListActivity::class.java
     } else {
       InvitedUsersListGuestActivity::class.java
     }

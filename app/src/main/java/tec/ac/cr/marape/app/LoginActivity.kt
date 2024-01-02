@@ -37,7 +37,8 @@ class LoginActivity : AppCompatActivity() {
 
 
     btnInicio = findViewById(R.id.btnInicio)
-    emailEntry = findViewById(R.id.correo)
+    emailEntry = findViewById(R.id.edit_email)
+
     passwordEntry = findViewById(R.id.login_contrasenia)
 
     dialogoInicio = AlertDialog.Builder(this)
@@ -78,7 +79,11 @@ class LoginActivity : AppCompatActivity() {
 
         //Verificar Usuario
         mAuth.signInWithEmailAndPassword(email, contrasenia).addOnSuccessListener {
-          db.collection("users").document(email).get().addOnSuccessListener(::reLoginUser)
+          db.collection("users").document(email).get().addOnSuccessListener(::doInitialLogin)
+            .addOnFailureListener {
+              Toast.makeText(this@LoginActivity, it.toString(), Toast.LENGTH_LONG).show()
+              dialog.cancel()
+            }
         }.addOnFailureListener {
           Toast.makeText(
             this@LoginActivity, it.message, Toast.LENGTH_SHORT
@@ -89,7 +94,7 @@ class LoginActivity : AppCompatActivity() {
     }
   }
 
-  private fun reLoginUser(userRef: DocumentSnapshot) {
+  private fun doInitialLogin(userRef: DocumentSnapshot) {
     Log.d("Z:Login:User", userRef.reference.path)
     userRef.toObject(User::class.java)?.let {
       state.user = it
@@ -102,7 +107,7 @@ class LoginActivity : AppCompatActivity() {
     super.onStart()
     mAuth.currentUser?.let {
       it.email?.let {
-        db.collection("users").document(it).get().addOnSuccessListener(::reLoginUser)
+        db.collection("users").document(it).get().addOnSuccessListener(::doInitialLogin)
           .addOnFailureListener {
             Toast.makeText(this@LoginActivity, R.string.login_error, Toast.LENGTH_SHORT).show()
             // TODO: see if this changes anything
@@ -115,14 +120,12 @@ class LoginActivity : AppCompatActivity() {
     }
   }
 
-
   private fun launchMainActivity() {
     val intent = Intent(this, MainActivity::class.java)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
 
-    db.collection("inventories")
-      .where(Filter.equalTo("ownerEmail", state.user.email))
-      .get().addOnSuccessListener { snapshot ->
+    db.collection("inventories").where(Filter.equalTo("ownerEmail", state.user.email)).get()
+      .addOnSuccessListener { snapshot ->
         // Clear the inventories before loading any new ones
         state.inventories.clear()
         snapshot.documents.iterator().forEach { inventorySnapshot ->
@@ -135,9 +138,8 @@ class LoginActivity : AppCompatActivity() {
         finish()
       }
     // Add inventory if my email is in the invitedUsers list
-    db.collection("inventories")
-      .where(Filter.arrayContains("invitedUsers", state.user.email))
-      .get().addOnSuccessListener { snapshot ->
+    db.collection("inventories").where(Filter.arrayContains("invitedUsers", state.user.email)).get()
+      .addOnSuccessListener { snapshot ->
         // Clear the inventories before loading any new ones
         state.sharedInventories.clear()
         snapshot.documents.iterator().forEach { inventorySnapshot ->
@@ -151,3 +153,4 @@ class LoginActivity : AppCompatActivity() {
       }
   }
 }
+
