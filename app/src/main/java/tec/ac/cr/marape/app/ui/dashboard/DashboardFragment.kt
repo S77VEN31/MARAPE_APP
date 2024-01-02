@@ -26,16 +26,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.CreateInventoryActivity
+import tec.ac.cr.marape.app.InventoryDetailsActivity
 import tec.ac.cr.marape.app.R
 import tec.ac.cr.marape.app.adapter.InventoryView
 import tec.ac.cr.marape.app.databinding.FragmentDashboardBinding
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.state.State
-import tec.ac.cr.marape.app.EditInventoryActivity
-import java.io.Serializable
+
+const val CREATED_INVENTORY = 1
+const val EDITED_INVENTORY = 2
 
 class DashboardFragment : Fragment() {
 
@@ -46,8 +47,6 @@ class DashboardFragment : Fragment() {
   private lateinit var viewModel: Lazy<DashboardViewModel>
   private lateinit var db: FirebaseFirestore
   private lateinit var inventoriesRef: CollectionReference
-  private val CREATED_INVENTORY = 1
-  private val EDITED_INVENTORY = 2
   private lateinit var customAdapter: InventoryView
 
 
@@ -99,33 +98,31 @@ class DashboardFragment : Fragment() {
     recyclerView!!.adapter?.notifyDataSetChanged()
   }
 
-  private fun handleDisablingInventory(view: View, inventory: Inventory, checked: Boolean, position: Int) {
+  private fun handleDisablingInventory(
+    view: View, inventory: Inventory, checked: Boolean, position: Int
+  ) {
     inventoriesRef.document(inventory.id).update("active", checked).addOnFailureListener {
       Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
     }
   }
 
   private fun handleItemClick(view: View, inventory: Inventory, position: Int) {
-    val intent = Intent(requireContext(), EditInventoryActivity::class.java)
+    val intent = Intent(requireContext(), InventoryDetailsActivity::class.java)
     intent.putExtra("position", position)
     intent.putExtra("inventory", inventory)
     launcher.launch(intent)
   }
 
   private fun handleInventoryDeletion(view: View, inventory: Inventory, position: Int) {
-    AlertDialog.Builder(requireContext())
-      .setTitle(R.string.inventory_deletion_title)
-      .setMessage(R.string.inventory_deletion_message)
-      .setCancelable(true)
+    AlertDialog.Builder(requireContext()).setTitle(R.string.inventory_deletion_title)
+      .setMessage(R.string.inventory_deletion_message).setCancelable(true)
       .setPositiveButton(R.string.account_deletion_confirm_button_text) { _, _ ->
         inventoriesRef.document(inventory.id).delete().addOnSuccessListener {
           customAdapter.remove(inventory)
         }
-      }
-      .setNegativeButton(R.string.action_cancel) { self, _ ->
+      }.setNegativeButton(R.string.action_cancel) { self, _ ->
         self.cancel()
-      }
-      .show()
+      }.show()
   }
 
   @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -137,11 +134,12 @@ class DashboardFragment : Fragment() {
           customAdapter.add(inventory)
         }
       }
+
       EDITED_INVENTORY -> {
         val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)
-        val editedInventory = result.data?.getSerializableExtra("edited", Inventory::class.java)
+        val editedInventory = result.data?.getSerializableExtra("inventory", Inventory::class.java)
         if (position != null && position != RecyclerView.NO_POSITION) {
-          editedInventory?.let {inventory ->
+          editedInventory?.let { inventory ->
             customAdapter.update(position, inventory)
           }
         }
