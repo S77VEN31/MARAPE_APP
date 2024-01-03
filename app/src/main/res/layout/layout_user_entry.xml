@@ -25,14 +25,18 @@
             android:id="@+id/entry_user_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingStart="10dp"
             android:text="TextView"
-            android:textColor="?attr/colorPrimary" />
+            android:textColor="?attr/colorPrimary"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/entry_user_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:paddingStart="10dp"
+            android:text="TextView"
+            android:textSize="14sp" />
 
         <LinearLayout
             android:id="@+id/information_contact_user"
@@ -46,6 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
+                android:paddingStart="10dp"
                 android:text="TextView" />
 
             <TextView
@@ -71,8 +76,8 @@
 
         <ImageButton
             android:id="@+id/add_user"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="@dimen/large_button_size"
+            android:layout_height="@dimen/large_button_size"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@drawable/ic_round_add_guest"
