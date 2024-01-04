@@ -33,18 +33,18 @@ class BCScan : AppCompatActivity() {
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     supportActionBar?.title = resources.getString(R.string.title_scan_product)
 
-    binding.btnScan.setOnClickListener {
-//      intentData = "9780140157376"
-
-      if (intentData != "") {
-        val resultIntent = Intent()
-        resultIntent.putExtra("product", intentData)
-        setResult(FOUND_IN_API, resultIntent)
-        finish()
-      } else {
-        Toast.makeText(applicationContext, "Ningún código encontrado", Toast.LENGTH_SHORT).show()
-      }
-    }
+//    binding.btnScan.setOnClickListener {
+////      intentData = "9780140157376"
+//
+//      if (intentData != "") {
+//        val resultIntent = Intent()
+//        resultIntent.putExtra("product", intentData)
+//        setResult(FOUND_IN_API, resultIntent)
+//        finish()
+//      } else {
+//        Toast.makeText(applicationContext, "Ningún código encontrado", Toast.LENGTH_SHORT).show()
+//      }
+//    }
   }
 
   private fun iniBc() {
@@ -146,11 +146,7 @@ class BCScan : AppCompatActivity() {
 
     }, {
       runOnUiThread {
-        Toast.makeText(
-          this,
-          it.message,
-          Toast.LENGTH_LONG
-        ).show()
+        // TODO: agregar esta funcionalidad
       }
     })
   }
@@ -160,7 +156,6 @@ class BCScan : AppCompatActivity() {
         finish()
         true
       }
-
       else -> super.onOptionsItemSelected(item)
     }
   }
