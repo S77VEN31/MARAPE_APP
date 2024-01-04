@@ -2,6 +2,7 @@ package tec.ac.cr.marape.app
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -33,6 +34,7 @@ class ViewProduct : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_view_product)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     db = FirebaseFirestore.getInstance()
 
@@ -99,5 +101,16 @@ class ViewProduct : AppCompatActivity() {
     txtPrice.text = ""
     txtSize.text = ""
     txtTargetPrice.text = ""
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when (item.itemId) {
+      android.R.id.home -> {
+        finish()
+        true
+      }
+
+      else -> super.onOptionsItemSelected(item)
+    }
   }
 }

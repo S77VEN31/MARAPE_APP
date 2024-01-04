@@ -29,7 +29,8 @@
         <activity
             android:name=".BCScan"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:label="@string/title_scan_product"/>
 
         <activity
             android:name=".ScanProduct"
@@ -43,31 +44,32 @@
         </activity>
         <activity
             android:name=".ViewProduct"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/title_product_details"/>
         <activity
             android:name=".EditProfile"
             android:exported="false"
-            android:label="Editar Perfil" />
+            android:label="@string/title_edit_profile" />
         <activity
             android:name=".CreateProductActivity"
             android:exported="false"
-            android:label="Crear Producto" />
+            android:label="@string/title_create_product" />
         <activity
             android:name=".EditInventoryActivity"
             android:exported="false"
-            android:label="Editar Inventario" />
+            android:label="@string/title_edit_inventory" />
         <activity
             android:name=".EditProductActivity"
             android:exported="false"
-            android:label="Editar Producto" />
+            android:label="@string/title_edit_product" />
         <activity
             android:name=".AddGuestActivity"
             android:exported="false"
-            android:label="Agregar Invitado" />
+            android:label="@string/title_add_guest" />
         <activity
             android:name=".GuestListActivity"
             android:exported="false"
-            android:label="Lista invitados">
+            android:label="@string/title_guest_list">
 
             <!-- <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -78,11 +80,11 @@
         <activity
             android:name=".RegisterActivity"
             android:exported="false"
-            android:label="Registrarse" />
+            android:label="@string/title_activity_register" />
         <activity
             android:name=".LoginActivity"
             android:exported="true"
-            android:label="Iniciar Sesión">
+            android:label="@string/title_login">
 
             <!--            NOTE: comentar esta vara para que la LoginActivity deje de ser la principal-->
             <intent-filter>
@@ -93,11 +95,12 @@
         </activity>
         <activity
             android:name=".InventoryDetailsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/title_inventory_details"/>
         <activity
             android:name=".CreateInventoryActivity"
             android:exported="false"
-            android:label="Crear Inventario" />
+            android:label="@string/title_create_inventory" />
         <activity
             android:name=".MainActivity"
             android:exported="false">
