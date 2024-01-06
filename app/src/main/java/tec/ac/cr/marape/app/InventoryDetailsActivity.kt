@@ -101,6 +101,13 @@ class InventoryDetailsActivity : AppCompatActivity() {
     launcher.launch(intent)
   }
 
+  fun listProducts(view: View) {
+    val intent = Intent(this, ProductListActivity::class.java)
+    intent.putExtra("position", position)
+    intent.putExtra("inventory", inventory)
+    launcher.launch(intent)
+  }
+
   private fun resultHandler(result: ActivityResult) {
     when (result.resultCode) {
       EDITED_INVENTORY -> {

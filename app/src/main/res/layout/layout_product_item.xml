@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/rounded_corners_drawable"
+    android:elevation="2dp"
+    android:outlineProvider="background"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:id="@+id/linearLayoutEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/product_name"
+            style="@style/Widget.MaterialComponents.TextView"
+            android:layout_width="162dp"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Mi Producto"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="?attr/colorPrimary"
+            android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/product_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="TextView"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textStyle="italic" />
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/product_amount"
+                style="@style/Widget.MaterialComponents.TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="TextView"
+                app:drawableStartCompat="@drawable/ic_rounded_groups"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageButton
+            android:id="@+id/unlink_product_button"
+            android:layout_width="45dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/person_add_fill0_wght400_grad0_opsz24" />
+
+        <ImageButton
+            android:id="@+id/delete_product_button"
+            android:layout_width="45dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:foregroundTintMode="add"
+            android:src="@drawable/ic_round_delete"
+            android:tint="@color/danger"
+            android:tintMode="src_in" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
