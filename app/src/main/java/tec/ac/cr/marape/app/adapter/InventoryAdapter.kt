@@ -21,7 +21,7 @@ class InventoryAdapter(var inventories: ArrayList<Inventory>) :
   RecyclerView.Adapter<InventoryAdapter.ViewHolder>(), Filterable {
 
 
-  var filteredInventories = ArrayList(inventories)
+  var filteredInventories = inventories
 
   private val locale = Locale("es", "CR")
   private val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
@@ -76,42 +76,36 @@ class InventoryAdapter(var inventories: ArrayList<Inventory>) :
     val idx = inventories.indexOfFirst {
       it.id == inventory.id
     }
+
     if (idx != -1) {
-      inventories.removeAt(idx)
+      inventories.removeAt(idx) // This index is the internal index in the internal list.
     }
 
-    filteredInventories.removeAt(position)
-    notifyItemRemoved(position)
+    notifyItemRemoved(position) // This index is the external index on the recycler view, they're not always the same
   }
 
   fun add(inventory: Inventory) {
     inventories.add(0, inventory)
-    filteredInventories.add(0, inventory)
     notifyItemInserted(0)
   }
 
-  // TODO: Make this function also work for all cases, right now if I update an inventory while in
-  //  search mode it won't update the correct one
   fun update(position: Int, inventory: Inventory) {
     val idx = inventories.indexOfFirst {
       it.id.compareTo(inventory.id) == 0
     }
-    // These are NOT the same indices, because the user could update
-    // an inventory in search mode, and that inventory will have a different index
-    // in either list, so it's best to not use the same index, the position can be used
-    // to update the filteredInventories array because that's the one that's being shown
-    // on screen.
-    inventories[idx] = inventory
-    filteredInventories[position] = inventory
-    notifyItemChanged(position)
+
+    if (idx != -1) {
+      inventories[idx] = inventory
+      notifyItemChanged(position)
+    }
   }
 
-  fun toggle(position: Int, inventory: Inventory, state: Boolean) {
+  fun toggle(inventory: Inventory, state: Boolean) {
     val idx = inventories.indexOfFirst {
       it.id.compareTo(inventory.id) == 0
     }
+
     inventories[idx].active = state
-    filteredInventories[position].active = state
   }
 
   fun setDeleteHandler(handler: (View, Inventory, Int) -> Unit) {
