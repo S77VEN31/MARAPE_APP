@@ -148,7 +148,11 @@ class InventoryAdapter(var inventories: ArrayList<Inventory>) :
 
       filteredInventories = if (query.isEmpty()) inventories else {
         inventories.filter {
-          FuzzySearch.ratio(query, it.name) > 20
+          val values = mutableListOf(it.name)
+          values.addAll(it.invitedUsers)
+          values.any { value ->
+            FuzzySearch.partialRatio(value, query) > 50
+          }
         } as ArrayList<Inventory>
       }
 
