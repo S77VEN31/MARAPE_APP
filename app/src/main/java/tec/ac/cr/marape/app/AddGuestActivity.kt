@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import me.xdrop.fuzzywuzzy.FuzzySearch
 import tec.ac.cr.marape.app.adapter.UserView
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.User
@@ -123,18 +124,12 @@ class AddGuestActivity : AppCompatActivity() {
 
   private fun searchUser(userList: MutableList<User>, query: String): MutableList<User> {
     return if (query.isNotEmpty()) {
-      val searchResults = mutableListOf<User>()
-      for (user in userList) {
+      userList.filter { user ->
         val userFields = listOf(user.name, user.email, user.phone, user.country)
-        // Checks if any of the strings contain the query
-        val matches = userFields.any { field ->
-          field.lowercase().contains(query.lowercase())
+        userFields.any { field ->
+          FuzzySearch.partialRatio(field, query) > 50
         }
-        if (matches) {
-          searchResults.add(user)
-        }
-      }
-      searchResults
+      } as MutableList<User>
     } else {
       userList
     }

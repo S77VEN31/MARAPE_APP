@@ -115,23 +115,12 @@ class GuestListActivity : AppCompatActivity() {
 
   private fun fuzzySearchGuest(guestList: MutableList<User>, query: String): MutableList<User> {
     return if (query.isNotEmpty()) {
-      val newList = mutableListOf<User>()
-
-      for (user in guestList) {
-        val userFields = listOf(user.name, user.email)
-
-        val matches = userFields.any { field ->
-          FuzzySearch.ratio(
-            query.lowercase(), field.lowercase()
-          ) >= 80
+      guestList.filter {
+        val userFields = listOf(it.name, it.email)
+        userFields.any { field ->
+          FuzzySearch.partialRatio(query, field) > 50
         }
-
-        if (matches) {
-          newList.add(user)
-        }
-
-      }
-      newList
+      } as MutableList<User>
     } else {
       guestList
     }
