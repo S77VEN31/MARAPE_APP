@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import android.widget.ImageButton
-import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.switchmaterial.SwitchMaterial
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import tec.ac.cr.marape.app.R
 import tec.ac.cr.marape.app.ellipsize
@@ -134,7 +134,7 @@ class InventoryAdapter(var inventories: ArrayList<Inventory>) :
     val creationDate: TextView = itemView.findViewById(R.id.entry_inventory_creation_date)
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
-    val statusSwitch: Switch = itemView.findViewById(R.id.entry_inventory_status_switch)
+    val statusSwitch: SwitchMaterial = itemView.findViewById(R.id.entry_inventory_status_switch)
     val collaborators: TextView = itemView.findViewById(R.id.entry_inventory_collaborators)
     val addCollaboratorButton: ImageButton =
       itemView.findViewById(R.id.entry_add_collaborator_button)
