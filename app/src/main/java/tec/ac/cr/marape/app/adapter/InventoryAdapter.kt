@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import tec.ac.cr.marape.app.R
+import tec.ac.cr.marape.app.ellipsize
 import tec.ac.cr.marape.app.model.Inventory
 import java.text.DateFormat
 import java.util.Date
@@ -44,7 +45,7 @@ class InventoryAdapter(var inventories: ArrayList<Inventory>) :
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
     val currentInventory = filteredInventories[position]
-    holder.inventoryName.text = currentInventory.name
+    holder.inventoryName.text = currentInventory.name.ellipsize(25)
     holder.creationDate.text = formatter.format(Date(currentInventory.creationDate)).toString()
     holder.statusSwitch.isChecked = currentInventory.active
     holder.collaborators.text = currentInventory.invitedUsers.size.toString()
