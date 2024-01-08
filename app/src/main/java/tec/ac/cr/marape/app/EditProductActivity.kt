@@ -28,6 +28,7 @@ class EditProductActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_edit_product)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     name = findViewById(R.id.edit_product_name)
     brand = findViewById(R.id.edit_product_brand)
@@ -40,7 +41,7 @@ class EditProductActivity : AppCompatActivity() {
     ourPrice = findViewById(R.id.edit_product_our_price)
     save = findViewById(R.id.edit_product_save_changes)
 
-    productId = intent.getStringExtra("productId")!!
+    productId = intent.getStringExtra("product_id")!!
     productRef = db.collection("products").document(productId)
 
     fillOutFields()
@@ -116,5 +117,4 @@ class EditProductActivity : AppCompatActivity() {
       else -> super.onOptionsItemSelected(item)
     }
   }
-
 }
