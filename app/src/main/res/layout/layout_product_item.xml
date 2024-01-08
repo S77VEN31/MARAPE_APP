@@ -65,22 +65,33 @@
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:text="TextView"
-                app:drawableStartCompat="@drawable/ic_rounded_groups"
+                app:drawableStartCompat="@drawable/ic_round_group_products"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageButton
+            android:id="@+id/edit_product_button"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/edit_fill0_wght400_grad0_opsz24"
+            android:src="@drawable/edit_fill0_wght400_grad0_opsz24"
+            android:tint="@color/black" />
+
+        <ImageButton
             android:id="@+id/unlink_product_button"
-            android:layout_width="45dp"
+            android:layout_width="40dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackground"
-            android:src="@drawable/person_add_fill0_wght400_grad0_opsz24" />
+            android:src="@drawable/ic_round_unlink" />
 
         <ImageButton
             android:id="@+id/delete_product_button"
-            android:layout_width="45dp"
+            android:layout_width="40dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackground"
