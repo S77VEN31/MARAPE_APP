@@ -4,4 +4,28 @@
         <item>Inactivo</item>
         <item>Activo</item>
     </string-array>
+
+    <string-array name="countries">
+        <item>Costa Rica</item>
+        <item>Argentina</item>
+        <item>Brasil</item>
+        <item>Canadá</item>
+        <item>Dinamarca</item>
+        <item>Egipto</item>
+        <item>Francia</item>
+        <item>Grecia</item>
+        <item>Honduras</item>
+        <item>India</item>
+        <item>Japón</item>
+        <item>Kenia</item>
+        <item>Líbano</item>
+        <item>México</item>
+        <item>Noruega</item>
+        <item>Omán</item>
+        <item>Perú</item>
+        <item>Qatar</item>
+        <item>Rusia</item>
+        <item>Suecia</item>
+        <item>Tailandia</item>
+    </string-array>
 </resources>
