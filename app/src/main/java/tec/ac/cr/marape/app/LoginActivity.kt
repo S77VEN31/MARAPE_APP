@@ -3,6 +3,7 @@ package tec.ac.cr.marape.app
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -36,7 +37,8 @@ class LoginActivity : AppCompatActivity() {
 
 
     btnInicio = findViewById(R.id.btnInicio)
-    emailEntry = findViewById(R.id.correo)
+    emailEntry = findViewById(R.id.edit_email)
+
     passwordEntry = findViewById(R.id.login_contrasenia)
 
     dialogoInicio = AlertDialog.Builder(this)
@@ -44,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
     mAuth = FirebaseAuth.getInstance()
 
     db = FirebaseFirestore.getInstance()
-    state = State.getInstance(baseContext)
+    state = State.getInstance()
 
   }
 
@@ -93,23 +95,19 @@ class LoginActivity : AppCompatActivity() {
   }
 
   private fun doInitialLogin(userRef: DocumentSnapshot) {
-    val user = userRef.toObject(User::class.java)
-    user?.let { got ->
-      state.user = got
-      //Redireccionar al MainActivity
+    Log.d("Z:Login:User", userRef.reference.path)
+    userRef.toObject(User::class.java)?.let {
+      state.user = it
+      state.user.ref = userRef.reference
       launchMainActivity()
-    } ?: run {
-      // TODO: Same as below, either fix the issue or at least tell the user that there's been something wrong
-      finish()
     }
-
   }
 
   override fun onStart() {
     super.onStart()
     mAuth.currentUser?.let {
       it.email?.let {
-        db.collection("users").document(it).get().addOnSuccessListener(::reLoginUser)
+        db.collection("users").document(it).get().addOnSuccessListener(::doInitialLogin)
           .addOnFailureListener {
             Toast.makeText(this@LoginActivity, R.string.login_error, Toast.LENGTH_SHORT).show()
             // TODO: see if this changes anything
@@ -122,20 +120,10 @@ class LoginActivity : AppCompatActivity() {
     }
   }
 
-  private fun reLoginUser(userRef: DocumentSnapshot) {
-    userRef.toObject(User::class.java)?.let {
-      state.user = it
-      launchMainActivity()
-    }
-  }
-
   private fun launchMainActivity() {
     val intent = Intent(this, MainActivity::class.java)
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
 
-    db.collection("inventories")
-      .where(Filter.equalTo("ownerEmail", state.user.email))
-      .get()
+    db.collection("inventories").where(Filter.equalTo("ownerEmail", state.user.email)).get()
       .addOnSuccessListener { snapshot ->
         // Clear the inventories before loading any new ones
         state.inventories.clear()
@@ -144,10 +132,24 @@ class LoginActivity : AppCompatActivity() {
           inventory?.id = inventorySnapshot.id
           inventory?.let { state.inventories.add(it) }
         }
+
+        startActivity(intent)
+        finish()
+      }
+    // Add inventory if my email is in the invitedUsers list
+    db.collection("inventories").where(Filter.arrayContains("invitedUsers", state.user.email)).get()
+      .addOnSuccessListener { snapshot ->
+        // Clear the inventories before loading any new ones
+        state.sharedInventories.clear()
+        snapshot.documents.iterator().forEach { inventorySnapshot ->
+          val inventory = inventorySnapshot.toObject(Inventory::class.java)
+          inventory?.id = inventorySnapshot.id
+          inventory?.let { state.sharedInventories.add(it) }
+        }
         // TODO: Find a non blocking way of doing this
         startActivity(intent)
         finish()
       }
   }
-
 }
+

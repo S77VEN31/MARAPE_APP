@@ -45,13 +45,6 @@
                 android:hint="@string/edit_inventory_creation_date"
                 android:inputType="text" />
 
-            <Spinner
-                android:id="@+id/edit_inventory_products"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_margin="10dp"
-                android:background="@drawable/style_border" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -62,28 +55,6 @@
             android:gravity="center"
             android:orientation="vertical"
             android:textAlignment="center">
-
-            <Button
-                android:id="@+id/button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/style_border"
-                android:text="@string/edit_inventory_remove_product" />
-
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/style_border"
-                android:text="@string/edit_inventory_add_product" />
 
             <Button
                 android:id="@+id/edit_inventory_save_button"

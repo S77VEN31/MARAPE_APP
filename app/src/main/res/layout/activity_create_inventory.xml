@@ -51,17 +51,6 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/create_inventory_add_product_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/style_border"
-                android:onClick="addProduct"
-                android:text="@string/add_product" />
-
-            <Button
                 android:id="@+id/create_inventory_confirm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

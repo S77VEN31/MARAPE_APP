@@ -1,10 +1,12 @@
 package tec.ac.cr.marape.app
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,10 +17,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import tec.ac.cr.marape.app.databinding.ActivityCreateProductBinding
 import tec.ac.cr.marape.app.model.Product
-import tec.ac.cr.marape.app.networking.RemoteApi
 import java.util.Date
-import java.util.Timer
-import kotlin.concurrent.schedule
+
+
+const val FOUND_IN_API = 1
+const val FOUND_IN_DATABASE = 2
+const val NOT_FOUND = 3
 
 
 class CreateProductActivity : AppCompatActivity() {
@@ -27,29 +31,66 @@ class CreateProductActivity : AppCompatActivity() {
   private val binding get() = _binding!!
 
   private val product = Product()
-  private var timer = Timer()
-  private lateinit var launcher: ActivityResultLauncher<PickVisualMediaRequest>
+  private lateinit var launcher: ActivityResultLauncher<Intent>
+  private var requestCamera: ActivityResultLauncher<String>? = null
+  private lateinit var mediaLauncher: ActivityResultLauncher<PickVisualMediaRequest>
   private lateinit var db: FirebaseFirestore
   private lateinit var storage: FirebaseStorage
   private var selectedImages = emptyList<Uri>()
 
 
   private fun handleImageSelection(result: List<Uri>) {
-    selectedImages = result as ArrayList<Uri>
+    selectedImages = result
     binding.createProductImageCount.text = result.size.toString()
+  }
+
+  private fun resultCallback(result: ActivityResult) {
+    when (result.resultCode) {
+      FOUND_IN_API -> {
+        val prod = result.data!!.getSerializableExtra("product") as Product
+        // Llenar los campos.
+        binding.createProductBarcode.setText(prod.barcode)
+        binding.createProductName.setText(prod.name)
+        binding.createProductBrand.setText(prod.brand)
+        binding.createProductDescription.setText(prod.description)
+        binding.createProductColor.setText(prod.color)
+        binding.createProductMaterial.setText(prod.material)
+        binding.createProductSize.setText(prod.size)
+      }
+
+      FOUND_IN_DATABASE -> {
+        Toast.makeText(this, "Producto agregado al inventario", Toast.LENGTH_SHORT).show()
+        finish()
+      }
+    }
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     _binding = ActivityCreateProductBinding.inflate(layoutInflater)
+    setContentView(binding.root)
     db = FirebaseFirestore.getInstance()
     storage = FirebaseStorage.getInstance()
-    launcher = registerForActivityResult(
-      ActivityResultContracts.PickMultipleVisualMedia(),
-      ::handleImageSelection
+    mediaLauncher = registerForActivityResult(
+      ActivityResultContracts.PickMultipleVisualMedia(), ::handleImageSelection
     )
-    setContentView(binding.root)
 
+    launcher =
+      registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ::resultCallback)
+
+    requestCamera = registerForActivityResult(
+      ActivityResultContracts.RequestPermission(),
+    ) {
+      if (it) {
+        val intent = Intent(this, BCScan::class.java)
+        launcher.launch(intent)
+      } else {
+        Toast.makeText(this, "Permiso denegado", Toast.LENGTH_SHORT).show()
+      }
+    }
+    binding.scanProduct.setOnClickListener {
+      requestCamera?.launch(android.Manifest.permission.CAMERA)
+    }
     binding.createProductName.addTextChangedListener {
       product.name = it.toString()
     }
@@ -59,12 +100,7 @@ class CreateProductActivity : AppCompatActivity() {
     }
 
     binding.createProductBarcode.doAfterTextChanged {
-      timer.cancel()
-      timer = Timer()
-      timer.schedule(500L) {
-        product.barcode = it.toString()
-        fetchTargetPrice(product.barcode)
-      }
+      product.barcode = it.toString()
     }
 
     binding.createProductAmount.addTextChangedListener {
@@ -95,39 +131,6 @@ class CreateProductActivity : AppCompatActivity() {
     binding.createProductOurPrice.addTextChangedListener {
       product.price = it.toString().toFloat()
     }
-  }
-
-  private fun fetchTargetPrice(code: String) {
-    RemoteApi.getProduct(code, { res ->
-      if (res.products.isNotEmpty()) {
-        val prod = res.products[0]
-        val target = prod.stores.find {
-          it.name.contains(
-            "target",
-            true
-          )
-        }
-
-        binding.createProductName.setText(prod.title)
-        binding.createProductBrand.setText(prod.brand)
-        binding.createProductDescription.setText(prod.description)
-        binding.createProductColor.setText(prod.color)
-        binding.createProductMaterial.setText(prod.material)
-        binding.createProductSize.setText(prod.size)
-
-        target?.let {
-          binding.createProductPrice.setText(it.price)
-        }
-      }
-    }, {
-      runOnUiThread {
-        Toast.makeText(
-          this@CreateProductActivity,
-          R.string.barcode_not_found_error,
-          Toast.LENGTH_LONG
-        ).show()
-      }
-    })
   }
 
   private fun validate(): Boolean {
@@ -167,7 +170,6 @@ class CreateProductActivity : AppCompatActivity() {
     return validationErrors.isEmpty()
   }
 
-
   fun createProduct(view: View) {
     if (!validate()) return
 
@@ -186,9 +188,7 @@ class CreateProductActivity : AppCompatActivity() {
     product.id = doc.id
     doc.set(product).addOnSuccessListener {
       Toast.makeText(
-        this@CreateProductActivity,
-        R.string.create_product_success,
-        Toast.LENGTH_LONG
+        this@CreateProductActivity, R.string.create_product_success, Toast.LENGTH_LONG
       ).show()
       finish()
     }.addOnFailureListener {
@@ -201,6 +201,6 @@ class CreateProductActivity : AppCompatActivity() {
   }
 
   fun addImages(view: View) {
-    launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    mediaLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
   }
 }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.notifications.NotificationsFragment">
+    tools:context=".InventoryDetailsActivity">
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -27,12 +27,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:text="@string/user_profile_username"
+                android:text="@string/inventory_details_name"
                 android:textColor="#000000"
                 android:textSize="24sp" />
 
             <TextView
-                android:id="@+id/et_user"
+                android:id="@+id/shared_inventory_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
@@ -50,12 +50,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:text="@string/user_profile_email"
+                android:text="@string/inventory_details_creation_date"
                 android:textColor="#000000"
                 android:textSize="24sp" />
 
             <TextView
-                android:id="@+id/et_email"
+                android:id="@+id/shared_inventory_creation_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
@@ -73,12 +73,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:text="@string/user_profile_country"
+                android:text="@string/inventory_details_status"
                 android:textColor="#000000"
                 android:textSize="24sp" />
 
             <TextView
-                android:id="@+id/et_Country"
+                android:id="@+id/shared_inventory_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
@@ -96,30 +96,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:text="@string/user_profile_phone"
+                android:text="@string/inventory_details_owner"
                 android:textColor="#000000"
                 android:textSize="24sp" />
 
             <TextView
-                android:id="@+id/et_Phone"
+                android:id="@+id/shared_inventory_owner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
                 android:textSize="16sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <Switch
-                android:id="@+id/switch_price_target"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:text="@string/text_price_target" />
         </LinearLayout>
 
     </LinearLayout>
@@ -134,13 +120,15 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/btnSignOff"
+            android:id="@+id/btnInvitedUsers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:background="@drawable/style_border"
             android:backgroundTintMode="multiply"
-            android:text="@string/text_log_out" />
+            android:text="@string/inventory_details_guests"
+             android:onClick="listInvitedUsers"
+             />
 
         <Button
             android:id="@+id/deleteAccount"
@@ -148,17 +136,46 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:background="@drawable/style_border"
-            android:text="@string/text_delete_account" />
+            android:text="@string/inventory_details_products" />
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/floatingActionButtonEditShared"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:onClick="editInventory"
+        android:src="@drawable/edit_fill0_wght400_grad0_opsz24"
+        android:tint="?attr/colorOnPrimary"
+        android:tintMode="src_in"
+        app:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@+id/floatingActionButtonShareShared"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButtonShareShared"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         android:clickable="true"
-        android:src="@drawable/edit_fill0_wght400_grad0_opsz24"
+        android:src="@drawable/share_fill0_wght400_grad0_opsz24"
+        android:tint="?attr/colorOnPrimary"
+        android:tintMode="src_in"
+        app:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="100dp"
+        android:layout_marginBottom="24dp"
+        android:clickable="true"
+        android:src="@drawable/add_fill0_wght400_grad0_opsz24"
         android:tint="?attr/colorOnPrimary"
         android:tintMode="src_in"
         app:backgroundTint="?attr/colorPrimary"
