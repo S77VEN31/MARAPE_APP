@@ -81,6 +81,9 @@ class InventoryAdapter(var inventories: ArrayList<Inventory>) :
     if (idx != -1) {
       inventories.removeAt(idx) // This index is the internal index in the internal list.
     }
+    if (inventories != filteredInventories) {
+      filteredInventories.removeAt(position)
+    }
 
     notifyItemRemoved(position) // This index is the external index on the recycler view, they're not always the same
   }
@@ -147,7 +150,7 @@ class InventoryAdapter(var inventories: ArrayList<Inventory>) :
 
       val query = constraint?.toString() ?: ""
 
-      filteredInventories = if (query.isEmpty()) inventories else {
+      val filteredInventories = if (query.isEmpty()) inventories else {
         inventories.filter {
           val values = mutableListOf(it.name)
           values.addAll(it.invitedUsers)
