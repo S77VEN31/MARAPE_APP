@@ -71,11 +71,16 @@ class CreateProductActivity : AppCompatActivity() {
         addProductToInventory(prod)
         finish()
       }
+
+      NOT_FOUND -> {
+        Toast.makeText(this, "Producto no encontrado", Toast.LENGTH_SHORT).show()
+      }
     }
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
     _binding = ActivityCreateProductBinding.inflate(layoutInflater)
     setContentView(binding.root)
     db = FirebaseFirestore.getInstance()
@@ -233,6 +238,17 @@ class CreateProductActivity : AppCompatActivity() {
       }
 
   }
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when (item.itemId) {
+      android.R.id.home -> {
+        finish()
+        true
+      }
+
+      else -> super.onOptionsItemSelected(item)
+    }
+  }
+
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
       android.R.id.home -> {
