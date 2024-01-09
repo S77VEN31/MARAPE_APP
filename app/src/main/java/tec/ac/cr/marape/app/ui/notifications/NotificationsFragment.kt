@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import tec.ac.cr.marape.app.EditProfile
+import tec.ac.cr.marape.app.ExportProductsActivity
 import tec.ac.cr.marape.app.LoginActivity
 import tec.ac.cr.marape.app.R
 import tec.ac.cr.marape.app.databinding.FragmentNotificationsBinding
@@ -30,21 +31,25 @@ class NotificationsFragment : Fragment() {
   private lateinit var launcher: ActivityResultLauncher<Intent>
 
   private lateinit var state: State
+  private var checked = false
 
   override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
+    inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
   ): View {
     _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
     launcher = registerForActivityResult(
-      ActivityResultContracts.StartActivityForResult(),
-      ::activityResultHandler
+      ActivityResultContracts.StartActivityForResult(), ::activityResultHandler
     )
+
     val root: View = binding.root
 
     mAuth = FirebaseAuth.getInstance()
     state = State.getInstance()
+
+    val sharedPreferences = requireContext().getSharedPreferences(
+      "user_preferences_${state.user.email}", Context.MODE_PRIVATE
+    )
+    checked = sharedPreferences.getBoolean("price_target", false)
     return root
   }
 
@@ -61,6 +66,7 @@ class NotificationsFragment : Fragment() {
     binding.etUser.text = state.user.name
     binding.etCountry.text = state.user.country
     binding.etPhone.text = state.user.phone
+    binding.switchPriceTarget.isChecked = checked
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -81,23 +87,26 @@ class NotificationsFragment : Fragment() {
     binding.deleteAccount.setOnClickListener {
       deleteAccount()
     }
-        
+
     // Botón para editar perfil
     binding.floatingActionButton.setOnClickListener {
       val edit = Intent(requireContext(), EditProfile::class.java)
       launcher.launch(edit)
     }
-    
-    
+
+
     binding.switchPriceTarget.setOnClickListener {
       val currentState = binding.switchPriceTarget.isChecked
       savePreference(currentState, state.user.email)
     }
 
+
+    binding.btnExportProducts.setOnClickListener(this::exportProducts)
   }
 
-  private fun savePreference(currentState: Boolean, email: String){
-    val sharedPreferences = requireContext().getSharedPreferences("user_preferences_$email", Context.MODE_PRIVATE)
+  private fun savePreference(currentState: Boolean, email: String) {
+    val sharedPreferences =
+      requireContext().getSharedPreferences("user_preferences_$email", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
     editor.putBoolean("price_target", currentState)
     editor.apply()
@@ -132,4 +141,10 @@ class NotificationsFragment : Fragment() {
     super.onDestroyView()
     _binding = null
   }
+
+  private fun exportProducts(view: View) {
+    val intent = Intent(requireContext(), ExportProductsActivity::class.java)
+    startActivity(intent)
+  }
+
 }

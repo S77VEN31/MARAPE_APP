@@ -134,6 +134,15 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
+            android:id="@+id/btnExportProducts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/style_border"
+            android:backgroundTintMode="multiply"
+            android:text="@string/text_products" />
+
+        <Button
             android:id="@+id/btnSignOff"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

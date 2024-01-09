@@ -80,6 +80,7 @@ class DashboardFragment : Fragment() {
         val searchItem: MenuItem = menu.findItem(R.id.search_inventory)
         (searchItem.actionView as SearchView).setOnQueryTextListener(object :
           SearchView.OnQueryTextListener {
+
           override fun onQueryTextSubmit(query: String?): Boolean {
             return false
           }
@@ -105,10 +106,10 @@ class DashboardFragment : Fragment() {
     view: View, inventory: Inventory, checked: Boolean, position: Int
   ) {
     inventoriesRef.document(inventory.id).update("active", checked).addOnSuccessListener {
-        inventoryAdapter.toggle(position, inventory, checked)
-      }.addOnFailureListener {
-        Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
-      }
+      inventoryAdapter.toggle(inventory, checked)
+    }.addOnFailureListener {
+      Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+    }
   }
 
   private fun handleListCollaborators(view: View, inventory: Inventory, position: Int) {
@@ -156,7 +157,7 @@ class DashboardFragment : Fragment() {
 
       EDITED_INVENTORY -> {
         val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)!!
-        val editedInventory = result.data?.getSerializableExtra("edited") as Inventory
+        val editedInventory = result.data?.getSerializableExtra("inventory") as Inventory
         if (position != RecyclerView.NO_POSITION) {
           editedInventory.let { inventory ->
             inventoryAdapter.update(position, inventory)
@@ -165,10 +166,10 @@ class DashboardFragment : Fragment() {
       }
 
       DELETE_GUEST_INVENTORY -> {
-        val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)
+        val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)!!
         val updated = result.data?.getSerializableExtra("addGuest") as Inventory
         if (position != RecyclerView.NO_POSITION) {
-          inventoryAdapter.update(position!!, updated)
+          inventoryAdapter.update(position, updated)
         }
       }
 

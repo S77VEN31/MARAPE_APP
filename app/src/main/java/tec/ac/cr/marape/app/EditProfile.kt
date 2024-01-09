@@ -62,18 +62,13 @@ class EditProfile : AppCompatActivity() {
   }
 
   private fun setupCountriesSpinner() {
-    val elementos = listOf(
-      "Argentina", "Brasil", "Canadá", "Dinamarca", "Egipto",
-      "Francia", "Grecia", "Honduras", "India", "Japón",
-      "Kenia", "Líbano", "México", "Noruega", "Omán",
-      "Perú", "Qatar", "Rusia", "Suecia", "Tailandia"
-    )
-    val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, elementos)
+    val countries = resources.getStringArray(R.array.countries)
+    val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, countries)
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
     spinner.adapter = adapter
 
     val userCountry = state.user.country
-    val position = elementos.indexOf(userCountry)
+    val position = countries.indexOf(userCountry)
     if (position != -1) {
       spinner.setSelection(position)
     }
@@ -89,25 +84,17 @@ class EditProfile : AppCompatActivity() {
     user.country = newCountry
     user.phone = newPhone
 
-    db.collection("users")
-      .document(user.email)
-      .set(user)
-      .addOnSuccessListener {
-        state.user = user
-        Toast.makeText(
-          this@EditProfile,
-          "Cambios guardados correctamente",
-          Toast.LENGTH_SHORT
-        ).show()
-        setResult(Activity.RESULT_OK)
-        finish()
-      }
-      .addOnFailureListener {
-        Toast.makeText(
-          this@EditProfile,
-          "No se pudieron guardar los cambios",
-          Toast.LENGTH_SHORT
-        ).show()
-      }
+    db.collection("users").document(user.email).set(user).addOnSuccessListener {
+      state.user = user
+      Toast.makeText(
+        this@EditProfile, "Cambios guardados correctamente", Toast.LENGTH_SHORT
+      ).show()
+      setResult(Activity.RESULT_OK)
+      finish()
+    }.addOnFailureListener {
+      Toast.makeText(
+        this@EditProfile, "No se pudieron guardar los cambios", Toast.LENGTH_SHORT
+      ).show()
+    }
   }
 }

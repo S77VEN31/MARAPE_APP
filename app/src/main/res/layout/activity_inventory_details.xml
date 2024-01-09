@@ -136,7 +136,9 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:background="@drawable/style_border"
-            android:text="@string/inventory_details_products" />
+            android:text="@string/inventory_details_products"
+            android:onClick="listProducts"
+            />
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

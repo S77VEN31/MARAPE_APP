@@ -1,52 +1,35 @@
 package tec.ac.cr.marape.app
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import tec.ac.cr.marape.app.databinding.ActivityEditProductBinding
 import tec.ac.cr.marape.app.model.Product
 
 class EditProductActivity : AppCompatActivity() {
   private val db = FirebaseFirestore.getInstance()
-  private lateinit var name: EditText
-  private lateinit var brand: EditText
-  private lateinit var quantity: EditText
-  private lateinit var description: EditText
-  private lateinit var price: EditText
-  private lateinit var color: EditText
-  private lateinit var material: EditText
-  private lateinit var size: EditText
-  private lateinit var ourPrice: EditText
-  private lateinit var save: Button
+  private lateinit var binding: ActivityEditProductBinding
   private lateinit var productId: String
   private lateinit var productRef: DocumentReference
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_edit_product)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    name = findViewById(R.id.edit_product_name)
-    brand = findViewById(R.id.edit_product_brand)
-    quantity = findViewById(R.id.edit_product_quantity)
-    description = findViewById(R.id.edit_product_description)
-    price = findViewById(R.id.edit_product_price)
-    color = findViewById(R.id.edit_product_color)
-    material = findViewById(R.id.edit_product_material)
-    size = findViewById(R.id.edit_product_size)
-    ourPrice = findViewById(R.id.edit_product_our_price)
-    save = findViewById(R.id.edit_product_save_changes)
+    binding = ActivityEditProductBinding.inflate(layoutInflater)
+    setContentView(binding.root)
 
-    productId = intent.getStringExtra("productId")!!
+    productId = intent.getStringExtra("product_id")!!
     productRef = db.collection("products").document(productId)
 
     fillOutFields()
 
-    save.setOnClickListener {
-      if (!validateFields()){
+    binding.editProductSaveChanges.setOnClickListener {
+      if (!validateFields()) {
         updateProduct()
       } else {
         Toast.makeText(this, "Debe completar todos los campos", Toast.LENGTH_SHORT).show()
@@ -55,23 +38,30 @@ class EditProductActivity : AppCompatActivity() {
 
   }
 
-  private fun validateFields(): Boolean{
-    return (name.text.isNullOrEmpty() || brand.text.isNullOrEmpty() || quantity.text.isNullOrEmpty() ||
-      description.text.isNullOrEmpty() || price.text.isNullOrEmpty() || color.text.isNullOrEmpty()
-      || material.text.isNullOrEmpty() || size.text.isNullOrEmpty() || ourPrice.text.isNullOrEmpty())
+  private fun validateFields(): Boolean {
+    return (binding.editProductName.text.isNullOrEmpty() || binding.editProductBrand.text.isNullOrEmpty() || binding.editProductDescription.text.isNullOrEmpty() || binding.editProductColor.text.isNullOrEmpty() || binding.editProductQuantity.text.isNullOrEmpty() || binding.editProductMaterial.text.isNullOrEmpty() || binding.editProductSize.text.isNullOrEmpty() || binding.editProductPrice.text.isNullOrEmpty())
   }
 
-  private fun updateProduct(){
+  private fun updateProduct() {
     productRef.update(
-      "name", name.text.toString(),
-      "brand", brand.text.toString(),
-      "description", description.text.toString(),
-      "color", color.text.toString(),
-      "material", material.text.toString(),
-      "size", size.text.toString(),
-      "amount", quantity.text.toString().toInt(),
-      "price", price.text.toString().toFloat(),
-      "targetPrice", ourPrice.text.toString().toFloat()
+      "name",
+      binding.editProductName.text.toString(),
+      "brand",
+      binding.editProductBrand.text.toString(),
+      "description",
+      binding.editProductDescription.text.toString(),
+      "color",
+      binding.editProductColor.text.toString(),
+      "material",
+      binding.editProductMaterial.text.toString(),
+      "size",
+      binding.editProductSize.text.toString(),
+      "amount",
+      binding.editProductQuantity.text.toString().toInt(),
+      "price",
+      binding.editProductPrice.text.toString().toFloat(),
+      "targetPrice",
+      binding.editProductOurPrice.text.toString().toFloat()
     ).addOnSuccessListener {
       Toast.makeText(this, "Producto actualizado con éxito", Toast.LENGTH_SHORT).show()
     }.addOnFailureListener {
@@ -80,30 +70,28 @@ class EditProductActivity : AppCompatActivity() {
   }
 
 
-  private fun fillOutFields(){
-    productRef.get()
-      .addOnSuccessListener { documentSnapshot ->
-        if (documentSnapshot.exists()) {
-          val product = documentSnapshot.toObject(Product::class.java)
+  private fun fillOutFields() {
+    productRef.get().addOnSuccessListener { documentSnapshot ->
+      if (documentSnapshot.exists()) {
+        val product = documentSnapshot.toObject(Product::class.java)
 
-          product?.let {
-            name.setText(it.name)
-            brand.setText(it.brand)
-            description.setText(it.description)
-            color.setText(it.color)
-            material.setText(it.material)
-            size.setText(it.size)
-            quantity.setText(it.amount.toString())
-            price.setText(it.price.toString())
-            ourPrice.setText(it.targetPrice.toString())
-          }
-        } else {
-          Toast.makeText(this, "Documento no existe", Toast.LENGTH_SHORT).show()
+        product?.let {
+          binding.editProductName.setText(it.name)
+          binding.editProductBrand.setText(it.brand)
+          binding.editProductDescription.setText(it.description)
+          binding.editProductColor.setText(it.color)
+          binding.editProductMaterial.setText(it.material)
+          binding.editProductSize.setText(it.size)
+          binding.editProductQuantity.setText(it.amount)
+          binding.editProductPrice.setText(it.price.toString())
+          binding.editProductOurPrice.setText(it.targetPrice.toString())
         }
+      } else {
+        Toast.makeText(this, "Documento no existe", Toast.LENGTH_SHORT).show()
       }
-      .addOnFailureListener { e ->
-        Toast.makeText(this, "Error al obtener el documento", Toast.LENGTH_SHORT).show()
-      }
+    }.addOnFailureListener { e ->
+      Toast.makeText(this, "Error al obtener el documento", Toast.LENGTH_SHORT).show()
+    }
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -116,5 +104,4 @@ class EditProductActivity : AppCompatActivity() {
       else -> super.onOptionsItemSelected(item)
     }
   }
-
 }

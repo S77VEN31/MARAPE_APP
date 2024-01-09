@@ -55,7 +55,6 @@ class InventoryDetailsActivity : AppCompatActivity() {
     if (state.user.email.compareTo(inventory!!.ownerEmail) != 0) {
       binding.floatingActionButtonEditShared.visibility = View.GONE
     }
-    binding.deleteAccount.setOnClickListener(::callAct)
     binding.floatingActionButton2.setOnClickListener(::createProduct)
   }
 
@@ -103,6 +102,13 @@ class InventoryDetailsActivity : AppCompatActivity() {
     launcher.launch(intent)
   }
 
+  fun listProducts(view: View) {
+    val intent = Intent(this, ProductListActivity::class.java)
+    intent.putExtra("position", position)
+    intent.putExtra("inventory", inventory)
+    launcher.launch(intent)
+  }
+
   private fun resultHandler(result: ActivityResult) {
     when (result.resultCode) {
       EDITED_INVENTORY -> {
@@ -125,10 +131,6 @@ class InventoryDetailsActivity : AppCompatActivity() {
     }
   }
 
-  private fun callAct(view: View) {
-    val intent = Intent(this, ViewProduct::class.java)
-    launcher.launch(intent)
-  }
   private fun createProduct(view: View) {
     val intent = Intent(this, CreateProductActivity::class.java)
     launcher.launch(intent)

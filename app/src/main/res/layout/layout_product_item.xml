@@ -22,23 +22,19 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/entry_inventory_name"
+            android:id="@+id/product_name"
             style="@style/Widget.MaterialComponents.TextView"
-            android:layout_width="wrap_content"
+            android:layout_width="162dp"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="Mi Quinto Inventario"
+            android:text="Mi Producto"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="?attr/colorPrimary"
             android:textStyle="bold" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/entry_inventory_creation_date"
+                android:id="@+id/product_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
@@ -46,11 +42,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textStyle="italic" />
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/entry_inventory_status_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+
 
     </LinearLayout>
 
@@ -67,13 +59,13 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/entry_inventory_collaborators"
+                android:id="@+id/product_amount"
                 style="@style/Widget.MaterialComponents.TextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:text="TextView"
-                app:drawableStartCompat="@drawable/ic_rounded_groups"
+                app:drawableStartCompat="@drawable/ic_round_group_products"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -81,16 +73,25 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageButton
-            android:id="@+id/entry_add_collaborator_button"
-            android:layout_width="45dp"
+            android:id="@+id/edit_product_button"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/edit_fill0_wght400_grad0_opsz24"
+            android:src="@drawable/edit_fill0_wght400_grad0_opsz24"
+            android:tint="@color/black" />
+
+        <ImageButton
+            android:id="@+id/unlink_product_button"
+            android:layout_width="40dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackground"
-            android:src="@drawable/person_add_fill0_wght400_grad0_opsz24" />
+            android:src="@drawable/ic_round_unlink" />
 
         <ImageButton
-            android:id="@+id/entry_delete_inventory_button"
-            android:layout_width="45dp"
+            android:id="@+id/delete_product_button"
+            android:layout_width="40dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackground"

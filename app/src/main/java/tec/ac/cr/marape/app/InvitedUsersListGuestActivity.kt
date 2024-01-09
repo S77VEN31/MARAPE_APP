@@ -15,7 +15,7 @@ import tec.ac.cr.marape.app.databinding.ActivityInvitedUsersListBinding
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.User
 
-class InvitedUsersListGuestActivity : AppCompatActivity() {
+class   InvitedUsersListGuestActivity : AppCompatActivity() {
 
   private lateinit var inventory: Inventory
   private lateinit var db: FirebaseFirestore

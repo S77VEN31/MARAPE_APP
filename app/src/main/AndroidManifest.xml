@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature android:name="android.hardware.camera.autofocus " />
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
@@ -24,24 +25,25 @@
         android:theme="@style/Theme.Proyecto"
         tools:targetApi="31">
         <activity
-            android:name=".InvitedUsersListGuestActivity"
+            android:name=".ExportProductsActivity"
             android:exported="false" />
+        <activity
+            android:name=".ProductListActivity"
+            android:exported="false"
+            android:label="Productos" />
+        <activity
+            android:name=".InvitedUsersListGuestActivity"
+            android:exported="false"
+            android:label="Invitados" />
         <activity
             android:name=".BCScan"
             android:exported="false"
-            android:screenOrientation="portrait"
             android:label="@string/title_scan_product"/>
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ScanProduct"
-            android:exported="false">
-
-            <!--<intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
-
-        </activity>
+            android:exported="false"
+            android:label="Escanear" />
         <activity
             android:name=".ViewProduct"
             android:exported="false"
@@ -71,11 +73,13 @@
             android:exported="false"
             android:label="@string/title_guest_list">
 
-            <!-- <intent-filter>
+            <!--
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter> -->
+            </intent-filter>
+            -->
         </activity>
         <activity
             android:name=".RegisterActivity"
@@ -86,7 +90,7 @@
             android:exported="true"
             android:label="@string/title_login">
 
-            <!--            NOTE: comentar esta vara para que la LoginActivity deje de ser la principal-->
+            <!-- NOTE: comentar esta vara para que la LoginActivity deje de ser la principal -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -105,10 +109,12 @@
             android:name=".MainActivity"
             android:exported="false">
 
-            <!--<intent-filter>
+            <!--
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
+            -->
         </activity>
     </application>
 
