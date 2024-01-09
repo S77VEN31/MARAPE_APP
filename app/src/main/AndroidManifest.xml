@@ -31,9 +31,6 @@
             android:exported="false" />
 
         <activity
-            android:name=".InvitedUsersListGuestActivity"
-            android:exported="false" />
-        <activity
             android:name=".ProductListActivity"
             android:exported="false"
             android:label="Productos" />
@@ -44,7 +41,7 @@
         <activity
             android:name=".BCScan"
             android:exported="false"
-            android:label="@string/title_scan_product"/>
+            android:label="@string/title_scan_product"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ScanProduct"
@@ -59,10 +56,7 @@
             -->
 
         </activity>
-=======
-            android:exported="false"
-            android:label="Escanear" />
->>>>>>> 4a63006d63a47efd32c6dbc62078cbb01c66d9fe
+
         <activity
             android:name=".ViewProduct"
             android:exported="false"
