@@ -3,6 +3,7 @@ package tec.ac.cr.marape.app
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -77,6 +78,8 @@ class CreateProductActivity : AppCompatActivity() {
 
     launcher =
       registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ::resultCallback)
+
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     requestCamera = registerForActivityResult(
       ActivityResultContracts.RequestPermission(),
@@ -202,5 +205,16 @@ class CreateProductActivity : AppCompatActivity() {
 
   fun addImages(view: View) {
     mediaLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when (item.itemId) {
+      android.R.id.home -> {
+        finish()
+        true
+      }
+
+      else -> super.onOptionsItemSelected(item)
+    }
   }
 }

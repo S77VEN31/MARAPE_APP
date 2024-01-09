@@ -16,3 +16,9 @@ data class Product(
   var targetPrice: Float = 0.0f,
   var price: Float = 0.0f
 ) : Serializable
+
+
+fun a(): String {
+  val hola = "hola"
+  return "${hola.toString()}"
+}

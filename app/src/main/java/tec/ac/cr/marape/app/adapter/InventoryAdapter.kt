@@ -20,8 +20,6 @@ import java.util.Locale
 
 class InventoryAdapter(var inventories: ArrayList<Inventory>) :
   RecyclerView.Adapter<InventoryAdapter.ViewHolder>(), Filterable {
-
-
   var filteredInventories = inventories
 
   private val locale = Locale("es", "CR")
