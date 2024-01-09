@@ -13,13 +13,24 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import org.apache.poi.ss.usermodel.Sheet
+import org.apache.poi.ss.usermodel.Workbook
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.zeroturnaround.zip.ZipUtil
 import tec.ac.cr.marape.app.databinding.ActivityInventoryDetailsBinding
 import tec.ac.cr.marape.app.model.Inventory
+import tec.ac.cr.marape.app.model.Product
 import tec.ac.cr.marape.app.model.User
 import tec.ac.cr.marape.app.state.State
 import tec.ac.cr.marape.app.ui.dashboard.EDITED_INVENTORY
+import java.io.File
+import java.io.FileOutputStream
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
@@ -34,6 +45,7 @@ class InventoryDetailsActivity : AppCompatActivity() {
   private val locale = Locale("es", "CR")
   private val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
   private lateinit var state: State
+  private lateinit var products: ArrayList<Product>
 
   @RequiresApi(Build.VERSION_CODES.TIRAMISU)
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +68,121 @@ class InventoryDetailsActivity : AppCompatActivity() {
       binding.floatingActionButtonEditShared.visibility = View.GONE
     }
     binding.floatingActionButton2.setOnClickListener(::createProduct)
+    binding.shareInventoryButton.setOnClickListener(::shareInventory)
+
+    lifecycleScope.launch {
+      fetchProducts()
+    }
+  }
+
+  private fun makeExcelWorkbook(): Workbook {
+    val workbook = XSSFWorkbook()
+    val detailsSheet = workbook.createSheet("Detalles")
+    makeDetails(detailsSheet)
+    val productsSheet = workbook.createSheet("Productos")
+    makeProducts(productsSheet)
+    return workbook
+  }
+
+  private fun makeDetails(sheet: Sheet) {
+    val headers = listOf("Nombre", "Fecha de Creación", "Estado", "Propietario")
+    val header = sheet.createRow(0)
+    headers.forEachIndexed { idx, field ->
+      header.createCell(idx).setCellValue(field)
+      val mn = field.length * 256
+      if (sheet.getColumnWidth(idx) < mn) {
+        sheet.setColumnWidth(idx, mn)
+      }
+    }
+    val values = sheet.createRow(1)
+    inventory?.let {
+      values.createCell(0).setCellValue(it.name)
+      values.createCell(1).setCellValue(it.creationDate.toString())
+      values.createCell(2).setCellValue(it.active)
+      values.createCell(3).setCellValue(it.ownerEmail)
+    }
+  }
+
+  private suspend fun fetchProducts() {
+    this.products = this@InventoryDetailsActivity.inventory?.items?.map { item ->
+      db.document("products/$item").get().await().toObject(Product::class.java)!!
+    } as ArrayList<Product>
+  }
+
+  private fun makeProducts(sheet: Sheet) {
+    val header = sheet.createRow(0)
+    val fields = listOf(
+      "Código de barras",
+      "Nombre",
+      "Marca",
+      "Descripción",
+      "Color",
+      "Material",
+      "Cantidad",
+      "Tamaño",
+      "Precio Target",
+      "Precio Nuestro"
+    )
+
+    fields.forEachIndexed { idx, field ->
+      header.createCell(idx).setCellValue(field)
+      val mn = field.length * 256
+      if (sheet.getColumnWidth(idx) < mn) {
+        sheet.setColumnWidth(idx, mn)
+      }
+    }
+
+
+    this.products.forEachIndexed { idx, product ->
+      val row = sheet.createRow(idx + 1)
+      val values = listOf(
+        product.barcode,
+        product.name,
+        product.brand,
+        product.description,
+        product.color,
+        product.material,
+        product.amount.toString(),
+        product.targetPrice.toString(),
+        product.price.toString()
+      )
+      values.forEachIndexed { jdx, field ->
+        row.createCell(jdx).setCellValue(field)
+        val mn = field.length * 256
+        if (sheet.getColumnWidth(jdx) < mn) {
+          sheet.setColumnWidth(jdx, mn)
+        }
+      }
+    }
+  }
+
+
+  private fun shareInventory(view: View) {
+    // Perform excel file creation
+    lifecycleScope.launch {
+      val workbook = makeExcelWorkbook()
+
+      val dir = baseContext.getExternalFilesDir("files")
+      val file = File(dir, "current_share.xlsx")
+      val outFile = FileOutputStream(file)
+      workbook.write(outFile)
+      outFile.close()
+
+      val exported = baseContext.getExternalFilesDir("exported")
+      val zipFile = File(exported, "output.zip")
+      ZipUtil.pack(file.parentFile, zipFile)
+
+      val shareIntent = Intent(Intent.ACTION_SEND)
+      shareIntent.setType("*/*")
+      shareIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+      shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Detalles de inventario: ${inventory?.name}")
+      shareIntent.putExtra(Intent.EXTRA_TEXT, "Compartido desde MARAPE-APP")
+      val fileUri = FileProvider.getUriForFile(
+        this@InventoryDetailsActivity, "tec.ac.cr.marape.app.provider", zipFile
+      )
+      shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
+      startActivity(Intent.createChooser(shareIntent, "Compartir Inventario Vía..."))
+    }
   }
 
   private fun loadInventoryData(intent: Intent) {
