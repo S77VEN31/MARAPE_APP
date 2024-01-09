@@ -14,9 +14,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import tec.ac.cr.marape.app.databinding.ActivityCreateProductBinding
+import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.Product
 import java.util.Date
 
@@ -30,7 +32,7 @@ class CreateProductActivity : AppCompatActivity() {
 
   private var _binding: ActivityCreateProductBinding? = null
   private val binding get() = _binding!!
-
+  private lateinit var inventory: Inventory
   private val product = Product()
   private lateinit var launcher: ActivityResultLauncher<Intent>
   private var requestCamera: ActivityResultLauncher<String>? = null
@@ -46,9 +48,10 @@ class CreateProductActivity : AppCompatActivity() {
   }
 
   private fun resultCallback(result: ActivityResult) {
+    val prod = result.data!!.getSerializableExtra("product") as Product
+
     when (result.resultCode) {
       FOUND_IN_API -> {
-        val prod = result.data!!.getSerializableExtra("product") as Product
         // Llenar los campos.
         binding.createProductBarcode.setText(prod.barcode)
         binding.createProductName.setText(prod.name)
@@ -60,7 +63,12 @@ class CreateProductActivity : AppCompatActivity() {
       }
 
       FOUND_IN_DATABASE -> {
-        Toast.makeText(this, "Producto agregado al inventario", Toast.LENGTH_SHORT).show()
+        val productsRef = db.collection("products")
+        val docID = prod.id
+        val productDocRef = productsRef.document(docID)
+        val add = 1
+        productDocRef.update("amount", FieldValue.increment(add.toLong()))
+        addProductToInventory(prod)
         finish()
       }
 
@@ -85,6 +93,7 @@ class CreateProductActivity : AppCompatActivity() {
       registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ::resultCallback)
 
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    inventory = intent.getSerializableExtra("inventory")!! as Inventory
 
     requestCamera = registerForActivityResult(
       ActivityResultContracts.RequestPermission(),
@@ -194,10 +203,12 @@ class CreateProductActivity : AppCompatActivity() {
       else -> products.document(product.barcode)
     }
     product.id = doc.id
+//    product.amount = 1 // cantidad?
     doc.set(product).addOnSuccessListener {
       Toast.makeText(
         this@CreateProductActivity, R.string.create_product_success, Toast.LENGTH_LONG
       ).show()
+      addProductToInventory(product)
       finish()
     }.addOnFailureListener {
       // TODO: This might or might not do anything, that depends on whether or not the images have
@@ -212,15 +223,20 @@ class CreateProductActivity : AppCompatActivity() {
     mediaLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
   }
 
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    return when (item.itemId) {
-      android.R.id.home -> {
-        finish()
-        true
+  private fun addProductToInventory(product: Product){
+    val inventoriesRef = db.collection("inventories")
+    val docID = inventory.id
+
+    val inventoryDocRef = inventoriesRef.document(docID)
+
+    inventoryDocRef.update("items", FieldValue.arrayUnion(product.id))
+      .addOnSuccessListener {
+        Toast.makeText(this,"Producto agregado al inventario", Toast.LENGTH_SHORT).show()
+      }
+      .addOnFailureListener{e->
+        Toast.makeText(this,"Error al agregar el producto al inventario", Toast.LENGTH_SHORT).show()
       }
 
-      else -> super.onOptionsItemSelected(item)
-    }
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
