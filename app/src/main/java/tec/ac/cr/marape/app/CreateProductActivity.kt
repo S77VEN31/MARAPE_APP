@@ -203,7 +203,7 @@ class CreateProductActivity : AppCompatActivity() {
       else -> products.document(product.barcode)
     }
     product.id = doc.id
-    product.amount = 1 // cantidad?
+//    product.amount = 1 // cantidad?
     doc.set(product).addOnSuccessListener {
       Toast.makeText(
         this@CreateProductActivity, R.string.create_product_success, Toast.LENGTH_LONG
