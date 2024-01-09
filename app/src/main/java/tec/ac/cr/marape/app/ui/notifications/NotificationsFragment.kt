@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import tec.ac.cr.marape.app.EditProfile
+import tec.ac.cr.marape.app.ExportProductsActivity
 import tec.ac.cr.marape.app.LoginActivity
 import tec.ac.cr.marape.app.R
 import tec.ac.cr.marape.app.databinding.FragmentNotificationsBinding
@@ -39,6 +40,7 @@ class NotificationsFragment : Fragment() {
     launcher = registerForActivityResult(
       ActivityResultContracts.StartActivityForResult(), ::activityResultHandler
     )
+
     val root: View = binding.root
 
     mAuth = FirebaseAuth.getInstance()
@@ -98,6 +100,8 @@ class NotificationsFragment : Fragment() {
       savePreference(currentState, state.user.email)
     }
 
+
+    binding.btnExportProducts.setOnClickListener(this::exportProducts)
   }
 
   private fun savePreference(currentState: Boolean, email: String) {
@@ -137,4 +141,10 @@ class NotificationsFragment : Fragment() {
     super.onDestroyView()
     _binding = null
   }
+
+  private fun exportProducts(view: View) {
+    val intent = Intent(requireContext(), ExportProductsActivity::class.java)
+    startActivity(intent)
+  }
+
 }
