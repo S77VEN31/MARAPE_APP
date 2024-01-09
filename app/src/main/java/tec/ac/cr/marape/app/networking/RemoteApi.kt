@@ -11,7 +11,7 @@ const val TAG = "Z:RemoteApi"
 
 object RemoteApi {
   // TODO: Get this thing out of here
-  private val apiKey = "mk8ayoo288bg3ru0yrwkvma7filvqh"
+  private val apiKey = "hxvgoo6yxu611x69n88l7psxsb8kvm"
 
   private val baseUrl =
     "https://api.barcodelookup.com/v3/products?barcode=%s&key=%s"

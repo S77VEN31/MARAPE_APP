@@ -46,12 +46,10 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:textStyle="italic" />
 
-            <Switch
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/entry_inventory_status_switch"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
     </LinearLayout>
@@ -77,6 +75,8 @@
                 android:text="TextView"
                 app:drawableStartCompat="@drawable/ic_rounded_groups"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 

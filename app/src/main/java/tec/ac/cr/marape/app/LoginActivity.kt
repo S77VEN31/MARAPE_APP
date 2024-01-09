@@ -122,7 +122,6 @@ class LoginActivity : AppCompatActivity() {
 
   private fun launchMainActivity() {
     val intent = Intent(this, MainActivity::class.java)
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
 
     db.collection("inventories").where(Filter.equalTo("ownerEmail", state.user.email)).get()
       .addOnSuccessListener { snapshot ->
@@ -133,7 +132,7 @@ class LoginActivity : AppCompatActivity() {
           inventory?.id = inventorySnapshot.id
           inventory?.let { state.inventories.add(it) }
         }
-        // TODO: Find a non blocking way of doing this
+
         startActivity(intent)
         finish()
       }

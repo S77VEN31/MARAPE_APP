@@ -55,6 +55,7 @@ class InventoryDetailsActivity : AppCompatActivity() {
     if (state.user.email.compareTo(inventory!!.ownerEmail) != 0) {
       binding.floatingActionButtonEditShared.visibility = View.GONE
     }
+    binding.floatingActionButton2.setOnClickListener(::createProduct)
   }
 
   private fun loadInventoryData(intent: Intent) {
@@ -128,5 +129,10 @@ class InventoryDetailsActivity : AppCompatActivity() {
 
       else -> super.onOptionsItemSelected(item)
     }
+  }
+
+  private fun createProduct(view: View) {
+    val intent = Intent(this, CreateProductActivity::class.java)
+    launcher.launch(intent)
   }
 }

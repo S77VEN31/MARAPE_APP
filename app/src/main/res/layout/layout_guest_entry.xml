@@ -26,14 +26,18 @@
             android:id="@+id/entry_guest_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingStart="10dp"
             android:text="TextView"
-            android:textColor="?attr/colorPrimary" />
+            android:textColor="?attr/colorPrimary"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/entry_guest_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:paddingStart="10dp"
+            android:text="TextView"
+            android:textSize="14sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,6 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
+                android:paddingStart="10dp"
                 android:text="PhoneNumber" />
 
             <TextView
