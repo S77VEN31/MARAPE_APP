@@ -5,10 +5,20 @@
     <string name="title_notifications">Perfil</string>
     <string name="title_activity_login">Login</string>
     <string name="title_scan_product">Escanear Producto</string>
+    <string name="title_inventory_details">Detalles del Inventario</string>
+    <string name="title_product_details">Producto</string>
+    <string name="title_edit_profile">Editar Perfil</string>
+    <string name="title_create_product">Crear Producto</string>
+    <string name="title_edit_inventory">Editar Inventario</string>
+    <string name="title_edit_product">Editar Producto</string>
+    <string name="title_add_guest">Agregar Invitado</string>
+    <string name="title_guest_list">Lista invitados</string>
+    <string name="title_login">Iniciar Sesión</string>
+    <string name="title_create_inventory">Crear Inventario</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="title_activity_register">RegisterActivity</string>
-
+    <string name="title_activity_register">Registrarse</string>
+    <string name="text_products">Products</string>
     <string name="text_log_out">Cerrar Sesión</string>
     <string name="text_delete_account">Borrar Cuenta</string>
     <string name="login_error">No se pudo iniciar sesión</string>
@@ -16,13 +26,10 @@
     <string name="account_deletion_title">Borrar Cuenta</string>
     <string name="account_deletion_confirm_button_text">Confirmar</string>
     <string name="action_cancel">Cancelar</string>
-
     <string name="add_product">Agregar Producto</string>
-
     <!-- TODO: refactor these 2 strings into a single one, no need for 2 separate strings -->
     <string name="create_inventory">Crear</string>
     <string name="create_product">Crear</string>
-
     <string name="create_product_name_hint">Nombre</string>
     <string name="create_product_empty_name_error">El nombre no puede estar vacío</string>
     <string name="user_profile_username">Nombre de Usuario</string>
@@ -30,7 +37,6 @@
     <string name="user_profile_country">País</string>
     <string name="user_profile_phone">Teléfono</string>
     <string name="text_hint_password">Contraseña</string>
-
     <string name="inventory_deletion_title">Borrar Inventario</string>
     <string name="inventory_deletion_message">¿Deseas borrar este inventario?</string>
     <string name="inventory_search_message">Buscar</string>
@@ -39,7 +45,6 @@
     <string name="edit_inventory_save">Guardar</string>
     <string name="edit_inventory_name">Nombre del Inventario</string>
     <string name="edit_inventory_creation_date">Fecha de Creación</string>
-
     <string name="inventory_details_title">Detalles inventario</string>
     <string name="inventory_details_name">Nombre</string>
     <string name="inventory_details_creation_date">Fecha de Creación</string>
@@ -50,8 +55,6 @@
     <string name="btn_scan_product_scan">Scan</string>
     <string name="btn_scan_product_add">Agregar</string>
     <string name="btn_scan_product_cancel">Cancelar</string>
-
-
     <string name="tv_code">Código: </string>
     <string name="tv_name">Nombre: </string>
     <string name="tv_brand">Marca: </string>
@@ -63,8 +66,6 @@
     <string name="tv_material">Material: </string>
     <string name="tv_images">Imágenes: </string>
     <string name="empty_text" />
-
-
     <string name="create_product_brand">Marca</string>
     <string name="create_product_amount">Cantidad</string>
     <string name="create_product_price">Precio</string>
@@ -75,7 +76,6 @@
     <string name="create_product_size">Tamaño</string>
     <string name="create_product_our_price">Precio Nuestro (Opcional)</string>
     <string name="create_product_add_image">Agregar Imagen</string>
-
     <string name="barcode_not_found_error">Código de barras no encontrado.</string>
     <string name="create_product_success">Producto creado con éxito.</string>
     <string name="product_brand_hint">Marca</string>
@@ -87,11 +87,9 @@
     <string name="product_material_hint">Material</string>
     <string name="product_our_price_hint">Nuestro Precio(Opcional)</string>
     <string name="edit_product_save">Guardar</string>
-
     <string name="user_search">Buscar usuario</string>
     <string name="guest_add">Agregar invitado</string>
-
-
+    <string name="create_product_images_count">Imagenes</string>
     <string name="edit_profile_save">Guardar</string>
     <string name="text_price_target">Precio Target</string>
 </resources>

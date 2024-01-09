@@ -12,7 +12,13 @@ data class Product(
   var material: String = "",
   var amount: Int = 0,
   var size: String = "",
-  var images: List<String> = emptyList(),
+  var images: ArrayList<String> = ArrayList(),
   var targetPrice: Float = 0.0f,
   var price: Float = 0.0f
 ) : Serializable
+
+
+fun a(): String {
+  val hola = "hola"
+  return "${hola.toString()}"
+}

@@ -2,17 +2,19 @@ package tec.ac.cr.marape.app
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.model.Product
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 
 
 const val FROM_VIEW_PRODUCT = 1
+
 class ViewProduct : AppCompatActivity() {
 
   private lateinit var btnScan: Button
@@ -33,6 +35,7 @@ class ViewProduct : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_view_product)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     db = FirebaseFirestore.getInstance()
 
@@ -59,10 +62,11 @@ class ViewProduct : AppCompatActivity() {
     launcher =
       registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         when (result.resultCode) {
-          NOT_FOUND ->{
+          NOT_FOUND -> {
             limpiarDatos()
             Toast.makeText(this, "No se encontró el producto", Toast.LENGTH_SHORT).show()
           }
+
           FOUND_IN_DATABASE -> {
             val product = result.data?.getSerializableExtra("product") as Product
             mostrarDatos(product)
@@ -99,5 +103,16 @@ class ViewProduct : AppCompatActivity() {
     txtPrice.text = ""
     txtSize.text = ""
     txtTargetPrice.text = ""
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when (item.itemId) {
+      android.R.id.home -> {
+        finish()
+        true
+      }
+
+      else -> super.onOptionsItemSelected(item)
+    }
   }
 }

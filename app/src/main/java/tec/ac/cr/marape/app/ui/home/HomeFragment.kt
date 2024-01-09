@@ -3,10 +3,15 @@ package tec.ac.cr.marape.app.ui.home
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
@@ -16,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.InventoryDetailsActivity
+import tec.ac.cr.marape.app.R
 import tec.ac.cr.marape.app.adapter.SharedInventoryView
 import tec.ac.cr.marape.app.databinding.FragmentHomeBinding
 import tec.ac.cr.marape.app.model.Inventory
@@ -43,6 +49,31 @@ class HomeFragment : Fragment() {
     db = FirebaseFirestore.getInstance()
     sharedInventoriesRef = db.collection("inventories")
     customAdapter = SharedInventoryView(viewModel.value.inventories)
+
+    (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
+      override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.search_inventory, menu)
+        val searchItem: MenuItem = menu.findItem(R.id.search_inventory)
+        (searchItem.actionView as SearchView).setOnQueryTextListener(object :
+          SearchView.OnQueryTextListener {
+
+          override fun onQueryTextSubmit(query: String?): Boolean {
+            return false
+          }
+
+          override fun onQueryTextChange(newText: String?): Boolean {
+            customAdapter.filter.filter(newText)
+            return true
+          }
+
+        })
+      }
+
+      override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        return false
+      }
+
+    }, viewLifecycleOwner)
 
     return binding.root
   }
