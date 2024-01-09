@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "tec.ac.cr.marape.app"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -26,6 +26,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -56,13 +57,18 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.5")
     implementation("com.google.code.gson:gson:2.10")
+    implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
     testImplementation("junit:junit:4.13.2")
     testImplementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
-    implementation ("com.google.android.gms:play-services-vision:20.1.3")
+
+    implementation ("net.sourceforge.jexcelapi:jxl:2.6.12")
+
+
+
 
 
 

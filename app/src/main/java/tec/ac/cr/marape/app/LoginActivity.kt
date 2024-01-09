@@ -151,5 +151,16 @@ class LoginActivity : AppCompatActivity() {
         finish()
       }
   }
+
+  fun exportExcel(view: View) {
+    // Lógica para iniciar la actividad de registro
+    val intent = Intent(this, ExcelProductActivity::class.java)
+    startActivity(intent)
+    finish()
+  }
+
+
+
+
 }
 
