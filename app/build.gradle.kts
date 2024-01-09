@@ -54,6 +54,7 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.5")
     implementation("com.google.code.gson:gson:2.10")
+    implementation("org.zeroturnaround:zt-zip:1.16")
     testImplementation("junit:junit:4.13.2")
     testImplementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
