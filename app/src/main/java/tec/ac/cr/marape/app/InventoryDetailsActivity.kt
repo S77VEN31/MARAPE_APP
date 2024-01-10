@@ -63,8 +63,6 @@ class InventoryDetailsActivity : AppCompatActivity() {
 
     // TODO: The position will be used to update the inventory in the local sharedInventories array.
 
-    inventory = intent.getSerializableExtra("inventory")!! as Inventory
-    position = intent.getIntExtra("position", RecyclerView.NO_POSITION)
 
     loadInventoryData(intent)
 
@@ -216,6 +214,8 @@ class InventoryDetailsActivity : AppCompatActivity() {
   }
 
   private fun loadInventoryData(intent: Intent) {
+    inventory = intent.getSerializableExtra("inventory")!! as Inventory
+    position = intent.getIntExtra("position", RecyclerView.NO_POSITION)
     inventory.let {
       binding.sharedInventoryName.text = it.name
       binding.sharedInventoryCreationDate.text = formatter.format(Date(it.creationDate))
