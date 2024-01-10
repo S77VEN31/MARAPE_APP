@@ -29,6 +29,8 @@ import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.Product
 import tec.ac.cr.marape.app.state.State
 
+const val REMOVED_PRODUCTS = 8
+
 class ProductListActivity : AppCompatActivity() {
 
   private lateinit var inventory: Inventory
@@ -123,6 +125,12 @@ class ProductListActivity : AppCompatActivity() {
         state.sharedInventories[inventoryPosition].items.removeIf {
           it == currentProduct.id
         }
+
+        // TODO: Find a better way of doing this.
+        setResult(
+          REMOVED_PRODUCTS,
+          Intent().putExtra("inventory", state.sharedInventories[inventoryPosition])
+        )
         onComplete(true)
       }.addOnFailureListener {
         onComplete(false)

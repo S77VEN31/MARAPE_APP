@@ -270,9 +270,12 @@ class InventoryDetailsActivity : AppCompatActivity() {
     when (result.resultCode) {
       EDITED_INVENTORY -> {
         loadInventoryData(result.data!!)
-        setResult(
-          EDITED_INVENTORY, result.data
-        )
+        setResult(EDITED_INVENTORY, result.data)
+      }
+
+      REMOVED_PRODUCTS -> {
+        loadInventoryData(result.data!!)
+        setResult(REMOVED_PRODUCTS, result.data)
       }
     }
   }
