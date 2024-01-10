@@ -3,6 +3,7 @@
 package tec.ac.cr.marape.app
 
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -17,6 +18,7 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.apache.poi.ss.usermodel.Sheet
@@ -37,6 +39,7 @@ import java.util.Locale
 
 class InventoryDetailsActivity : AppCompatActivity() {
   private lateinit var db: FirebaseFirestore
+  private lateinit var storage: FirebaseStorage
   private lateinit var owner: User
   private var inventory: Inventory? = null
   private var position = RecyclerView.NO_POSITION
@@ -55,6 +58,8 @@ class InventoryDetailsActivity : AppCompatActivity() {
     launcher =
       registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ::resultHandler)
     db = FirebaseFirestore.getInstance()
+    storage = FirebaseStorage.getInstance()
+
     setContentView(binding.root)
 
     // This is the back button
@@ -159,17 +164,35 @@ class InventoryDetailsActivity : AppCompatActivity() {
 
   private fun shareInventory(view: View) {
     // Perform excel file creation
+    val dialog = AlertDialog.Builder(this).setMessage(R.string.creating_excel_file).show()
+    val timestamp = Date().time
+    val zipname = "${inventory?.id}-$timestamp"
     lifecycleScope.launch {
       val workbook = makeExcelWorkbook()
 
-      val dir = baseContext.getExternalFilesDir("files")
-      val file = File(dir, "current_share.xlsx")
+      val dir = baseContext.getExternalFilesDir("files/$zipname")
+      val file = File(dir, "${inventory?.name}.xlsx")
+      if (file.exists()) {
+        file.delete()
+      }
+
       val outFile = FileOutputStream(file)
       workbook.write(outFile)
       outFile.close()
 
+      // Download images and add them to the thingy.
+      products.forEach { product ->
+        val imagesDir = baseContext.getExternalFilesDir("files/$zipname/${product.barcode}")
+        product.images.forEach { image ->
+          val child = storage.reference.child(image)
+          val metadata = child.metadata.await()
+          val extension = metadata.contentType?.split('/')?.last()!!
+          child.getFile(File(imagesDir, "${File(image).name}.${extension}")).await()
+        }
+      }
+
       val exported = baseContext.getExternalFilesDir("exported")
-      val zipFile = File(exported, "output.zip")
+      val zipFile = File(exported, "${inventory?.name}.zip")
       ZipUtil.pack(file.parentFile, zipFile)
 
       val shareIntent = Intent(Intent.ACTION_SEND)
@@ -181,6 +204,7 @@ class InventoryDetailsActivity : AppCompatActivity() {
         this@InventoryDetailsActivity, "tec.ac.cr.marape.app.provider", zipFile
       )
       shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
+      dialog.cancel()
       startActivity(Intent.createChooser(shareIntent, "Compartir Inventario Vía..."))
     }
   }
