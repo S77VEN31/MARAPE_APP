@@ -1,6 +1,5 @@
 package tec.ac.cr.marape.app.model
 
-import com.google.firebase.firestore.DocumentReference
 import java.io.Serializable
 
 
@@ -15,6 +14,6 @@ data class Inventory(
   var creationDate: Long = 0,
   var active: Boolean = false,
   var ownerEmail: String = "",
-  var invitedUsers: List<String> = emptyList(),
-  var items: List<String> = emptyList()
+  var invitedUsers: MutableList<String> = mutableListOf(),
+  var items: MutableList<String> = mutableListOf()
 ) : Serializable

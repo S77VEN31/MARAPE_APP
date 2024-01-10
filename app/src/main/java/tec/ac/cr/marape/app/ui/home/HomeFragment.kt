@@ -9,7 +9,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
-import androidx.activity.result.ActivityResultLauncher
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -26,7 +25,6 @@ import tec.ac.cr.marape.app.adapter.SharedInventoryView
 import tec.ac.cr.marape.app.databinding.FragmentHomeBinding
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.state.State
-import java.io.Serializable
 
 
 class HomeFragment : Fragment() {
@@ -38,7 +36,6 @@ class HomeFragment : Fragment() {
   private lateinit var customAdapter: SharedInventoryView
   private lateinit var viewModel: Lazy<HomeViewModel>
   private lateinit var state: State
-  private lateinit var launcher: ActivityResultLauncher<Intent>
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -91,16 +88,15 @@ class HomeFragment : Fragment() {
   }
 
   private fun handleInventoryToggle(inventory: Inventory, isChecked: Boolean, position: Int) {
-    sharedInventoriesRef.document(inventory.id).update("active", isChecked)
-      .addOnSuccessListener {
-        customAdapter.toggle(position, inventory, isChecked)
-      }
+    sharedInventoriesRef.document(inventory.id).update("active", isChecked).addOnSuccessListener {
+      customAdapter.toggle(position, inventory, isChecked)
+    }
   }
 
   private fun handleInventoryDetails(inventory: Inventory, position: Int) {
     val intent = Intent(requireContext(), InventoryDetailsActivity::class.java)
     intent.putExtra("position", position)
-    intent.putExtra("inventory", inventory as Serializable)
+    intent.putExtra("inventory", inventory)
     startActivity(intent)
   }
 

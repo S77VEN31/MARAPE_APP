@@ -28,7 +28,9 @@ class NotificationsFragment : Fragment() {
   private val binding get() = _binding!!
 
   private lateinit var mAuth: FirebaseAuth
-  private lateinit var launcher: ActivityResultLauncher<Intent>
+  private var launcher: ActivityResultLauncher<Intent> = registerForActivityResult(
+    ActivityResultContracts.StartActivityForResult(), ::activityResultHandler
+  )
 
   private lateinit var state: State
   private var checked = false
@@ -37,9 +39,6 @@ class NotificationsFragment : Fragment() {
     inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
   ): View {
     _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
-    launcher = registerForActivityResult(
-      ActivityResultContracts.StartActivityForResult(), ::activityResultHandler
-    )
 
     val root: View = binding.root
 
@@ -144,7 +143,7 @@ class NotificationsFragment : Fragment() {
 
   private fun exportProducts(view: View) {
     val intent = Intent(requireContext(), ExportProductsActivity::class.java)
-    startActivity(intent)
+    launcher.launch(intent)
   }
 
 }
