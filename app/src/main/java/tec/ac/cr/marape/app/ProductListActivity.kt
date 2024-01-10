@@ -114,7 +114,7 @@ class ProductListActivity : AppCompatActivity() {
         productsAdapter.update(position, product)
       }
 
-      ADDED_PRODUCT_INVENTORY -> {
+      FOUND_IN_DATABASE, FOUND_IN_API -> {
         val product = result.data?.getSerializableExtra("product")!! as Product
         productsAdapter.add(product)
       }
