@@ -36,6 +36,7 @@
 
         <activity
             android:name=".ExportProductsActivity"
+            android:label="Todos los Productos"
             android:exported="false" />
         <activity
             android:name=".ProductListActivity"
