@@ -92,4 +92,5 @@
     <string name="create_product_images_count">Imagenes</string>
     <string name="edit_profile_save">Guardar</string>
     <string name="text_price_target">Precio Target</string>
+    <string name="creating_excel_file">Creando documentos</string>
 </resources>

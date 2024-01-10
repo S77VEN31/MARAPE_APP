@@ -3,6 +3,7 @@ package tec.ac.cr.marape.app
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
@@ -20,6 +21,7 @@ import com.google.firebase.storage.FirebaseStorage
 import tec.ac.cr.marape.app.databinding.ActivityCreateProductBinding
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.Product
+import java.io.File
 import java.util.Date
 
 
@@ -121,11 +123,15 @@ class CreateProductActivity : AppCompatActivity() {
     }
 
     binding.createProductAmount.addTextChangedListener {
-      product.amount = it.toString().toInt()
+      if (it!!.isNotEmpty()) {
+        product.amount = it.toString().toInt()
+      }
     }
 
     binding.createProductPrice.addTextChangedListener {
-      product.targetPrice = it.toString().toFloat()
+      if (it!!.isNotEmpty()) {
+        product.targetPrice = it.toString().toFloat()
+      }
     }
 
     binding.createProductDescription.addTextChangedListener {
@@ -146,7 +152,9 @@ class CreateProductActivity : AppCompatActivity() {
     }
 
     binding.createProductOurPrice.addTextChangedListener {
-      product.price = it.toString().toFloat()
+      if (it!!.isNotEmpty()) {
+        product.price = it.toString().toFloat()
+      }
     }
   }
 
