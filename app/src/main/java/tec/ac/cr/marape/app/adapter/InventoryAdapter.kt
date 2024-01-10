@@ -98,8 +98,12 @@ class InventoryAdapter(var inventories: ArrayList<Inventory>) :
 
     if (idx != -1) {
       inventories[idx] = inventory
-      notifyItemChanged(position)
     }
+    if (inventories != filteredInventories) {
+      filteredInventories[position] = inventory
+    }
+
+    notifyItemChanged(position)
   }
 
   fun toggle(inventory: Inventory, state: Boolean) {

@@ -168,18 +168,13 @@ class DashboardFragment : Fragment() {
       DELETE_GUEST_INVENTORY -> {
         val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)!!
         val updated = result.data?.getSerializableExtra("addGuest") as Inventory
-        if (position != RecyclerView.NO_POSITION) {
-          inventoryAdapter.update(position, updated)
-        }
+        inventoryAdapter.update(position, updated)
       }
 
       ADDED_GUEST_INVENTORY -> {
-        val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)
+        val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)!!
         val addGuestInventory = result.data?.getSerializableExtra("addGuest") as Inventory
-        if (position != null && position != RecyclerView.NO_POSITION) {
-          inventoryAdapter.update(position, addGuestInventory)
-        }
-
+        inventoryAdapter.update(position, addGuestInventory)
       }
     }
   }
