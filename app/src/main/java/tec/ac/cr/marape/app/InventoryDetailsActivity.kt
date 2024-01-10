@@ -5,14 +5,12 @@ package tec.ac.cr.marape.app
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
@@ -41,22 +39,20 @@ class InventoryDetailsActivity : AppCompatActivity() {
   private lateinit var db: FirebaseFirestore
   private lateinit var storage: FirebaseStorage
   private lateinit var owner: User
-  private var inventory: Inventory? = null
+  private lateinit var inventory: Inventory
   private var position = RecyclerView.NO_POSITION
-  private lateinit var launcher: ActivityResultLauncher<Intent>
+  private var launcher: ActivityResultLauncher<Intent> =
+    registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ::resultHandler)
   private lateinit var binding: ActivityInventoryDetailsBinding
   private val locale = Locale("es", "CR")
   private val formatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
   private lateinit var state: State
   private lateinit var products: ArrayList<Product>
 
-  @RequiresApi(Build.VERSION_CODES.TIRAMISU)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     state = State.getInstance()
     binding = ActivityInventoryDetailsBinding.inflate(layoutInflater)
-    launcher =
-      registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ::resultHandler)
     db = FirebaseFirestore.getInstance()
     storage = FirebaseStorage.getInstance()
 
@@ -67,9 +63,12 @@ class InventoryDetailsActivity : AppCompatActivity() {
 
     // TODO: The position will be used to update the inventory in the local sharedInventories array.
 
+    inventory = intent.getSerializableExtra("inventory")!! as Inventory
+    position = intent.getIntExtra("position", RecyclerView.NO_POSITION)
+
     loadInventoryData(intent)
 
-    if (state.user.email.compareTo(inventory!!.ownerEmail) != 0) {
+    if (state.user.email.compareTo(inventory.ownerEmail) != 0) {
       binding.floatingActionButtonEditShared.visibility = View.GONE
     }
     binding.shareInventoryButton.setOnClickListener(::shareInventory)
@@ -99,24 +98,25 @@ class InventoryDetailsActivity : AppCompatActivity() {
       }
     }
     val values = sheet.createRow(1)
-    inventory?.let {
-      val state = if (it.active) "Activo" else "Inactivo"
-      listOf(
-        it.name, formatter.format(Date(it.creationDate)).toString(), state, it.ownerEmail
-      ).forEachIndexed { idx, field ->
-        values.createCell(idx).setCellValue(field)
-        val nm = field.length * 255
-        if (sheet.getColumnWidth(idx) < nm) {
-          sheet.setColumnWidth(idx, nm)
-        }
+    val state = if (inventory.active) "Activo" else "Inactivo"
+    listOf(
+      inventory.name,
+      formatter.format(Date(inventory.creationDate)).toString(),
+      state,
+      inventory.ownerEmail
+    ).forEachIndexed { idx, field ->
+      values.createCell(idx).setCellValue(field)
+      val nm = field.length * 255
+      if (sheet.getColumnWidth(idx) < nm) {
+        sheet.setColumnWidth(idx, nm)
       }
 
     }
   }
 
   private suspend fun fetchProducts() {
-    this.products = this@InventoryDetailsActivity.inventory?.items?.map { item ->
-      db.document("products/$item").get().await().toObject(Product::class.java)!!
+    this.products = this@InventoryDetailsActivity.inventory.items.mapNotNull { item ->
+      db.document("products/$item").get().await().toObject(Product::class.java)
     } as ArrayList<Product>
   }
 
@@ -172,12 +172,12 @@ class InventoryDetailsActivity : AppCompatActivity() {
     // Perform excel file creation
     val dialog = AlertDialog.Builder(this).setMessage(R.string.creating_excel_file).show()
     val timestamp = Date().time
-    val zipname = "${inventory?.id}-$timestamp"
+    val zipname = "${inventory.id}-$timestamp"
     lifecycleScope.launch {
       val workbook = makeExcelWorkbook()
 
       val dir = baseContext.getExternalFilesDir("files/$zipname")
-      val file = File(dir, "${inventory?.name}.xlsx")
+      val file = File(dir, "${inventory.name}.xlsx")
       if (file.exists()) {
         file.delete()
       }
@@ -198,13 +198,13 @@ class InventoryDetailsActivity : AppCompatActivity() {
       }
 
       val exported = baseContext.getExternalFilesDir("exported")
-      val zipFile = File(exported, "${inventory?.name}.zip")
+      val zipFile = File(exported, "${inventory.name}.zip")
       ZipUtil.pack(file.parentFile, zipFile)
 
       val shareIntent = Intent(Intent.ACTION_SEND)
       shareIntent.setType("*/*")
       shareIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-      shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Detalles de inventario: ${inventory?.name}")
+      shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Detalles de inventario: ${inventory.name}")
       shareIntent.putExtra(Intent.EXTRA_TEXT, "Compartido desde MARAPE-APP")
       val fileUri = FileProvider.getUriForFile(
         this@InventoryDetailsActivity, "tec.ac.cr.marape.app.provider", zipFile
@@ -216,9 +216,7 @@ class InventoryDetailsActivity : AppCompatActivity() {
   }
 
   private fun loadInventoryData(intent: Intent) {
-    inventory = intent.getSerializableExtra("inventory") as Inventory?
-    position = intent.getIntExtra("position", RecyclerView.NO_POSITION)
-    inventory?.let {
+    inventory.let {
       binding.sharedInventoryName.text = it.name
       binding.sharedInventoryCreationDate.text = formatter.format(Date(it.creationDate))
 
@@ -241,7 +239,7 @@ class InventoryDetailsActivity : AppCompatActivity() {
 
   fun listInvitedUsers(view: View) {
     // launch the activity to list the users
-    val clazz: Class<*> = if (state.user.email.compareTo(inventory!!.ownerEmail) == 0) {
+    val clazz: Class<*> = if (state.user.email.compareTo(inventory.ownerEmail) == 0) {
       GuestListActivity::class.java
     } else {
       InvitedUsersListGuestActivity::class.java
