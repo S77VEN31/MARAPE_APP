@@ -15,7 +15,7 @@ import tec.ac.cr.marape.app.model.Product
 class ExportProductAdapter(
   var productList: MutableList<Product>,
 ) : RecyclerView.Adapter<ExportProductAdapter.ViewHolder>(), Filterable {
-  private var filteredProducts = productList
+  var filteredProducts = productList
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val itemView = LayoutInflater.from(parent.context)
@@ -48,7 +48,6 @@ class ExportProductAdapter(
     }
 
     holder.productEdit.setOnClickListener {
-      //goToEditProduct(holder.itemView.context, currentProduct.id)
       editListener(position, currentProduct)
     }
   }

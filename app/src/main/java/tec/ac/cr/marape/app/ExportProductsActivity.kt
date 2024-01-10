@@ -168,7 +168,7 @@ class ExportProductsActivity : AppCompatActivity() {
       outFile.close()
 
       // Download images and add them to the thingy.
-      productList.forEach { product ->
+      productsAdapter.filteredProducts.forEach { product ->
         if (product.images.isNotEmpty()) {
           val imagesDir = baseContext.getExternalFilesDir("files/$zipname/${product.barcode}")
           product.images.forEach { image ->
