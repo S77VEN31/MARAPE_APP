@@ -1,7 +1,6 @@
 package tec.ac.cr.marape.app
 
 import android.content.ContentValues.TAG
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -128,11 +127,10 @@ class GuestListActivity : AppCompatActivity() {
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
-      android.R.id.home -> {
-        val result = Intent()
+      android.R.id.home -> {/*val result = Intent()
         result.putExtra("addGuest", inventory)
         result.putExtra("position", position)
-        setResult(DELETE_GUEST_INVENTORY, result)
+        setResult(DELETE_GUEST_INVENTORY, result)*/
         finish()
         true
       }
