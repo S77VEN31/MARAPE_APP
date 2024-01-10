@@ -280,7 +280,7 @@ class InventoryDetailsActivity : AppCompatActivity() {
 
       ADDED_PRODUCT_INVENTORY -> {
         loadInventoryData(result.data!!)
-        setResult(EDITED_INVENTORY, result.data)
+        setResult(ADDED_PRODUCT_INVENTORY, result.data)
       }
     }
   }
