@@ -118,7 +118,7 @@ class ExportProductsActivity : AppCompatActivity() {
     }
 
 
-    this.productList.forEachIndexed { idx, product ->
+    productsAdapter.filteredProducts.forEachIndexed { idx, product ->
       val row = sheet.createRow(idx + 1)
       val values = listOf(
         product.barcode,
