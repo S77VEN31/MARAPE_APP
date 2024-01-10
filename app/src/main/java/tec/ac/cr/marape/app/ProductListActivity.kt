@@ -24,7 +24,6 @@ import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.Product
 import tec.ac.cr.marape.app.ui.dashboard.EDITED_INVENTORY
 
-
 class ProductListActivity : AppCompatActivity() {
 
   private lateinit var inventory: Inventory
@@ -32,6 +31,7 @@ class ProductListActivity : AppCompatActivity() {
   private lateinit var binding: ActivityProductListBinding
   private lateinit var productsAdapter: ProductListAdapter
   private lateinit var productList: List<Product>
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     binding = ActivityProductListBinding.inflate(layoutInflater)
@@ -40,6 +40,8 @@ class ProductListActivity : AppCompatActivity() {
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     db = FirebaseFirestore.getInstance()
     inventory = intent.getSerializableExtra("inventory")!! as Inventory
+
+
 
     lifecycleScope.launch {
       productList = inventory.items.mapNotNull { item ->
@@ -52,7 +54,7 @@ class ProductListActivity : AppCompatActivity() {
       }
 
       binding.floatingActionButtonCreateProduct.setOnClickListener(::createProduct)
-      productsAdapter = ProductListAdapter(productList, inventory)
+      productsAdapter = ProductListAdapter(productList, inventory, this@ProductListActivity)
       binding.productList.adapter = productsAdapter
       binding.productList.layoutManager = LinearLayoutManager(this@ProductListActivity)
     }
@@ -84,6 +86,7 @@ class ProductListActivity : AppCompatActivity() {
 
 
   }
+
 
   /*
 

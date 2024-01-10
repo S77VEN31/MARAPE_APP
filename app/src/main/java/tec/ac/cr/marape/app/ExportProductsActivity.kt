@@ -33,7 +33,7 @@ class ExportProductsActivity : AppCompatActivity() {
     lifecycleScope.launch {
       productList = db.collection("products").get().await().toObjects(Product::class.java)
 
-      productsAdapter = ExportProductAdapter(productList)
+      productsAdapter = ExportProductAdapter(productList, this@ExportProductsActivity)
       binding.exportProductList.adapter = productsAdapter
       binding.exportProductList.layoutManager = LinearLayoutManager(this@ExportProductsActivity)
     }
