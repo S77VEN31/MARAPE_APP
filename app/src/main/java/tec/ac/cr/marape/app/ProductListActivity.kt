@@ -114,7 +114,7 @@ class ProductListActivity : AppCompatActivity() {
         productsAdapter.update(position, product)
       }
 
-      FOUND_IN_DATABASE, FOUND_IN_API -> {
+      FOUND_IN_DATABASE, FOUND_IN_API, ADDED_PRODUCT_INVENTORY -> {
         val product = result.data?.getSerializableExtra("product")!! as Product
         productsAdapter.add(product)
       }
@@ -184,7 +184,7 @@ class ProductListActivity : AppCompatActivity() {
   private fun createProduct(view: View) {
     val intent = Intent(this, CreateProductActivity::class.java)
     intent.putExtra("inventory", inventory)
-    startActivity(intent)
+    launcher.launch(intent)
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
