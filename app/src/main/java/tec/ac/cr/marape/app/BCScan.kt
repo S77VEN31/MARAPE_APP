@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.SurfaceHolder
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
@@ -13,7 +12,6 @@ import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.google.firebase.firestore.FirebaseFirestore
 import tec.ac.cr.marape.app.databinding.ActivityBcscanBinding
-import tec.ac.cr.marape.app.model.LookupResponse
 import tec.ac.cr.marape.app.model.Product
 import tec.ac.cr.marape.app.networking.RemoteApi
 import java.io.IOException
@@ -37,14 +35,9 @@ class BCScan : AppCompatActivity() {
   }
 
   private fun iniBc() {
-    barcodeDetector = BarcodeDetector.Builder(this)
-      .setBarcodeFormats(Barcode.ALL_FORMATS)
-      .build()
-    cameraSource = CameraSource.Builder(this, barcodeDetector)
-      .setRequestedPreviewSize(1920, 1080)
-      .setAutoFocusEnabled(true)
-      .setFacing(CameraSource.CAMERA_FACING_BACK)
-      .build()
+    barcodeDetector = BarcodeDetector.Builder(this).setBarcodeFormats(Barcode.ALL_FORMATS).build()
+    cameraSource = CameraSource.Builder(this, barcodeDetector).setRequestedPreviewSize(1920, 1080)
+      .setAutoFocusEnabled(true).setFacing(CameraSource.CAMERA_FACING_BACK).build()
     binding.surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
       @SuppressLint("MissingPermission")
       override fun surfaceCreated(holder: SurfaceHolder) {
@@ -84,11 +77,7 @@ class BCScan : AppCompatActivity() {
   }
 
   private fun buscarProducto(barcode: String) {
-
-    db.collection("products")
-      .document(barcode)
-      .get()
-      .addOnSuccessListener { document ->
+    db.collection("products").document(barcode).get().addOnSuccessListener { document ->
         if (document != null && document.exists()) {
           val product = document.toObject(Product::class.java)!!
           val intent = Intent()
@@ -116,8 +105,7 @@ class BCScan : AppCompatActivity() {
         val prod = res.products[0]
         val target = prod.stores.find {
           it.name.contains(
-            "target",
-            true
+            "target", true
           )
         }
         product.barcode = code
@@ -146,6 +134,8 @@ class BCScan : AppCompatActivity() {
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
       android.R.id.home -> {
+        cameraSource.release()
+        setResult(NOT_FOUND)
         finish()
         true
       }
