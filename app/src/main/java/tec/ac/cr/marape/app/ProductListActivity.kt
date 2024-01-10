@@ -113,6 +113,11 @@ class ProductListActivity : AppCompatActivity() {
         val product = result.data?.getSerializableExtra("product")!! as Product
         productsAdapter.update(position, product)
       }
+
+      ADDED_PRODUCT_INVENTORY -> {
+        val product = result.data?.getSerializableExtra("product")!! as Product
+        productsAdapter.add(product)
+      }
     }
   }
 

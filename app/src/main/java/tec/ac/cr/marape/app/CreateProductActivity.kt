@@ -72,7 +72,10 @@ class CreateProductActivity : AppCompatActivity() {
         productDocRef.update("amount", FieldValue.increment(add.toLong()))
         addProductToInventory(prod)
         inventory.items.add(prod.id)
-        setResult(ADDED_PRODUCT_INVENTORY, Intent().putExtra("inventory", inventory))
+        setResult(
+          ADDED_PRODUCT_INVENTORY,
+          Intent().putExtra("inventory", inventory).putExtra("product", prod)
+        )
         finish()
       }
 
