@@ -71,6 +71,8 @@ class CreateProductActivity : AppCompatActivity() {
         val add = 1
         productDocRef.update("amount", FieldValue.increment(add.toLong()))
         addProductToInventory(prod)
+        inventory.items.add(prod.id)
+        setResult(ADDED_PRODUCT_INVENTORY, Intent().putExtra("inventory", inventory))
         finish()
       }
 
