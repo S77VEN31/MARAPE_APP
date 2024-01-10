@@ -224,7 +224,10 @@ class CreateProductActivity : AppCompatActivity() {
       ).show()
       addProductToInventory(product)
       inventory.items.add(product.id)
-      setResult(ADDED_PRODUCT_INVENTORY, Intent().putExtra("inventory", inventory))
+      setResult(
+        ADDED_PRODUCT_INVENTORY,
+        Intent().putExtra("inventory", inventory).putExtra("product", product)
+      )
       finish()
     }.addOnFailureListener {
       // TODO: This might or might not do anything, that depends on whether or not the images have
