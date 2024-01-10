@@ -89,16 +89,6 @@
             android:background="?attr/selectableItemBackground"
             android:src="@drawable/ic_round_unlink" />
 
-        <ImageButton
-            android:id="@+id/delete_product_button"
-            android:layout_width="40dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
-            android:foregroundTintMode="add"
-            android:src="@drawable/ic_round_delete"
-            android:tint="@color/danger"
-            android:tintMode="src_in" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
