@@ -277,6 +277,11 @@ class InventoryDetailsActivity : AppCompatActivity() {
         loadInventoryData(result.data!!)
         setResult(REMOVED_PRODUCTS, result.data)
       }
+
+      ADDED_PRODUCT_INVENTORY -> {
+        loadInventoryData(result.data!!)
+        setResult(EDITED_INVENTORY, result.data)
+      }
     }
   }
 

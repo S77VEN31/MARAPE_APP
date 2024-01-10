@@ -26,6 +26,7 @@ import java.util.Date
 const val FOUND_IN_API = 1
 const val FOUND_IN_DATABASE = 2
 const val NOT_FOUND = 3
+const val ADDED_PRODUCT_INVENTORY = 4
 
 
 class CreateProductActivity : AppCompatActivity() {
@@ -217,6 +218,8 @@ class CreateProductActivity : AppCompatActivity() {
         this@CreateProductActivity, R.string.create_product_success, Toast.LENGTH_LONG
       ).show()
       addProductToInventory(product)
+      inventory.items.add(product.id)
+      setResult(ADDED_PRODUCT_INVENTORY, Intent().putExtra("inventory", inventory))
       finish()
     }.addOnFailureListener {
       // TODO: This might or might not do anything, that depends on whether or not the images have
@@ -234,17 +237,13 @@ class CreateProductActivity : AppCompatActivity() {
   private fun addProductToInventory(product: Product) {
     val inventoriesRef = db.collection("inventories")
     val docID = inventory.id
-
     val inventoryDocRef = inventoriesRef.document(docID)
 
-    inventoryDocRef.update("items", FieldValue.arrayUnion(product.id))
-      .addOnSuccessListener {
-        Toast.makeText(this, "Producto agregado al inventario", Toast.LENGTH_SHORT).show()
-      }
-      .addOnFailureListener { e ->
-        Toast.makeText(this, "Error al agregar el producto al inventario", Toast.LENGTH_SHORT)
-          .show()
-      }
+    inventoryDocRef.update("items", FieldValue.arrayUnion(product.id)).addOnSuccessListener {
+      Toast.makeText(this, "Producto agregado al inventario", Toast.LENGTH_SHORT).show()
+    }.addOnFailureListener { e ->
+      Toast.makeText(this, "Error al agregar el producto al inventario", Toast.LENGTH_SHORT).show()
+    }
 
   }
 
