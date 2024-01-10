@@ -29,8 +29,7 @@ class GuestView(private var guestList: MutableList<User>, var inventory: Invento
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GuestViewHolder {
     val itemView = LayoutInflater.from(parent.context).inflate(
-      R.layout.layout_guest_entry,
-      parent, false
+      R.layout.layout_guest_entry, parent, false
     )
     return GuestViewHolder(itemView)
   }
@@ -69,14 +68,12 @@ class GuestView(private var guestList: MutableList<User>, var inventory: Invento
 
   private fun removeDatabase(currentUser: User, onComplete: (Boolean) -> Unit) {
     db.collection("inventories").document(inventory.id)
-      .update("invitedUsers", FieldValue.arrayRemove(currentUser.email))
-      .addOnSuccessListener {
+      .update("invitedUsers", FieldValue.arrayRemove(currentUser.email)).addOnSuccessListener {
         if (guestList.contains(currentUser)) {
           guestList.remove(currentUser)
         }
         onComplete(true)
-      }
-      .addOnFailureListener {
+      }.addOnFailureListener {
         onComplete(false)
       }
   }
@@ -85,7 +82,7 @@ class GuestView(private var guestList: MutableList<User>, var inventory: Invento
     val mutableInvitedUsers = inventory.invitedUsers.toMutableList()
     val removeInvite = currentUser.email
     mutableInvitedUsers.remove(removeInvite)
-    inventory.invitedUsers = mutableInvitedUsers.toList()
+    inventory.invitedUsers = mutableInvitedUsers
     Log.i("TAG", "Inventario actualizado: $inventory")
   }
 
@@ -93,15 +90,13 @@ class GuestView(private var guestList: MutableList<User>, var inventory: Invento
     removeDatabase(currentUser) { success ->
       if (success) {
         Toast.makeText(
-          holder.itemView.context, "Usuario eliminado del inventario",
-          Toast.LENGTH_SHORT
+          holder.itemView.context, "Usuario eliminado del inventario", Toast.LENGTH_SHORT
         ).show()
         removeLocal(currentUser)
         notifyDataSetChanged()
       } else {
         Toast.makeText(
-          holder.itemView.context, "Error al eliminar el invitado",
-          Toast.LENGTH_SHORT
+          holder.itemView.context, "Error al eliminar el invitado", Toast.LENGTH_SHORT
         ).show()
       }
     }
