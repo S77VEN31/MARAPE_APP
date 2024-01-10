@@ -67,6 +67,10 @@ class ProductListAdapter(
     val productUnlink: ImageButton = itemView.findViewById(R.id.unlink_product_button)
   }
 
+  fun add(product: Product) {
+    productList.add(0, product)
+    notifyItemInserted(0)
+  }
   fun update(position: Int, product: Product) {
     val idx = productList.indexOfFirst {
       it.id == product.id
