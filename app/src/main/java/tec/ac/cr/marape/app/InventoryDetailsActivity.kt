@@ -101,10 +101,20 @@ class InventoryDetailsActivity : AppCompatActivity() {
     }
     val values = sheet.createRow(1)
     inventory?.let {
-      values.createCell(0).setCellValue(it.name)
-      values.createCell(1).setCellValue(it.creationDate.toString())
-      values.createCell(2).setCellValue(it.active)
-      values.createCell(3).setCellValue(it.ownerEmail)
+      val state = if (it.active) "Activo" else "Inactivo"
+      listOf(
+        it.name,
+        formatter.format(Date(it.creationDate)).toString(),
+        state,
+        it.ownerEmail
+      ).forEachIndexed { idx, field ->
+        values.createCell(idx).setCellValue(field)
+        val nm = field.length * 255
+        if (sheet.getColumnWidth(idx) < nm) {
+          sheet.setColumnWidth(idx, nm)
+        }
+      }
+
     }
   }
 
