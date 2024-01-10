@@ -3,7 +3,6 @@ package tec.ac.cr.marape.app
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
@@ -21,7 +20,6 @@ import com.google.firebase.storage.FirebaseStorage
 import tec.ac.cr.marape.app.databinding.ActivityCreateProductBinding
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.Product
-import java.io.File
 import java.util.Date
 
 
@@ -50,11 +48,11 @@ class CreateProductActivity : AppCompatActivity() {
   }
 
   private fun resultCallback(result: ActivityResult) {
-    val prod = result.data!!.getSerializableExtra("product") as Product
 
     when (result.resultCode) {
       FOUND_IN_API -> {
         // Llenar los campos.
+        val prod = result.data!!.getSerializableExtra("product") as Product
         binding.createProductBarcode.setText(prod.barcode)
         binding.createProductName.setText(prod.name)
         binding.createProductBrand.setText(prod.brand)
@@ -65,6 +63,7 @@ class CreateProductActivity : AppCompatActivity() {
       }
 
       FOUND_IN_DATABASE -> {
+        val prod = result.data!!.getSerializableExtra("product") as Product
         val productsRef = db.collection("products")
         val docID = prod.id
         val productDocRef = productsRef.document(docID)
@@ -79,6 +78,7 @@ class CreateProductActivity : AppCompatActivity() {
       }
     }
   }
+
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -231,7 +231,7 @@ class CreateProductActivity : AppCompatActivity() {
     mediaLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
   }
 
-  private fun addProductToInventory(product: Product){
+  private fun addProductToInventory(product: Product) {
     val inventoriesRef = db.collection("inventories")
     val docID = inventory.id
 
@@ -239,10 +239,11 @@ class CreateProductActivity : AppCompatActivity() {
 
     inventoryDocRef.update("items", FieldValue.arrayUnion(product.id))
       .addOnSuccessListener {
-        Toast.makeText(this,"Producto agregado al inventario", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Producto agregado al inventario", Toast.LENGTH_SHORT).show()
       }
-      .addOnFailureListener{e->
-        Toast.makeText(this,"Error al agregar el producto al inventario", Toast.LENGTH_SHORT).show()
+      .addOnFailureListener { e ->
+        Toast.makeText(this, "Error al agregar el producto al inventario", Toast.LENGTH_SHORT)
+          .show()
       }
 
   }
