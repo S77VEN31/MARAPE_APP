@@ -9,6 +9,9 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -19,6 +22,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import tec.ac.cr.marape.app.adapter.EDITED_PRODUCT
 import tec.ac.cr.marape.app.adapter.ProductListAdapter
 import tec.ac.cr.marape.app.databinding.ActivityProductListBinding
 import tec.ac.cr.marape.app.model.Inventory
@@ -34,6 +38,8 @@ class ProductListActivity : AppCompatActivity() {
   private lateinit var productList: ArrayList<Product>
   private lateinit var state: State
   private var inventoryPosition: Int = RecyclerView.NO_POSITION
+  private var launcher: ActivityResultLauncher<Intent> =
+    registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ::resultHandler)
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -84,10 +90,28 @@ class ProductListActivity : AppCompatActivity() {
       binding.floatingActionButtonCreateProduct.setOnClickListener(this@ProductListActivity::createProduct)
       productsAdapter = ProductListAdapter(productList, inventory)
       productsAdapter.addUnlinkListener(::handleUnlink)
+      productsAdapter.addEditListener(::handleEdit)
       binding.productList.adapter = productsAdapter
       binding.productList.layoutManager = LinearLayoutManager(this@ProductListActivity)
     }
 
+  }
+
+  private fun handleEdit(position: Int, product: Product) {
+    val intent = Intent(this, EditProductActivity::class.java)
+    intent.putExtra("position", position)
+    intent.putExtra("product", product)
+    launcher.launch(intent)
+  }
+
+  private fun resultHandler(result: ActivityResult) {
+    when (result.resultCode) {
+      EDITED_PRODUCT -> {
+        val position = result.data?.getIntExtra("position", RecyclerView.NO_POSITION)!!
+        val product = result.data?.getSerializableExtra("product")!! as Product
+        productsAdapter.update(position, product)
+      }
+    }
   }
 
   private fun unlinkPerformance(
