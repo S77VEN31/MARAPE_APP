@@ -6,40 +6,57 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import org.apache.poi.ss.usermodel.Sheet
+import org.apache.poi.ss.usermodel.Workbook
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.zeroturnaround.zip.ZipUtil
 import tec.ac.cr.marape.app.adapter.EDITED_PRODUCT
 import tec.ac.cr.marape.app.adapter.ExportProductAdapter
 import tec.ac.cr.marape.app.databinding.ActivityExportProductsBinding
 import tec.ac.cr.marape.app.model.Product
+import java.io.File
+import java.io.FileOutputStream
+import java.util.Date
 
 class ExportProductsActivity : AppCompatActivity() {
   private lateinit var db: FirebaseFirestore
+  private lateinit var storage: FirebaseStorage
   private lateinit var binding: ActivityExportProductsBinding
   private lateinit var productsAdapter: ExportProductAdapter
   private val launcher: ActivityResultLauncher<Intent> = registerForActivityResult(
     ActivityResultContracts.StartActivityForResult(), ::resultHandler
   )
   private lateinit var productList: ArrayList<Product>
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     binding = ActivityExportProductsBinding.inflate(layoutInflater)
     setContentView(binding.root)
+    db = FirebaseFirestore.getInstance()
+    storage = FirebaseStorage.getInstance()
 
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    db = FirebaseFirestore.getInstance()
+
+    binding.shareProducts.setOnClickListener(::shareProducts)
+
+
 
     lifecycleScope.launch {
       productList =
@@ -75,6 +92,108 @@ class ExportProductsActivity : AppCompatActivity() {
         return false
       }
     }, this)
+  }
+
+  private fun makeProducts(sheet: Sheet){
+    val header = sheet.createRow(0)
+    val fields = listOf(
+      "Código de barras",
+      "Nombre",
+      "Marca",
+      "Descripción",
+      "Color",
+      "Material",
+      "Cantidad",
+      "Tamaño",
+      "Precio Target",
+      "Precio Nuestro"
+    )
+
+    fields.forEachIndexed { idx, field ->
+      header.createCell(idx).setCellValue(field)
+      val mn = field.length * 256
+      if (sheet.getColumnWidth(idx) < mn) {
+        sheet.setColumnWidth(idx, mn)
+      }
+    }
+
+
+    this.productList.forEachIndexed { idx, product ->
+      val row = sheet.createRow(idx + 1)
+      val values = listOf(
+        product.barcode,
+        product.name,
+        product.brand,
+        product.description,
+        product.color,
+        product.material,
+        product.amount.toString(),
+        product.targetPrice.toString(),
+        product.price.toString()
+      )
+      values.forEachIndexed { jdx, field ->
+        row.createCell(jdx).setCellValue(field)
+        val mn = field.length * 256
+        if (sheet.getColumnWidth(jdx) < mn) {
+          sheet.setColumnWidth(jdx, mn)
+        }
+      }
+    }
+  }
+
+
+  private fun makeExcelWorkbook(): Workbook{
+    val workbook = XSSFWorkbook()
+    val productsSheet = workbook.createSheet("Productos")
+    makeProducts(productsSheet)
+    return workbook
+  }
+
+  private fun shareProducts(view: View){
+    val dialog = AlertDialog.Builder(this).setMessage(R.string.creating_excel_file).show()
+    val timestamp = Date().time
+    val zipname = "productos-$timestamp"
+
+    lifecycleScope.launch {
+      val workbook = makeExcelWorkbook()
+
+      val dir = baseContext.getExternalFilesDir("files/$zipname")
+      val file = File(dir, "Productos.xlsx")
+      if (file.exists()) {
+        file.delete()
+      }
+
+      val outFile = FileOutputStream(file)
+      workbook.write(outFile)
+      outFile.close()
+
+      // Download images and add them to the thingy.
+      productList.forEach { product ->
+        val imagesDir = baseContext.getExternalFilesDir("files/$zipname/${product.barcode}")
+        product.images.forEach { image ->
+          val child = storage.reference.child(image)
+          val metadata = child.metadata.await()
+          val extension = metadata.contentType?.split('/')?.last()!!
+          child.getFile(File(imagesDir, "${File(image).name}.${extension}")).await()
+        }
+      }
+
+      val exported = baseContext.getExternalFilesDir("exported")
+      val zipFile = File(exported, "productos.zip")
+      ZipUtil.pack(file.parentFile, zipFile)
+
+      val shareIntent = Intent(Intent.ACTION_SEND)
+      shareIntent.setType("*/*")
+      shareIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+      shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Detalles de Todos los Productos")
+      shareIntent.putExtra(Intent.EXTRA_TEXT, "Compartido desde MARAPE-APP")
+      val fileUri = FileProvider.getUriForFile(
+        this@ExportProductsActivity, "tec.ac.cr.marape.app.provider", zipFile
+      )
+      shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
+      dialog.cancel()
+      startActivity(Intent.createChooser(shareIntent, "Compartir Productos Vía..."))
+    }
   }
 
 
