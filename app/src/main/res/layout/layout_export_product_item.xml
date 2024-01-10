@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/product_name"
+            android:id="@+id/export_product_name"
             style="@style/Widget.MaterialComponents.TextView"
             android:layout_width="162dp"
             android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
 
 
             <TextView
-                android:id="@+id/product_price"
+                android:id="@+id/export_product_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
@@ -59,7 +59,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/product_amount"
+                android:id="@+id/export_product_amount"
                 style="@style/Widget.MaterialComponents.TextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageButton
-            android:id="@+id/edit_product_button"
+            android:id="@+id/export_edit_product_button"
             android:layout_width="40dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -82,13 +82,15 @@
             android:tint="@color/black" />
 
         <ImageButton
-            android:id="@+id/unlink_product_button"
+            android:id="@+id/export_delete_product_button"
             android:layout_width="40dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackground"
-            android:src="@drawable/ic_round_unlink" />
-
+            android:foregroundTintMode="add"
+            android:src="@drawable/ic_round_delete"
+            android:tint="@color/danger"
+            android:tintMode="src_in" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

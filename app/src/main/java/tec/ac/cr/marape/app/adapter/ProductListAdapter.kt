@@ -10,22 +10,56 @@ import android.widget.Filter
 import android.widget.Filterable
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import tec.ac.cr.marape.app.EditProductActivity
+import tec.ac.cr.marape.app.ProductListActivity
 import tec.ac.cr.marape.app.R
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.Product
 
 
-class ProductListAdapter(var productList: List<Product>, val inventory: Inventory) :
+const val REQUEST_CODE_EDIT_PRODUCT = 7
+
+class ProductListAdapter(var productList: List<Product>,
+                         private val inventory: Inventory, private val activity: ProductListActivity ) :
   RecyclerView.Adapter<ProductListAdapter.ViewHolder>(), Filterable {
   private val db = FirebaseFirestore.getInstance()
-  private lateinit var inventoryId: String
+  private lateinit var launcher: ActivityResultLauncher<Intent>
   private var filteredProducts = productList
 
+  init {
+    setupLauncher()
+  }
+
+  private fun setupLauncher() {
+    launcher = activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+      if (result.resultCode == REQUEST_CODE_EDIT_PRODUCT) {
+        val updatedProductId = result.data?.getStringExtra("updatedProductId")
+        updatedProductId?.let { productId ->
+          // Obtener el producto actualizado de la base de datos con el ID
+          db.document("products/$productId").get().addOnSuccessListener { documentSnapshot ->
+            val updatedProduct = documentSnapshot.toObject(Product::class.java)
+            updatedProduct?.let { product ->
+              // Actualizar el producto en la lista productList
+              val index = productList.indexOfFirst { it.id == productId }
+              if (index != -1) {
+                productList = productList.toMutableList().apply {
+                  set(index, product)
+                }
+                notifyDataSetChanged()
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val itemView =
@@ -42,25 +76,13 @@ class ProductListAdapter(var productList: List<Product>, val inventory: Inventor
     holder.productPrice.text = currentProduct.price.toString()
     holder.productName.text = currentProduct.name
     holder.productAmount.text = currentProduct.amount.toString()
-    inventoryId = inventory.id
-    var title = "Confirmación"
-    var message = ""
-
-    holder.productDelete.setOnClickListener {
-      message =
-        "Este producto no se puede eliminar ya que se encuentra asociado. ¿Desea desligar y eliminar?"
-      sendConfirmation(holder.itemView.context, title, message) {
-        //showResultDelete(holder.itemView.context, currentProduct.id)
-      }
-    }
 
     holder.productEdit.setOnClickListener {
       goToEditProduct(holder.itemView.context, currentProduct.id)
     }
 
     holder.productUnlink.setOnClickListener {
-      message = "¿Estás seguro de que quieres desligar este producto del actual inventario?"
-      sendConfirmation(holder.itemView.context, title, message, onYes = {
+      sendConfirmation(holder.itemView.context, onYes = {
         showResultUnlink(holder.itemView.context, currentProduct)
       })
     }
@@ -72,23 +94,22 @@ class ProductListAdapter(var productList: List<Product>, val inventory: Inventor
     val productName: android.widget.TextView = itemView.findViewById(R.id.product_name)
     val productAmount: android.widget.TextView = itemView.findViewById(R.id.product_amount)
     val productEdit: ImageButton = itemView.findViewById(R.id.edit_product_button)
-    val productDelete: ImageButton = itemView.findViewById(R.id.delete_product_button)
     val productUnlink: ImageButton = itemView.findViewById(R.id.unlink_product_button)
   }
 
   private fun goToEditProduct(context: Context, productId: String) {
     val intent = Intent(context, EditProductActivity::class.java)
     intent.putExtra("product_id", productId)
-    context.startActivity(intent)
+    launcher.launch(intent)
   }
 
 
   private fun sendConfirmation(
-    context: Context, title: String, message: String, onYes: () -> Unit
+    context: Context, onYes: () -> Unit
   ) {
     val builder = AlertDialog.Builder(context)
-    builder.setTitle(title)
-    builder.setMessage(message)
+    builder.setTitle("Confirmación")
+    builder.setMessage("¿Estás seguro de que quieres desligar este producto del actual inventario?")
 
     builder.setPositiveButton("Sí") { dialog, which ->
       onYes()
@@ -113,13 +134,6 @@ class ProductListAdapter(var productList: List<Product>, val inventory: Inventor
       }
   }
 
-  private fun deletePerformance(productId: String, onComplete: (Boolean) -> Unit) {
-    db.collection("products").document(productId).delete().addOnSuccessListener {
-      onComplete(true)
-    }.addOnFailureListener {
-      onComplete(false)
-    }
-  }
 
   private fun removeProduct(removeProduct: Product) {
     val mutableProductList = productList.toMutableList()
@@ -138,21 +152,6 @@ class ProductListAdapter(var productList: List<Product>, val inventory: Inventor
       } else {
         Toast.makeText(
           context, "Error al desligar el producto", Toast.LENGTH_SHORT
-        ).show()
-      }
-    }
-  }
-
-  private fun showResultDelete(context: Context, productId: String) {
-    deletePerformance(productId) { success ->
-      if (success) {
-        Toast.makeText(
-          context, "Producto eliminado con éxito", Toast.LENGTH_SHORT
-        ).show()
-        //notifyDataSetChanged()
-      } else {
-        Toast.makeText(
-          context, "Error al eliminar el producto", Toast.LENGTH_SHORT
         ).show()
       }
     }

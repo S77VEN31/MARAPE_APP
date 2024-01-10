@@ -24,6 +24,7 @@ class BCScan : AppCompatActivity() {
   private lateinit var cameraSource: CameraSource
   private lateinit var db: FirebaseFirestore
   var intentData = ""
+  private var scanned = false
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     binding = ActivityBcscanBinding.inflate(layoutInflater)
@@ -31,20 +32,8 @@ class BCScan : AppCompatActivity() {
     setContentView(binding.root)
 
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    supportActionBar?.title = resources.getString(R.string.title_scan_product)
+//    supportActionBar?.title = resources.getString(R.string.title_scan_product)
 
-//    binding.btnScan.setOnClickListener {
-////      intentData = "9780140157376"
-//
-//      if (intentData != "") {
-//        val resultIntent = Intent()
-//        resultIntent.putExtra("product", intentData)
-//        setResult(FOUND_IN_API, resultIntent)
-//        finish()
-//      } else {
-//        Toast.makeText(applicationContext, "Ningún código encontrado", Toast.LENGTH_SHORT).show()
-//      }
-//    }
   }
 
   private fun iniBc() {
@@ -84,7 +73,10 @@ class BCScan : AppCompatActivity() {
           binding.tvBarcodeValue.post {
             intentData = barcodes.valueAt(0).displayValue
             binding.tvBarcodeValue.text = intentData
-            buscarProducto(intentData)
+            if (!scanned) {
+              scanned = true
+              buscarProducto(intentData)
+            }
           }
         }
       }
@@ -143,19 +135,21 @@ class BCScan : AppCompatActivity() {
         setResult(FOUND_IN_API, intent)
       }
       finish()
-
     }, {
       runOnUiThread {
-        // TODO: agregar esta funcionalidad
+        setResult(NOT_FOUND)
+        finish()
       }
     })
   }
+
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
       android.R.id.home -> {
         finish()
         true
       }
+
       else -> super.onOptionsItemSelected(item)
     }
   }

@@ -1,11 +1,13 @@
 package tec.ac.cr.marape.app
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import tec.ac.cr.marape.app.adapter.REQUEST_CODE_EDIT_PRODUCT
 import tec.ac.cr.marape.app.databinding.ActivityEditProductBinding
 import tec.ac.cr.marape.app.model.Product
 
@@ -23,7 +25,7 @@ class EditProductActivity : AppCompatActivity() {
     binding = ActivityEditProductBinding.inflate(layoutInflater)
     setContentView(binding.root)
 
-    productId = intent.getStringExtra("product_id")!!
+    productId = intent.getStringExtra("product_id").toString()
     productRef = db.collection("products").document(productId)
 
     fillOutFields()
@@ -64,6 +66,10 @@ class EditProductActivity : AppCompatActivity() {
       binding.editProductOurPrice.text.toString().toFloat()
     ).addOnSuccessListener {
       Toast.makeText(this, "Producto actualizado con éxito", Toast.LENGTH_SHORT).show()
+      val result = Intent()
+      result.putExtra("updatedProductId", productId)
+      setResult(REQUEST_CODE_EDIT_PRODUCT, result)
+      finish()
     }.addOnFailureListener {
       Toast.makeText(this, "Error al actualizar el producto", Toast.LENGTH_SHORT).show()
     }

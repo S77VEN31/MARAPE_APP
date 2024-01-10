@@ -72,7 +72,6 @@ class InventoryDetailsActivity : AppCompatActivity() {
     if (state.user.email.compareTo(inventory!!.ownerEmail) != 0) {
       binding.floatingActionButtonEditShared.visibility = View.GONE
     }
-    binding.floatingActionButton2.setOnClickListener(::createProduct)
     binding.shareInventoryButton.setOnClickListener(::shareInventory)
 
     lifecycleScope.launch {
@@ -103,10 +102,7 @@ class InventoryDetailsActivity : AppCompatActivity() {
     inventory?.let {
       val state = if (it.active) "Activo" else "Inactivo"
       listOf(
-        it.name,
-        formatter.format(Date(it.creationDate)).toString(),
-        state,
-        it.ownerEmail
+        it.name, formatter.format(Date(it.creationDate)).toString(), state, it.ownerEmail
       ).forEachIndexed { idx, field ->
         values.createCell(idx).setCellValue(field)
         val nm = field.length * 255
@@ -292,8 +288,4 @@ class InventoryDetailsActivity : AppCompatActivity() {
     }
   }
 
-  private fun createProduct(view: View) {
-    val intent = Intent(this, CreateProductActivity::class.java)
-    launcher.launch(intent)
-  }
 }
