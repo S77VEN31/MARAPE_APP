@@ -90,7 +90,7 @@ class InventoryDetailsActivity : AppCompatActivity() {
     val header = sheet.createRow(0)
     headers.forEachIndexed { idx, field ->
       header.createCell(idx).setCellValue(field)
-      val mn = field.length * 256
+      val mn = field.length * 100
       if (sheet.getColumnWidth(idx) < mn) {
         sheet.setColumnWidth(idx, mn)
       }
@@ -104,7 +104,7 @@ class InventoryDetailsActivity : AppCompatActivity() {
       inventory.ownerEmail
     ).forEachIndexed { idx, field ->
       values.createCell(idx).setCellValue(field)
-      val nm = field.length * 255
+      val nm = field.length * 100
       if (sheet.getColumnWidth(idx) < nm) {
         sheet.setColumnWidth(idx, nm)
       }
@@ -135,7 +135,7 @@ class InventoryDetailsActivity : AppCompatActivity() {
 
     fields.forEachIndexed { idx, field ->
       header.createCell(idx).setCellValue(field)
-      val mn = field.length * 256
+      val mn = field.length * 100
       if (sheet.getColumnWidth(idx) < mn) {
         sheet.setColumnWidth(idx, mn)
       }
@@ -157,7 +157,7 @@ class InventoryDetailsActivity : AppCompatActivity() {
       )
       values.forEachIndexed { jdx, field ->
         row.createCell(jdx).setCellValue(field)
-        val mn = field.length * 256
+        val mn = field.length * 100
         if (sheet.getColumnWidth(jdx) < mn) {
           sheet.setColumnWidth(jdx, mn)
         }
@@ -186,12 +186,14 @@ class InventoryDetailsActivity : AppCompatActivity() {
 
       // Download images and add them to the thingy.
       products.forEach { product ->
-        val imagesDir = baseContext.getExternalFilesDir("files/$zipname/${product.barcode}")
-        product.images.forEach { image ->
-          val child = storage.reference.child(image)
-          val metadata = child.metadata.await()
-          val extension = metadata.contentType?.split('/')?.last()!!
-          child.getFile(File(imagesDir, "${File(image).name}.${extension}")).await()
+        if (product.images.isNotEmpty()) {
+          val imagesDir = baseContext.getExternalFilesDir("files/$zipname/${product.barcode}")
+          product.images.forEach { image ->
+            val child = storage.reference.child(image)
+            val metadata = child.metadata.await()
+            val extension = metadata.contentType?.split('/')?.last()!!
+            child.getFile(File(imagesDir, "${File(image).name}.${extension}")).await()
+          }
         }
       }
 

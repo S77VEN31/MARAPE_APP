@@ -94,7 +94,7 @@ class ExportProductsActivity : AppCompatActivity() {
     }, this)
   }
 
-  private fun makeProducts(sheet: Sheet){
+  private fun makeProducts(sheet: Sheet) {
     val header = sheet.createRow(0)
     val fields = listOf(
       "Código de barras",
@@ -111,7 +111,7 @@ class ExportProductsActivity : AppCompatActivity() {
 
     fields.forEachIndexed { idx, field ->
       header.createCell(idx).setCellValue(field)
-      val mn = field.length * 256
+      val mn = field.length * 100
       if (sheet.getColumnWidth(idx) < mn) {
         sheet.setColumnWidth(idx, mn)
       }
@@ -133,7 +133,7 @@ class ExportProductsActivity : AppCompatActivity() {
       )
       values.forEachIndexed { jdx, field ->
         row.createCell(jdx).setCellValue(field)
-        val mn = field.length * 256
+        val mn = field.length * 100
         if (sheet.getColumnWidth(jdx) < mn) {
           sheet.setColumnWidth(jdx, mn)
         }
@@ -142,14 +142,14 @@ class ExportProductsActivity : AppCompatActivity() {
   }
 
 
-  private fun makeExcelWorkbook(): Workbook{
+  private fun makeExcelWorkbook(): Workbook {
     val workbook = XSSFWorkbook()
     val productsSheet = workbook.createSheet("Productos")
     makeProducts(productsSheet)
     return workbook
   }
 
-  private fun shareProducts(view: View){
+  private fun shareProducts(view: View) {
     val dialog = AlertDialog.Builder(this).setMessage(R.string.creating_excel_file).show()
     val timestamp = Date().time
     val zipname = "productos-$timestamp"
@@ -169,12 +169,14 @@ class ExportProductsActivity : AppCompatActivity() {
 
       // Download images and add them to the thingy.
       productList.forEach { product ->
-        val imagesDir = baseContext.getExternalFilesDir("files/$zipname/${product.barcode}")
-        product.images.forEach { image ->
-          val child = storage.reference.child(image)
-          val metadata = child.metadata.await()
-          val extension = metadata.contentType?.split('/')?.last()!!
-          child.getFile(File(imagesDir, "${File(image).name}.${extension}")).await()
+        if (product.images.isNotEmpty()) {
+          val imagesDir = baseContext.getExternalFilesDir("files/$zipname/${product.barcode}")
+          product.images.forEach { image ->
+            val child = storage.reference.child(image)
+            val metadata = child.metadata.await()
+            val extension = metadata.contentType?.split('/')?.last()!!
+            child.getFile(File(imagesDir, "${File(image).name}.${extension}")).await()
+          }
         }
       }
 
