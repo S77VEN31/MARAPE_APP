@@ -1,7 +1,6 @@
 package tec.ac.cr.marape.app.adapter
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -9,57 +8,24 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import android.widget.ImageButton
-import android.widget.Toast
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import tec.ac.cr.marape.app.EditProductActivity
-import tec.ac.cr.marape.app.ProductListActivity
 import tec.ac.cr.marape.app.R
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.Product
 
 
-const val REQUEST_CODE_EDIT_PRODUCT = 7
+const val EDITED_PRODUCT = 7
 
-class ProductListAdapter(var productList: List<Product>,
-                         private val inventory: Inventory, private val activity: ProductListActivity ) :
-  RecyclerView.Adapter<ProductListAdapter.ViewHolder>(), Filterable {
+class ProductListAdapter(
+  var productList: MutableList<Product>, private val inventory: Inventory
+) : RecyclerView.Adapter<ProductListAdapter.ViewHolder>(), Filterable {
   private val db = FirebaseFirestore.getInstance()
   private lateinit var launcher: ActivityResultLauncher<Intent>
   private var filteredProducts = productList
-
-  init {
-    setupLauncher()
-  }
-
-  private fun setupLauncher() {
-    launcher = activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-      if (result.resultCode == REQUEST_CODE_EDIT_PRODUCT) {
-        val updatedProductId = result.data?.getStringExtra("updatedProductId")
-        updatedProductId?.let { productId ->
-          // Obtener el producto actualizado de la base de datos con el ID
-          db.document("products/$productId").get().addOnSuccessListener { documentSnapshot ->
-            val updatedProduct = documentSnapshot.toObject(Product::class.java)
-            updatedProduct?.let { product ->
-              // Actualizar el producto en la lista productList
-              val index = productList.indexOfFirst { it.id == productId }
-              if (index != -1) {
-                productList = productList.toMutableList().apply {
-                  set(index, product)
-                }
-                notifyDataSetChanged()
-              }
-            }
-          }
-        }
-      }
-    }
-  }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
     val itemView =
@@ -69,6 +35,11 @@ class ProductListAdapter(var productList: List<Product>,
 
   override fun getItemCount(): Int {
     return filteredProducts.size
+  }
+
+  private lateinit var unlinkHandler: (Int, Product) -> Unit
+  fun addUnlinkListener(handler: (Int, Product) -> Unit) {
+    unlinkHandler = handler
   }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -82,9 +53,7 @@ class ProductListAdapter(var productList: List<Product>,
     }
 
     holder.productUnlink.setOnClickListener {
-      sendConfirmation(holder.itemView.context, onYes = {
-        showResultUnlink(holder.itemView.context, currentProduct)
-      })
+      unlinkHandler(position, currentProduct)
     }
 
   }
@@ -104,59 +73,21 @@ class ProductListAdapter(var productList: List<Product>,
   }
 
 
-  private fun sendConfirmation(
-    context: Context, onYes: () -> Unit
-  ) {
-    val builder = AlertDialog.Builder(context)
-    builder.setTitle("Confirmación")
-    builder.setMessage("¿Estás seguro de que quieres desligar este producto del actual inventario?")
-
-    builder.setPositiveButton("Sí") { dialog, which ->
-      onYes()
+  fun removeProduct(position: Int, product: Product) {
+    val idx = productList.indexOfFirst {
+      it.id == product.id
     }
 
-    builder.setNegativeButton("No") { dialog, which ->
-      dialog.dismiss()
+    if (idx != -1) {
+      productList.removeAt(idx)
     }
 
-    val dialog = builder.create()
-    dialog.show()
-  }
-
-
-  private fun unlinkPerformance(currentProduct: Product, onComplete: (Boolean) -> Unit) {
-    db.collection("inventories").document(inventory.id)
-      .update("items", FieldValue.arrayRemove(currentProduct.id)).addOnSuccessListener {
-        removeProduct(currentProduct)
-        onComplete(true)
-      }.addOnFailureListener {
-        onComplete(false)
-      }
-  }
-
-
-  private fun removeProduct(removeProduct: Product) {
-    val mutableProductList = productList.toMutableList()
-    mutableProductList.remove(removeProduct)
-    productList = mutableProductList.toList()
-  }
-
-
-  private fun showResultUnlink(context: Context, currentProduct: Product) {
-    unlinkPerformance(currentProduct) { success ->
-      if (success) {
-        Toast.makeText(
-          context, "Producto desligado con éxito", Toast.LENGTH_SHORT
-        ).show()
-        notifyDataSetChanged()
-      } else {
-        Toast.makeText(
-          context, "Error al desligar el producto", Toast.LENGTH_SHORT
-        ).show()
-      }
+    if (productList != filteredProducts) {
+      filteredProducts.removeAt(position)
     }
-  }
 
+    notifyItemRemoved(position)
+  }
 
   private val filter: Filter = object : Filter() {
     override fun performFiltering(constraint: CharSequence?): FilterResults {

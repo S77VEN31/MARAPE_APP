@@ -1,5 +1,6 @@
 package tec.ac.cr.marape.app
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -7,14 +8,14 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -22,7 +23,7 @@ import tec.ac.cr.marape.app.adapter.ProductListAdapter
 import tec.ac.cr.marape.app.databinding.ActivityProductListBinding
 import tec.ac.cr.marape.app.model.Inventory
 import tec.ac.cr.marape.app.model.Product
-import tec.ac.cr.marape.app.ui.dashboard.EDITED_INVENTORY
+import tec.ac.cr.marape.app.state.State
 
 class ProductListActivity : AppCompatActivity() {
 
@@ -30,7 +31,9 @@ class ProductListActivity : AppCompatActivity() {
   private lateinit var db: FirebaseFirestore
   private lateinit var binding: ActivityProductListBinding
   private lateinit var productsAdapter: ProductListAdapter
-  private lateinit var productList: List<Product>
+  private lateinit var productList: ArrayList<Product>
+  private lateinit var state: State
+  private var inventoryPosition: Int = RecyclerView.NO_POSITION
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -40,24 +43,8 @@ class ProductListActivity : AppCompatActivity() {
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     db = FirebaseFirestore.getInstance()
     inventory = intent.getSerializableExtra("inventory")!! as Inventory
-
-
-
-    lifecycleScope.launch {
-      productList = inventory.items.mapNotNull { item ->
-        if (item.isNotBlank()) {
-          val productDocument = db.document("products/$item").get().await()
-          productDocument?.toObject(Product::class.java)
-        } else {
-          null
-        }
-      }
-
-      binding.floatingActionButtonCreateProduct.setOnClickListener(::createProduct)
-      productsAdapter = ProductListAdapter(productList, inventory, this@ProductListActivity)
-      binding.productList.adapter = productsAdapter
-      binding.productList.layoutManager = LinearLayoutManager(this@ProductListActivity)
-    }
+    inventoryPosition = intent.getIntExtra("position", RecyclerView.NO_POSITION)
+    state = State.getInstance()
 
     (this as MenuHost).addMenuProvider(object : MenuProvider {
       override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -84,26 +71,85 @@ class ProductListActivity : AppCompatActivity() {
 
     }, this)
 
+    lifecycleScope.launch {
+      productList = inventory.items.mapNotNull { item ->
+        if (item.isNotBlank()) {
+          val productDocument = db.document("products/$item").get().await()
+          productDocument?.toObject(Product::class.java)
+        } else {
+          null
+        }
+      } as ArrayList<Product>
+
+      binding.floatingActionButtonCreateProduct.setOnClickListener(this@ProductListActivity::createProduct)
+      productsAdapter = ProductListAdapter(productList, inventory)
+      productsAdapter.addUnlinkListener(::handleUnlink)
+      binding.productList.adapter = productsAdapter
+      binding.productList.layoutManager = LinearLayoutManager(this@ProductListActivity)
+    }
 
   }
 
-
-  /*
-
-        lifecycleScope.launch {
-          productList = inventory.items.map { invitedUser ->
-            db.document("products/${invitedUser}").get().await().toObject(Product::class.java)!!
-          }
-          binding.productList.adapter = ProductListAdapter(productList, inventory)
-          binding.productList.layoutManager = LinearLayoutManager(this@ProductListActivity)
+  private fun unlinkPerformance(
+    position: Int, currentProduct: Product, onComplete: (Boolean) -> Unit
+  ) {
+    db.collection("inventories").document(inventory.id)
+      .update("items", FieldValue.arrayRemove(currentProduct.id)).addOnSuccessListener {
+        productsAdapter.removeProduct(position, currentProduct)
+        state.sharedInventories[inventoryPosition].items.removeIf {
+          it == currentProduct.id
         }
-   */
+        onComplete(true)
+      }.addOnFailureListener {
+        onComplete(false)
+      }
+  }
+
+  private fun handleUnlink(position: Int, product: Product) {
+    sendConfirmation {
+      showResultUnlink(position, product)
+    }
+  }
+
+  private fun sendConfirmation(
+    onYes: () -> Unit
+  ) {
+    val builder = AlertDialog.Builder(this)
+    builder.setTitle("Confirmación")
+    builder.setMessage("¿Estás seguro de que quieres desligar este producto del actual inventario?")
+
+    builder.setPositiveButton("Sí") { dialog, which ->
+      onYes()
+    }
+
+    builder.setNegativeButton("No") { dialog, which ->
+      dialog.dismiss()
+    }
+
+    val dialog = builder.create()
+    dialog.show()
+  }
+
+  private fun showResultUnlink(position: Int, currentProduct: Product) {
+    unlinkPerformance(position, currentProduct) { success ->
+      if (success) {
+        Toast.makeText(
+          this, "Producto desligado con éxito", Toast.LENGTH_SHORT
+        ).show()
+      } else {
+        Toast.makeText(
+          this, "Error al desligar el producto", Toast.LENGTH_SHORT
+        ).show()
+      }
+    }
+  }
 
   private fun createProduct(view: View) {
     val intent = Intent(this, CreateProductActivity::class.java)
     intent.putExtra("inventory", inventory)
     startActivity(intent)
   }
+
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
       android.R.id.home -> {
